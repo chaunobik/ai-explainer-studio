@@ -1,4 +1,5 @@
 import type { DeriveSceneSpec, GenerateAnchorSpec } from "./types";
+import type {PhotoCaptureSpec} from "./multiview-reference";
 
 export interface ImagePromptSpec {
   projectId: string;
@@ -8,6 +9,7 @@ export interface ImagePromptSpec {
   operation: "generate_anchor" | "derive_scene";
   referenceAssetIds: string[];
   referenceViewIds?: string[];
+  captureProfile: PhotoCaptureSpec;
   subjectLock: {
     entityIds: string[];
     canonicalDescription: string;
@@ -109,6 +111,26 @@ export function compileImagePrompt(spec: ImagePromptSpec): string {
     `Asset: ${spec.assetId} | Scene: ${spec.sceneId}`,
     `Reference assets: ${spec.referenceAssetIds.join(", ") || "none"}`,
     `Reference views: ${spec.referenceViewIds?.join(", ") || "none"}`,
+    "",
+    "CAPTURE PROFILE",
+    `Capture mode: ${spec.captureProfile.captureMode}`,
+    `Device class: ${spec.captureProfile.deviceClass}`,
+    `Lens: ${spec.captureProfile.lensEquivalentMm} mm full-frame equivalent`,
+    `Aperture: f/${spec.captureProfile.apertureF}`,
+    `Shutter: ${spec.captureProfile.shutterSpeed}`,
+    `ISO: ${spec.captureProfile.iso}`,
+    `White balance: ${spec.captureProfile.whiteBalanceKelvin} K`,
+    `Camera height: ${spec.captureProfile.cameraHeightM} m`,
+    `Subject distance: ${spec.captureProfile.subjectDistanceM} m`,
+    `Focus: ${spec.captureProfile.focus}`,
+    `Exposure: ${spec.captureProfile.exposure}`,
+    `Lighting: ${spec.captureProfile.lighting}`,
+    spec.captureProfile.stabilization
+      ? `Stabilization: ${spec.captureProfile.stabilization}`
+      : "",
+    `Processing: ${spec.captureProfile.processing}`,
+    "Capture realism rules:",
+    bullets(spec.captureProfile.realismRules),
     "",
     "SUBJECT IDENTITY LOCK",
     spec.subjectLock.canonicalDescription,
