@@ -6,6 +6,8 @@ import {
   renderScenePreviewAction,
   saveFinalQaAction,
   saveMotionQaAction,
+  saveMultiviewPromptQaAction,
+  saveMultiviewQaAction,
   savePromptQaAction,
   setImageDecisionAction,
   setVoiceDecisionAction,
@@ -83,6 +85,16 @@ export default function ProjectPage({
         "\n\n--- INPUT ImagePromptSpec ---\n" +
         JSON.stringify(prompt, null, 2)
       : "";
+
+  const multiviewPromptQaPackage =
+    data.multiviewPromptQaTemplate +
+    "\n\n--- INPUT MultiViewReferencePromptSpec ---\n" +
+    JSON.stringify(data.multiviewReferencePrompt, null, 2);
+
+  const multiviewQaPackage =
+    data.multiviewQaTemplate +
+    "\n\n--- APPROVED/REVIEWED A0 PROMPT SPEC ---\n" +
+    JSON.stringify(data.multiviewReferencePrompt, null, 2);
 
   const motionQaPackage =
     data.motionQaTemplate +
@@ -165,6 +177,143 @@ export default function ProjectPage({
             </ol>
 
             <div className="action-box">
+              {data.guided.kind === "multiview_prompt_qa" ? (
+                <div>
+                  <div className="action-box">
+                    <div className="eyebrow">Photo Capture Profile</div>
+                    <p>
+                      <strong>{data.multiviewReferencePrompt.capture_profile.capture_mode}</strong>
+                      {" · "}
+                      {data.multiviewReferencePrompt.capture_profile.device_class}
+                    </p>
+                    <p className="small muted">
+                      {data.multiviewReferencePrompt.capture_profile.lens_equivalent_mm} mm eq ·
+                      {" f/"}{data.multiviewReferencePrompt.capture_profile.aperture_f} ·
+                      {" "}{data.multiviewReferencePrompt.capture_profile.shutter_speed} ·
+                      {" ISO "}{data.multiviewReferencePrompt.capture_profile.iso} ·
+                      {" WB "}{data.multiviewReferencePrompt.capture_profile.white_balance_kelvin}K
+                    </p>
+                  </div>
+                  <div className="button-row">
+                    <CopyButton
+                      text={multiviewPromptQaPackage}
+                      label="Copy A0 Prompt QA Package"
+                    />
+                  </div>
+                  <details open>
+                    <summary className="small"><strong>Xem A0 Multi-View Prompt</strong></summary>
+                    <pre className="prompt-box">{data.multiviewReferencePrompt.final_prompt}</pre>
+                  </details>
+                  <form action={saveMultiviewPromptQaAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <div className="form-row">
+                      <label htmlFor="mv-prompt-qa-json">Dán Multi-View Prompt QA JSON từ ChatGPT</label>
+                      <textarea
+                        id="mv-prompt-qa-json"
+                        name="qaJson"
+                        placeholder={'{"prompt_id":"' + data.multiviewReferencePrompt.prompt_id + '","status":"pass",...}'}
+                        required
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button" type="submit">
+                        Lưu A0 Prompt QA & tiếp tục
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
+              {data.guided.kind === "generate_reference_pack" ? (
+                <div>
+                  <div className="action-box">
+                    <div className="eyebrow">A0 required views</div>
+                    <div className="view-chip-grid">
+                      {data.multiviewReferencePrompt.required_views.map((view: any) => (
+                        <span className="view-chip" key={view.view_id}>
+                          {view.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="muted">
+                    Không dùng ảnh thật. Copy prompt dưới đây sang ChatGPT Image để tạo một reference board đa góc của cùng một sản phẩm.
+                  </p>
+                  <div className="button-row">
+                    <CopyButton
+                      text={data.multiviewReferencePrompt.final_prompt}
+                      label="Copy A0 Generation Prompt"
+                    />
+                  </div>
+                  <pre className="prompt-box">{data.multiviewReferencePrompt.final_prompt}</pre>
+                  <form action={uploadImageAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <input type="hidden" name="assetId" value="A0" />
+                    <div className="form-row">
+                      <label htmlFor="a0-generated-file">
+                        Sau khi GPT tạo xong A0 reference board, upload ảnh tại đây
+                      </label>
+                      <input
+                        id="a0-generated-file"
+                        name="file"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        required
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button" type="submit">
+                        Import A0 & sang Multi-View QA
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
+              {data.guided.kind === "multiview_qa" ? (
+                <div>
+                  <img
+                    className="asset-preview reference-board-preview"
+                    src={"/api/projects/" + params.slug + "/assets/A0"}
+                    alt="A0 multi-view reference board"
+                  />
+                  <div className="action-box">
+                    <div className="eyebrow">Kiểm tra bắt buộc</div>
+                    <ul className="check-list">
+                      <li>Cùng đúng một sản phẩm ở mọi góc.</li>
+                      <li>Door/handle/divider/proportions không drift.</li>
+                      <li>Đủ tất cả góc bắt buộc và không gắn nhãn sai.</li>
+                      <li>Perspective phù hợp capture profile.</li>
+                      <li>Ảnh giống chụp thật, không CGI/warped geometry.</li>
+                      <li>Không bịa cấu tạo kỹ thuật ẩn.</li>
+                    </ul>
+                  </div>
+                  <div className="button-row">
+                    <CopyButton text={multiviewQaPackage} label="Copy Multi-View QA Package" />
+                  </div>
+                  <p className="small muted">
+                    Upload chính ảnh A0 phía trên vào ChatGPT cùng QA Package, sau đó dán JSON kết quả bên dưới.
+                  </p>
+                  <form action={saveMultiviewQaAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <div className="form-row">
+                      <label htmlFor="mv-qa-json">Dán Multi-View QA JSON</label>
+                      <textarea
+                        id="mv-qa-json"
+                        name="qaJson"
+                        placeholder='{"qa_result":{"qa_id":"QA-MV-A0-001","stage":"visual","status":"pass",...},"reference_prompt_id":"MVP1","asset_id":"A0",...}'
+                        required
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button" type="submit">
+                        Lưu Multi-View QA & tiếp tục
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
               {data.guided.kind === "upload_image" && assetId ? (
                 <form action={uploadImageAction}>
                   <input type="hidden" name="slug" value={params.slug} />
