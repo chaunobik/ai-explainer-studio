@@ -11,3 +11,5 @@ export {
   evaluateImageReadiness,
   evaluateVoiceReadiness,
 } from "./readiness";
+
+export {validateImageManifestIntegrity, validatePromptQaIntegrity} from "./integrity";
