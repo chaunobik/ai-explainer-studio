@@ -5,8 +5,8 @@
     "status": "pass",
     "attempt": 0,
     "summary": "Example only: A0 covers all required views with one consistent refrigerator identity and realistic smartphone-documentation appearance.",
-    "critical_violations": [],
-    "next_action": "approve"
+    "next_action": "approve",
+    "critical_failures": []
   },
   "reference_prompt_id": "MVP1",
   "asset_id": "A0",
