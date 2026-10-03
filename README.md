@@ -51,7 +51,7 @@ The canonical end-to-end example is under `examples/fridge-hot-behind/`.
 
 **Milestone 3 — Visual Generation: IN PROGRESS**
 
-Implemented: provider abstraction → anchor workflow → derived workflow → Visual QA → repair/retry.
+Implemented: provider abstraction → detailed per-asset ImagePromptSpec → Prompt QA → anchor workflow → derived workflow → Visual QA → repair/retry.
 
 Current manual integration gate: generate/import and approve A1, then A2/A5/A6 using `docs/M3_MANUAL_IMAGE_RUN.md`.
 
