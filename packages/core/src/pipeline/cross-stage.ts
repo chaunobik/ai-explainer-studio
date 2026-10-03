@@ -397,7 +397,11 @@ export function validateCrossStageArtifacts(
 
     const visiting = new Set<string>();
     const visited = new Set<string>();
-    const map = new Map(entries.map((entry: AnyRecord) => [entry.asset_id, entry]));
+    const map = new Map<string, AnyRecord>(
+      entries.map(
+        (entry: AnyRecord): [string, AnyRecord] => [entry.asset_id, entry],
+      ),
+    );
 
     const visit = (id: string): boolean => {
       if (visiting.has(id)) return true;
