@@ -5,7 +5,6 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import {revalidatePath} from "next/cache";
-import {redirect} from "next/navigation";
 import {projectDirForSlug} from "../../../lib/project-runtime";
 
 function readJson(filePath: string): any {
@@ -78,13 +77,12 @@ function imageDimensions(
   return null;
 }
 
-function done(slug: string, notice: string): never {
-  revalidatePath(`/projects/${slug}`);
-  redirect(`/projects/${slug}?notice=${encodeURIComponent(notice)}`);
+function refresh(slug: string): void {
+  revalidatePath("/projects/" + slug);
 }
 
-function fail(slug: string, message: string): never {
-  redirect(`/projects/${slug}?error=${encodeURIComponent(message)}`);
+function actionError(error: unknown): never {
+  throw new Error(error instanceof Error ? error.message : String(error));
 }
 
 export async function uploadImageAction(formData: FormData): Promise<void> {
@@ -133,9 +131,9 @@ export async function uploadImageAction(formData: FormData): Promise<void> {
     asset.file.checksum = crypto.createHash("sha256").update(bytes).digest("hex");
 
     writeJson(actualManifest, manifest);
-    done(slug, `Đã import ${assetId}. Bước tiếp theo đã được cập nhật tự động.`);
+    refresh(slug);
   } catch (error) {
-    fail(slug || "fridge-hot-behind", error instanceof Error ? error.message : String(error));
+    actionError(error);
   }
 }
 
@@ -186,14 +184,9 @@ export async function setImageDecisionAction(formData: FormData): Promise<void> 
     }
 
     writeJson(manifestPath, manifest);
-    done(
-      slug,
-      decision === "approved"
-        ? `${assetId} đã được approve. Tool đã tính bước tiếp theo.`
-        : `${assetId} đã bị reject. Chỉ asset này cần repair.`,
-    );
+    refresh(slug);
   } catch (error) {
-    fail(slug || "fridge-hot-behind", error instanceof Error ? error.message : String(error));
+    actionError(error);
   }
 }
 
@@ -236,13 +229,8 @@ export async function savePromptQaAction(formData: FormData): Promise<void> {
     if (!qaPath) throw new Error(`Không tìm thấy QA output path cho ${assetId}.`);
 
     writeJson(path.join(projectDir, qaPath), qa);
-    done(
-      slug,
-      qa.status === "pass"
-        ? `Prompt QA của ${assetId} đã PASS. Bước tiếp theo đã được mở khóa.`
-        : `Đã lưu Prompt QA của ${assetId} với status ${qa.status}.`,
-    );
+    refresh(slug);
   } catch (error) {
-    fail(slug || "fridge-hot-behind", error instanceof Error ? error.message : String(error));
+    actionError(error);
   }
 }
