@@ -7,6 +7,7 @@ export interface ImagePromptSpec {
   sceneId: string;
   operation: "generate_anchor" | "derive_scene";
   referenceAssetIds: string[];
+  referenceViewIds?: string[];
   subjectLock: {
     entityIds: string[];
     canonicalDescription: string;
@@ -107,6 +108,7 @@ export function compileImagePrompt(spec: ImagePromptSpec): string {
     `IMAGE TASK: ${spec.operation === "generate_anchor" ? "CREATE CANONICAL ANCHOR" : "EDIT/DERIVE FROM APPROVED REFERENCE"}`,
     `Asset: ${spec.assetId} | Scene: ${spec.sceneId}`,
     `Reference assets: ${spec.referenceAssetIds.join(", ") || "none"}`,
+    `Reference views: ${spec.referenceViewIds?.join(", ") || "none"}`,
     "",
     "SUBJECT IDENTITY LOCK",
     spec.subjectLock.canonicalDescription,
