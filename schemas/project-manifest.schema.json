@@ -44,7 +44,9 @@
         "voice_assets_template",
         "images_dir",
         "output_file",
-        "final_qa_output"
+        "final_qa_output",
+        "image_prompt_qa_outputs",
+        "motion_qa_output"
       ],
       "properties": {
         "research_result": {
@@ -130,6 +132,17 @@
           "minLength": 1
         },
         "asset_execution_plan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image_prompt_qa_outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "motion_qa_output": {
           "type": "string",
           "minLength": 1
         }
