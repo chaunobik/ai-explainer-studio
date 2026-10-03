@@ -1,0 +1,91 @@
+{
+  "voice_plan_id": "VOICE001",
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "language": "vi-VN",
+  "provider_id": "manual-tts",
+  "style": {
+    "persona": "Curious Explorer",
+    "pace": "Natural, clear Vietnamese explainer pace; energetic but not rushed.",
+    "energy": "Medium-high curiosity, calm technical confidence.",
+    "notes": [
+      "Use conversational Vietnamese rather than formal lecture delivery.",
+      "Short natural pauses between cause-and-effect phrases.",
+      "Do not dramatize normal refrigerator warmth as a fault or danger."
+    ]
+  },
+  "pronunciation_dictionary": [
+    {
+      "term": "dàn bay hơi",
+      "pronunciation": "dàn bay hơi"
+    },
+    {
+      "term": "dàn ngưng",
+      "pronunciation": "dàn ngưng"
+    }
+  ],
+  "segments": [
+    {
+      "scene_id": "S1",
+      "text": "Vì sao phía sau tủ lạnh lại nóng, trong khi bên trong thì lạnh?",
+      "target_duration_sec": 5,
+      "output_asset_id": "V1",
+      "delivery_notes": [
+        "Curious opening question; slight emphasis on 'nóng' and 'lạnh'."
+      ]
+    },
+    {
+      "scene_id": "S2",
+      "text": "Tủ lạnh không tạo ra cái lạnh. Nó lấy nhiệt từ khoang bên trong rồi chuyển nhiệt ra môi trường.",
+      "target_duration_sec": 9,
+      "output_asset_id": "V2",
+      "delivery_notes": [
+        "Emphasize the correction: 'không tạo ra cái lạnh'."
+      ]
+    },
+    {
+      "scene_id": "S3",
+      "text": "Môi chất lạnh hấp thụ nhiệt ở dàn bay hơi, sau đó được máy nén đẩy sang dàn ngưng.",
+      "target_duration_sec": 8,
+      "output_asset_id": "V3",
+      "delivery_notes": [
+        "Clear component names; steady technical pace."
+      ]
+    },
+    {
+      "scene_id": "S4",
+      "text": "Ở dàn ngưng, nhiệt được truyền ra không khí. Vì vậy khu vực thải nhiệt sẽ ấm lên khi tủ hoạt động.",
+      "target_duration_sec": 9,
+      "output_asset_id": "V4",
+      "delivery_notes": [
+        "Slight pause after 'không khí'."
+      ]
+    },
+    {
+      "scene_id": "S5",
+      "text": "Vị trí này tùy thiết kế: có tủ thải nhiệt phía sau, có tủ tích hợp đường tản nhiệt ở hai bên.",
+      "target_duration_sec": 9,
+      "output_asset_id": "V5",
+      "delivery_notes": [
+        "Contrast 'phía sau' and 'hai bên'."
+      ]
+    },
+    {
+      "scene_id": "S6",
+      "text": "Do đó, mặt ngoài ấm lên có thể là một phần bình thường của quá trình làm lạnh.",
+      "target_duration_sec": 7,
+      "output_asset_id": "V6",
+      "delivery_notes": [
+        "Reassuring, factual tone; no alarm."
+      ]
+    },
+    {
+      "scene_id": "S7",
+      "text": "Nói ngắn gọn: bên trong lạnh được vì nhiệt đã được chuyển ra ngoài — và phía sau nóng là một dấu hiệu của quá trình đó.",
+      "target_duration_sec": 8,
+      "output_asset_id": "V7",
+      "delivery_notes": [
+        "Concise payoff; finish confidently."
+      ]
+    }
+  ]
+}
