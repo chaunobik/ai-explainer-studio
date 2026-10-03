@@ -1,0 +1,138 @@
+{
+  "project_id": "EXAMPLE-001",
+  "topic": "Tại sao tủ lạnh nóng phía sau?",
+  "research": {
+    "research_id": "R001",
+    "topic": "Tại sao tủ lạnh nóng phía sau?",
+    "research_questions": [
+      "Tủ lạnh chuyển nhiệt như thế nào?",
+      "Vì sao khu vực phía sau nóng?"
+    ],
+    "sources": [
+      {
+        "source_id": "SRC1",
+        "title": "Example authoritative refrigeration source",
+        "url": "https://example.com/refrigeration",
+        "publisher": "Example",
+        "published_at": null,
+        "accessed_at": null,
+        "source_type": "other",
+        "notes": "Placeholder source for schema demonstration only."
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "F1",
+        "summary": "A refrigeration cycle transfers heat from the cooled compartment to the surroundings.",
+        "source_ids": [
+          "SRC1"
+        ],
+        "notes": "Example only; replace with real sourced research."
+      }
+    ],
+    "uncertainties": []
+  },
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Tủ lạnh chuyển nhiệt từ bên trong ra môi trường xung quanh.",
+      "claim_type": "mechanism",
+      "status": "approved",
+      "source_ids": [
+        "SRC1"
+      ],
+      "evidence_summary": "Example evidence mapping.",
+      "confidence": 0.9,
+      "criticality": "high",
+      "rejection_reason": null,
+      "allowed_for_script": true
+    }
+  ],
+  "script": {
+    "script_id": "SC001",
+    "language": "vi-VN",
+    "target_duration_sec": 55,
+    "hook": "Bạn có để ý phía sau tủ lạnh thường nóng không?",
+    "segments": [
+      {
+        "segment_id": "SG1",
+        "spoken_text": "Tủ lạnh không tạo ra cái lạnh; nó chuyển nhiệt từ bên trong ra ngoài.",
+        "claim_ids": [
+          "C1"
+        ],
+        "purpose": "reveal",
+        "visualizability_notes": "Show the same refrigerator, then reveal a heat-flow path toward the rear."
+      }
+    ],
+    "payoff": "Vì vậy phần phía sau nóng lên chính là dấu hiệu nhiệt đang được thải ra môi trường.",
+    "approved_claim_ids": [
+      "C1"
+    ],
+    "estimated_word_count": 43,
+    "estimated_duration_sec": 17,
+    "style": "curious_explorer"
+  },
+  "storyboard": {
+    "storyboard_id": "SB001",
+    "target_duration_sec": 55,
+    "total_duration_sec": 10,
+    "continuity_notes": [
+      "Use one refrigerator anchor throughout both scenes."
+    ],
+    "feasibility_notes": [
+      "Example is intentionally short and incomplete."
+    ],
+    "scenes": [
+      {
+        "scene_id": "S1",
+        "duration_sec": 4,
+        "narration": "Bạn có để ý phía sau tủ lạnh thường nóng không?",
+        "on_screen_text": "",
+        "visual_goal": "Establish one real-looking refrigerator as the anchor.",
+        "visual_type": "real_asset",
+        "primary_entity_ids": [
+          "fridge_01"
+        ],
+        "anchor_asset_id": "A1",
+        "parent_scene_id": null,
+        "relationship": "anchor",
+        "camera_action": "static_then_slow_push",
+        "visual_transforms": [],
+        "transition_out": "zoom_to_rear",
+        "transition_reason": "Continue into the same object's rear heat-rejection area.",
+        "required_objects": [
+          "refrigerator"
+        ],
+        "motion": {},
+        "qa_status": "pending"
+      },
+      {
+        "scene_id": "S2",
+        "duration_sec": 6,
+        "narration": "Tủ lạnh không tạo ra cái lạnh; nó chuyển nhiệt từ bên trong ra ngoài.",
+        "on_screen_text": "",
+        "visual_goal": "Show heat moving from inside the same refrigerator toward the rear.",
+        "visual_type": "technical_diagram",
+        "primary_entity_ids": [
+          "fridge_01"
+        ],
+        "anchor_asset_id": "A1",
+        "parent_scene_id": "S1",
+        "relationship": "derived",
+        "camera_action": "maintain_angle",
+        "visual_transforms": [
+          "cutaway_reveal",
+          "add_heat_flow_arrow"
+        ],
+        "transition_out": "fade",
+        "transition_reason": "Explain an invisible thermal process while preserving object identity.",
+        "required_objects": [
+          "refrigerator",
+          "heat_flow_arrow"
+        ],
+        "motion": {},
+        "qa_status": "pending"
+      }
+    ]
+  }
+}

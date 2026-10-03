@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/script-spec.schema.json",
+  "title": "ScriptSpec",
+  "type": "object",
+  "required": [
+    "script_id",
+    "language",
+    "target_duration_sec",
+    "hook",
+    "segments",
+    "payoff",
+    "approved_claim_ids"
+  ],
+  "properties": {
+    "script_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "const": "vi-VN"
+    },
+    "target_duration_sec": {
+      "type": "number",
+      "minimum": 30,
+      "maximum": 90
+    },
+    "hook": {
+      "type": "string",
+      "minLength": 1
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "segment_id",
+          "spoken_text",
+          "claim_ids",
+          "purpose"
+        ],
+        "properties": {
+          "segment_id": {
+            "type": "string",
+            "pattern": "^SG[0-9]+$"
+          },
+          "spoken_text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^C[0-9]+$"
+            }
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "setup",
+              "explain",
+              "contrast",
+              "reveal",
+              "transition",
+              "payoff_support"
+            ]
+          },
+          "visualizability_notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "payoff": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approved_claim_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^C[0-9]+$"
+      }
+    },
+    "estimated_word_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "estimated_duration_sec": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "style": {
+      "type": "string",
+      "default": "curious_explorer"
+    }
+  },
+  "additionalProperties": false
+}

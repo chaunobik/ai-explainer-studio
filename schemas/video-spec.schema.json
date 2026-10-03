@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ai-explainer-studio.local/schemas/video-spec.schema.json",
   "title": "VideoSpec",
+  "description": "Incrementally populated source-of-truth object for one explainer-video project.",
   "type": "object",
   "required": [
     "project_id",
@@ -9,7 +10,6 @@
     "platform",
     "video",
     "status",
-    "scenes",
     "qa"
   ],
   "properties": {
@@ -42,6 +42,20 @@
         "rendered"
       ]
     },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "topic",
+        "research",
+        "claims",
+        "script",
+        "storyboard",
+        "visual",
+        "motion",
+        "voice",
+        "final"
+      ]
+    },
     "video": {
       "type": "object",
       "required": [
@@ -71,26 +85,22 @@
       "additionalProperties": false
     },
     "research": {
-      "type": "object"
+      "$ref": "research-result.schema.json"
     },
     "claims": {
       "type": "array",
       "items": {
-        "type": "object"
+        "$ref": "claim.schema.json"
       }
     },
     "script": {
-      "type": "object"
+      "$ref": "script-spec.schema.json"
+    },
+    "storyboard": {
+      "$ref": "storyboard-spec.schema.json"
     },
     "asset_bible": {
-      "type": "object"
-    },
-    "scenes": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "scene-spec.schema.json"
-      }
+      "$ref": "asset-bible.schema.json"
     },
     "voice": {
       "type": "object"
@@ -105,5 +115,5 @@
       "type": "object"
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }
