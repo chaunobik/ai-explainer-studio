@@ -47,7 +47,14 @@ The dashboard currently supports:
 - voice narration display;
 - voice upload/import;
 - local audio preview;
-- voice approve/reject.
+- voice approve/reject;
+- per-scene Remotion preview rendering directly from the UI;
+- scene preview playback;
+- copy/paste Motion QA workflow;
+- guarded final render directly from the UI;
+- final video playback;
+- copy/paste Final Video QA workflow;
+- COMPLETE state after Final QA passes.
 
 All actions call local server/core logic directly. The UI does not execute `npm run ...` shell commands behind buttons.
 
@@ -100,3 +107,33 @@ npm run check
 ```
 
 They use the same core readiness concepts as the UI.
+
+
+## End-to-end guided sequence
+
+For the canonical refrigerator project, the dashboard will guide the operator through a sequence similar to:
+
+```
+Import A0
+→ Review / approve A0
+→ Prompt QA A1
+→ Generate/import A1
+→ Visual QA A1
+→ Prompt QA A2
+→ Generate/import A2
+→ Visual QA A2
+→ Prompt QA A5
+→ Generate/import A5
+→ Visual QA A5
+→ Prompt QA A6
+→ Generate/import A6
+→ Visual QA A6
+→ Import/review V1…V7
+→ Render scene previews
+→ Motion QA
+→ Final Render
+→ Final Video QA
+→ COMPLETE
+```
+
+The exact next step is recalculated after every successful action. The operator does not need to manually run Project Doctor or Project Status during the normal UI workflow.
