@@ -1,0 +1,106 @@
+{
+  "qa_result": {
+    "qa_id": "QA-CONT-001",
+    "stage": "continuity",
+    "artifact_id": "VP001",
+    "status": "pass",
+    "scores": {
+      "entity_identity": 1,
+      "route_selection": 0.99,
+      "lineage": 1,
+      "transition_logic": 0.99,
+      "technical_consistency": 0.99,
+      "production_feasibility": 0.98
+    },
+    "critical_failures": [],
+    "warnings": [
+      "A1 is still planned; Milestone 3 must approve the actual anchor before derived asset generation.",
+      "Scene 5 comparison must use overlays on fridge_01 rather than introducing a second physical refrigerator."
+    ],
+    "repair_actions": [],
+    "retry_count": 0
+  },
+  "entity_checks": [
+    {
+      "entity_id": "fridge_01",
+      "status": "pass",
+      "issues": []
+    }
+  ],
+  "scene_checks": [
+    {
+      "scene_id": "S1",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S2",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S3",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S4",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S5",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S6",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S7",
+      "status": "pass",
+      "issues": []
+    }
+  ],
+  "transition_checks": [
+    {
+      "from_scene_id": "S1",
+      "to_scene_id": "S2",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "from_scene_id": "S2",
+      "to_scene_id": "S3",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "from_scene_id": "S3",
+      "to_scene_id": "S4",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "from_scene_id": "S4",
+      "to_scene_id": "S5",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "from_scene_id": "S5",
+      "to_scene_id": "S6",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "from_scene_id": "S6",
+      "to_scene_id": "S7",
+      "status": "pass",
+      "issues": []
+    }
+  ],
+  "repair_actions": []
+}
