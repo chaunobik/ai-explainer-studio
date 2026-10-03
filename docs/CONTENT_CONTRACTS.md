@@ -70,7 +70,8 @@ Script QA must check:
 Purpose: translate an approved spoken script into feasible scenes.
 
 Each scene must declare:
-- narration
+- source script part IDs
+- verbatim narration
 - visual goal
 - visual type
 - relationship to prior/anchor scene
@@ -90,7 +91,7 @@ The application should enforce these rules in addition to JSON Schema:
 1. Every `Claim.source_ids[]` must exist in `ResearchResult.sources[]`.
 2. Every script `claim_id` must exist and be approved.
 3. No rejected or pending claim may appear in script.
-4. Every storyboard narration must come from or faithfully represent the approved script.
+4. Every storyboard narration must be verbatim from its referenced approved script parts.
 5. Sum of scene durations should be close to target duration.
 6. Scene IDs must be unique.
 7. A `derived` or `continuation` scene should name a valid parent or anchor.
