@@ -141,9 +141,11 @@ export default function ProjectPage({
     : undefined;
 
   const activePromptQa = prompt ? data.promptQaById[prompt.prompt_id] : undefined;
+  const a0Asset = data.imageManifest.assets.find((value: any) => value.asset_id === "A0");
+  const a0IsManual = a0Asset?.provenance?.provider_mode === "manual";
   const latestQa =
     activePromptQa ??
-    data.multiviewQa ??
+    (!a0IsManual ? data.multiviewQa : null) ??
     data.multiviewPromptQa ??
     null;
   const latestQaTitle = activePromptQa
@@ -319,6 +321,9 @@ export default function ProjectPage({
                   <p className="muted">
                     Không dùng ảnh thật. Copy prompt dưới đây sang ChatGPT Image để tạo một reference board đa góc của cùng một sản phẩm.
                   </p>
+                  <p className="notice">
+                    Manual workflow: hãy review ảnh ngay trong ChatGPT trước khi tải về. Khi bạn upload ảnh vào tool, thao tác upload được xem là xác nhận rằng ảnh đã được bạn chấp nhận; tool sẽ không hỏi review lại.
+                  </p>
                   <div className="button-row">
                     <CopyButton
                       text={data.multiviewReferencePrompt.final_prompt}
@@ -331,7 +336,7 @@ export default function ProjectPage({
                     <input type="hidden" name="assetId" value="A0" />
                     <div className="form-row">
                       <label htmlFor="a0-generated-file">
-                        Sau khi GPT tạo xong A0 reference board, upload ảnh tại đây
+                        Sau khi GPT tạo xong và bạn đã review A0 reference board, upload ảnh tại đây
                       </label>
                       <input
                         id="a0-generated-file"
@@ -343,7 +348,7 @@ export default function ProjectPage({
                     </div>
                     <div className="button-row">
                       <button className="button" type="submit">
-                        Import A0 & sang Multi-View QA
+                        Upload A0 đã review & tiếp tục
                       </button>
                     </div>
                   </form>
@@ -481,11 +486,11 @@ export default function ProjectPage({
                     <input type="hidden" name="slug" value={params.slug} />
                     <input type="hidden" name="assetId" value={assetId} />
                     <div className="form-row">
-                      <label htmlFor="generated-file">Sau khi tạo ảnh trong ChatGPT, import {assetId} tại đây</label>
+                      <label htmlFor="generated-file">Sau khi tạo và review ảnh trong ChatGPT, upload {assetId} tại đây</label>
                       <input id="generated-file" name="file" type="file" accept="image/png,image/jpeg,image/webp" required />
                     </div>
                     <div className="button-row">
-                      <button className="button" type="submit">Import {assetId} & kiểm tra tiếp</button>
+                      <button className="button" type="submit">Upload {assetId} đã review & tiếp tục</button>
                     </div>
                   </form>
                 </div>
