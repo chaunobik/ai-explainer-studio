@@ -29,3 +29,11 @@ export { compileImagePrompt, toGenerateAnchorSpec, toDeriveSceneSpec } from "./i
 
 export type {PhotoCaptureSpec, MultiViewReferencePromptSpec} from "./multiview-reference";
 export {compileMultiViewReferencePrompt, toGenerateReferencePackSpec} from "./multiview-reference";
+
+export {
+  isOperatorReviewedImageMode,
+  manualOperatorReviewId,
+  shouldMigrateManualImageToApproved,
+  statusAfterImageImport,
+  MANUAL_OPERATOR_REVIEW_PREFIX,
+} from "./review-policy";

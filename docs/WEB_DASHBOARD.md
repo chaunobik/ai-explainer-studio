@@ -66,13 +66,13 @@ Example:
 
 ```
 A0 Multi-View Prompt QA
-→ Generate A0 Reference Pack with ChatGPT Image
-→ Multi-View Consistency QA
+→ Generate + review A0 in ChatGPT Image
+→ Upload A0 (manual upload = operator-approved)
 → Prompt QA A1
-→ Generate/import A1 from selected A0 view(s)
-→ Visual QA A1
+→ Generate + review A1 from selected A0 view(s)
+→ Upload A1 (manual upload = operator-approved)
 → Prompt QA A2
-→ Generate/import A2
+→ Generate + review A2
 ...
 ```
 
@@ -91,20 +91,24 @@ For Prompt QA:
 4. paste it into the dashboard;
 5. click **Lưu Prompt QA & tiếp tục**.
 
-For A0 reference generation:
+For A0 reference generation in the current manual ChatGPT workflow:
 1. complete **A0 Multi-View Prompt QA**;
 2. click **Copy A0 Generation Prompt**;
 3. generate one eight-view reference board in ChatGPT Image without uploading a real product photo;
-4. upload the generated board to the dashboard;
-5. run **Multi-View Consistency QA**.
+4. visually review the generated board in ChatGPT and regenerate it there if needed;
+5. upload only the accepted board to the dashboard.
+
+Because the operator already reviewed the image before upload, a manual upload is treated as **operator-approved**. The dashboard does not ask for a second Multi-View / Visual QA confirmation.
+
+When an image provider runs in `api` / automated mode, this shortcut is disabled: generated images remain `qa_pending` and must pass automated Visual/Multi-View QA; uncertain results can still become `needs_human_review`.
 
 For later scene image generation:
 1. click **Copy Image Prompt**;
 2. use the approved A0 view(s) and A1/approved derivatives requested by the scene prompt;
-3. generate/edit the image;
-4. return to the dashboard and upload the result.
+3. generate/edit and review the image in ChatGPT;
+4. upload only the accepted result.
 
-The dashboard then automatically advances to the next QA/action state.
+For manual providers, upload is the operator-confirmation boundary and the dashboard immediately advances to the next dependency. For automated providers, Visual QA remains mandatory.
 
 ## Developer fallback
 
@@ -125,20 +129,15 @@ For the canonical refrigerator project, the dashboard will guide the operator th
 
 ```
 A0 Multi-View Prompt QA
-→ Generate/import AI-created A0 reference board
-→ Multi-View Consistency QA / approve A0
+→ Generate + review + upload A0
 → Prompt QA A1
-→ Generate/import A1
-→ Visual QA A1
+→ Generate + review + upload A1
 → Prompt QA A2
-→ Generate/import A2
-→ Visual QA A2
+→ Generate + review + upload A2
 → Prompt QA A5
-→ Generate/import A5
-→ Visual QA A5
+→ Generate + review + upload A5
 → Prompt QA A6
-→ Generate/import A6
-→ Visual QA A6
+→ Generate + review + upload A6
 → Import/review V1…V7
 → Render scene previews
 → Motion QA

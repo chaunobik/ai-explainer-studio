@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import {manualOperatorReviewId, statusAfterImageImport} from "../packages/core/src/index";
 
 function arg(name: string): string | undefined {
   const prefix = `--${name}=`;
@@ -115,7 +116,22 @@ const dimensions =
       ? jpegDimensions(bytes)
       : null;
 
-asset.status = "qa_pending";
+const nextStatus = statusAfterImageImport(asset.provenance.provider_mode);
+if (nextStatus === "approved") {
+  for (const parentId of asset.parent_asset_ids ?? []) {
+    const parent = manifest.assets.find((value: any) => value.asset_id === parentId);
+    if (!parent || parent.status !== "approved") {
+      throw new Error(`Parent ${parentId} must be approved before ${assetId}.`);
+    }
+  }
+  asset.qa_result_ids = [
+    ...new Set([
+      ...(asset.qa_result_ids ?? []),
+      manualOperatorReviewId(assetId),
+    ]),
+  ];
+}
+asset.status = nextStatus;
 asset.provenance.source_uri = source;
 asset.file.uri = path.relative(projectDir, target).replaceAll(path.sep, "/");
 asset.file.mime_type = mimeFor(ext);
@@ -126,7 +142,7 @@ asset.file.checksum = crypto.createHash("sha256").update(bytes).digest("hex");
 fs.writeFileSync(actualManifest, JSON.stringify(manifest, null, 2) + "\n");
 
 console.log(`✓ Imported ${assetId} → ${asset.file.uri}`);
-console.log(`  status: qa_pending`);
+console.log(`  status: ${asset.status}`);
 console.log(`  sha256: ${asset.file.checksum}`);
 if (dimensions) {
   console.log(`  size: ${dimensions.width}x${dimensions.height}`);
