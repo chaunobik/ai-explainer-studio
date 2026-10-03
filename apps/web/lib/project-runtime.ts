@@ -35,6 +35,10 @@ export interface DashboardData {
   imageManifest: any;
   voiceManifest: any;
   voiceSpec: any;
+  storyboard: any;
+  motionSpec: any;
+  previewSceneIds: string[];
+  outputExists: boolean;
   usingImageTemplate: boolean;
   usingVoiceTemplate: boolean;
   health: {
@@ -427,6 +431,13 @@ export function loadProjectDashboard(slug: string): DashboardData {
   }
 
   const outputExists = fs.existsSync(rel(p.output_file));
+  const previewsDir = path.join(projectDir, "output", "previews");
+  const previewSceneIds = fs.existsSync(previewsDir)
+    ? fs
+        .readdirSync(previewsDir)
+        .filter((name) => /^S[0-9]+\.mp4$/i.test(name))
+        .map((name) => path.basename(name, ".mp4"))
+    : [];
   let finalQaStatus: "pass" | "fail" | "needs_human_review" | null = null;
   const finalQaPath = rel(p.final_qa_output);
   if (fs.existsSync(finalQaPath)) {
@@ -475,6 +486,10 @@ export function loadProjectDashboard(slug: string): DashboardData {
     imageManifest,
     voiceManifest,
     voiceSpec,
+    storyboard,
+    motionSpec: motion,
+    previewSceneIds,
+    outputExists,
     usingImageTemplate,
     usingVoiceTemplate,
     health: {errors: contractErrors, warnings},
