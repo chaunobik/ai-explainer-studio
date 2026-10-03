@@ -1,3 +1,5 @@
+import type { DeriveSceneSpec, GenerateAnchorSpec } from "./types";
+
 export interface ImagePromptSpec {
   promptId: string;
   assetId: string;
@@ -191,4 +193,63 @@ export function compileImagePrompt(spec: ImagePromptSpec): string {
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+
+export function toGenerateAnchorSpec(
+  spec: ImagePromptSpec,
+  attempt = 0,
+): GenerateAnchorSpec {
+  if (spec.operation !== "generate_anchor") {
+    throw new Error(
+      `Prompt spec ${spec.promptId} is not an anchor-generation prompt.`,
+    );
+  }
+
+  return {
+    promptSpecId: spec.promptId,
+    projectId: "",
+    sceneId: spec.sceneId,
+    outputAssetId: spec.assetId,
+    entityIds: spec.subjectLock.entityIds,
+    referenceAssetIds: spec.referenceAssetIds,
+    prompt: compileImagePrompt(spec),
+    negativeConstraints: spec.negativeConstraints,
+    continuityConstraints: spec.continuityConstraints,
+    technicalConstraints: spec.technicalConstraints,
+    outputSpec: spec.outputSpec,
+    attempt,
+  };
+}
+
+export function toDeriveSceneSpec(
+  spec: ImagePromptSpec,
+  attempt = 0,
+): DeriveSceneSpec {
+  if (spec.operation !== "derive_scene") {
+    throw new Error(
+      `Prompt spec ${spec.promptId} is not a derived-scene prompt.`,
+    );
+  }
+
+  if (spec.referenceAssetIds.length === 0) {
+    throw new Error(
+      `Derived prompt spec ${spec.promptId} requires at least one reference asset.`,
+    );
+  }
+
+  return {
+    promptSpecId: spec.promptId,
+    projectId: "",
+    sceneId: spec.sceneId,
+    outputAssetId: spec.assetId,
+    entityIds: spec.subjectLock.entityIds,
+    referenceAssetIds: spec.referenceAssetIds,
+    prompt: compileImagePrompt(spec),
+    negativeConstraints: spec.negativeConstraints,
+    continuityConstraints: spec.continuityConstraints,
+    technicalConstraints: spec.technicalConstraints,
+    outputSpec: spec.outputSpec,
+    attempt,
+  };
 }
