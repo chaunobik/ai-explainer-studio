@@ -74,12 +74,21 @@ for (const [stage, artifactIds] of [
   state = completeStage(state, stage, "pass", [...artifactIds]);
 }
 
-const a0 = read("reference-a0-manifest.template.json");
-const actions = planManualImageActions(providerJobs, [a0]);
+const a0Template = read("reference-a0-manifest.template.json");
+const beforeReferenceApproval = planManualImageActions(providerJobs, [a0Template]);
+const blockedA1 = beforeReferenceApproval.find((action) => action.assetId === "A1");
+if (blockedA1?.ready) {
+  console.error("✗ A1 must remain blocked until A0 is imported and approved.");
+  process.exit(1);
+}
+
+const simulatedApprovedA0 = {...a0Template, status: "approved"};
+const actions = planManualImageActions(providerJobs, [simulatedApprovedA0]);
 
 console.log("✓ Cross-stage invariants pass.");
 console.log(`✓ Ready pipeline stages: ${getReadyStages(state).join(", ")}`);
-console.log("Manual image actions:");
+console.log("Manual image dependency simulation:");
+console.log("  - A0 template: IMPORT/APPROVE required");
 for (const action of actions) {
   console.log(
     `  - ${action.assetId}: ${action.ready ? "READY" : "BLOCKED"}${action.blockers.length ? ` — ${action.blockers.join("; ")}` : ""}`,
@@ -88,7 +97,7 @@ for (const action of actions) {
 
 const a1 = actions.find((action) => action.assetId === "A1");
 if (!a1?.ready) {
-  console.error("✗ Expected A1 to be the next ready manual image action.");
+  console.error("✗ Expected A1 to become ready after simulated A0 approval.");
   process.exit(1);
 }
 
@@ -102,4 +111,4 @@ if (premature.length > 0) {
   process.exit(1);
 }
 
-console.log("✓ Dry run stopped at the intended human gate: generate/import and QA A1.");
+console.log("✓ Dry run confirms the intended gates: import/approve A0 → A1 → derived images.");

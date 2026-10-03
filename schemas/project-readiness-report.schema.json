@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/project-readiness-report.schema.json",
+  "title": "ProjectReadinessReport",
+  "type": "object",
+  "required": [
+    "project_id",
+    "overall_status",
+    "checks",
+    "next_actions"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "blocked",
+        "action_required",
+        "render_ready",
+        "final_qa_required",
+        "complete",
+        "needs_human_review"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "stage",
+          "status",
+          "message"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "ready",
+              "blocked",
+              "action_required",
+              "needs_human_review"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "action": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/image-assets-manifest.schema.json",
+  "title": "ImageAssetsManifest",
+  "type": "object",
+  "required": [
+    "project_id",
+    "assets"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "image-asset.schema.json"
+      }
+    }
+  },
+  "additionalProperties": false
+}
