@@ -13,3 +13,6 @@ export type {
 
 export type { ImageProvider } from "./image-provider";
 export { ManualImageProvider } from "./manual-image-provider";
+
+export type { AnchorGenerationInput, AnchorStyleSpec } from "./anchor-workflow";
+export { buildAnchorGenerationSpec, isApprovedAnchor, assertApprovedAnchor } from "./anchor-workflow";
