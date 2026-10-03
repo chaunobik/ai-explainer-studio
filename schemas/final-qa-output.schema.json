@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/final-qa-output.schema.json",
+  "title": "FinalQAOutput",
+  "type": "object",
+  "required": [
+    "qa_result",
+    "checks",
+    "repair_actions"
+  ],
+  "properties": {
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "duration",
+        "resolution",
+        "audio_coverage",
+        "subtitle_coverage",
+        "critical_stage_status"
+      ],
+      "properties": {
+        "duration": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "resolution": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "audio_coverage": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "subtitle_coverage": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "critical_stage_status": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
