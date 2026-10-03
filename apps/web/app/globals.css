@@ -80,7 +80,7 @@ h3 { font-size: 16px; margin-bottom: 8px; }
 
 .dashboard {
   display: grid;
-  grid-template-columns: minmax(210px, 0.72fr) minmax(520px, 2.45fr) minmax(230px, 0.78fr);
+  grid-template-columns: minmax(210px, 0.72fr) minmax(0, 2.8fr);
   gap: 18px;
   align-items: start;
 }
@@ -332,4 +332,8 @@ textarea { min-height: 170px; resize: vertical; font-family: ui-monospace, SFMon
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.health-column {
+  grid-column: 2;
 }
