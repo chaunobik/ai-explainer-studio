@@ -34,6 +34,7 @@ export interface DashboardData {
   promptQaTemplate: string;
   imageManifest: any;
   voiceManifest: any;
+  voiceSpec: any;
   usingImageTemplate: boolean;
   usingVoiceTemplate: boolean;
   health: {
@@ -473,6 +474,7 @@ export function loadProjectDashboard(slug: string): DashboardData {
     ),
     imageManifest,
     voiceManifest,
+    voiceSpec,
     usingImageTemplate,
     usingVoiceTemplate,
     health: {errors: contractErrors, warnings},
