@@ -1,0 +1,49 @@
+{
+  "job_id": "manual-chatgpt-image:EXAMPLE-FRIDGE-001:S1:A1:0",
+  "provider_id": "manual-chatgpt-image",
+  "provider_mode": "manual",
+  "operation": "generate_anchor",
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "scene_id": "S1",
+  "output_asset_id": "A1",
+  "reference_asset_ids": [],
+  "prompt": "Create the canonical anchor image for an engineering explainer video.\n\nPrimary subject:\nMatte white freestanding two-door top-freezer refrigerator in an ordinary home kitchen, viewed initially from a rear three-quarter angle.\n\nIdentity features that must be visible and preserved in all later scenes:\n- matte white body\n- same top-freezer/two-door geometry\n- same door proportions\n- same handle/recess geometry\n- same overall width-height proportions\n- same kitchen environment when the physical object is visible\n\nVisual direction:\nRealism target: technical_realistic\nLighting: Soft natural indoor daylight with believable room shadows; no studio glow.\nCamera style: Grounded real-camera perspective, mostly rear three-quarter and controlled cutaway views.\nEnvironment: Ordinary compact home kitchen; realistic wall clearance and everyday surfaces.\nColor notes: Neutral household colors; refrigerator remains matte white.\n\nUse natural, believable photography cues. Keep proportions physically plausible.\nDo not invent technical components that are not visible or specified.\nAvoid artificial showroom perfection, excessive cinematic glow, or stylized CGI unless explicitly requested.\nThis image will be the master continuity reference for all later derived scenes.",
+  "negative_constraints": [
+    "change to stainless-steel finish",
+    "change to French-door or side-by-side layout",
+    "change door count or proportions",
+    "replace with a different refrigerator model",
+    "move to an unrelated kitchen without a context switch",
+    "alter component locations merely for visual convenience",
+    "hyper-polished CGI",
+    "neon rim lighting",
+    "excessive depth of field",
+    "perfectly symmetrical showroom staging",
+    "unmotivated environment changes"
+  ],
+  "continuity_constraints": [
+    "Preserve: matte white body",
+    "Preserve: same top-freezer/two-door geometry",
+    "Preserve: same door proportions",
+    "Preserve: same handle/recess geometry",
+    "Preserve: same overall width-height proportions",
+    "Preserve: same kitchen environment when the physical object is visible",
+    "All physical refrigerator scenes must derive from A1 or an approved derivative.",
+    "Technical abstractions should preserve the recognizable fridge_01 silhouette when shown together with the appliance.",
+    "Scene 5 may compare heat-rejection layouts but must keep fridge_01 as the primary example."
+  ],
+  "technical_constraints": [
+    "Do not expose invented internal components in the anchor image.",
+    "Keep the rear three-quarter view suitable for later cutaway overlays."
+  ],
+  "output_spec": {
+    "aspect_ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "transparent_background": false
+  },
+  "status": "requires_user_action",
+  "attempt": 0,
+  "user_instructions": "Use this prompt package in ChatGPT Image, then import the approved result into the project.",
+  "error": null
+}

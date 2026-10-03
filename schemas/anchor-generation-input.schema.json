@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/anchor-generation-input.schema.json",
+  "title": "AnchorGenerationInput",
+  "type": "object",
+  "required": [
+    "project_id",
+    "scene_id",
+    "asset_id",
+    "entity_ids",
+    "canonical_description",
+    "invariant_features",
+    "forbidden_variations",
+    "continuity_constraints",
+    "style",
+    "output_spec",
+    "attempt"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^A[0-9]+$"
+    },
+    "entity_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "canonical_description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "invariant_features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_variations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "continuity_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "style": {
+      "type": "object",
+      "required": [
+        "realism_target",
+        "lighting",
+        "camera_style",
+        "environment"
+      ],
+      "properties": {
+        "realism_target": {
+          "type": "string"
+        },
+        "lighting": {
+          "type": "string"
+        },
+        "camera_style": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "color_notes": {
+          "type": "string"
+        },
+        "forbidden_style_traits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "technical_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_spec": {
+      "type": "object",
+      "required": [
+        "aspect_ratio",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "aspect_ratio": {
+          "type": "string",
+          "enum": [
+            "9:16",
+            "16:9",
+            "1:1"
+          ]
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "transparent_background": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}
