@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {CopyButton} from "../../../components/CopyButton";
 import {loadProjectDashboard} from "../../../lib/project-runtime";
+import {buildQaContractAppendix} from "../../../lib/qa-contract";
 import {
   renderFinalAction,
   renderScenePreviewAction,
@@ -82,22 +83,26 @@ export default function ProjectPage({
   const qaPackage =
     data.guided.kind === "prompt_qa" && prompt
       ? data.promptQaTemplate +
+        buildQaContractAppendix("image_prompt_qa") +
         "\n\n--- INPUT ImagePromptSpec ---\n" +
         JSON.stringify(prompt, null, 2)
       : "";
 
   const multiviewPromptQaPackage =
     data.multiviewPromptQaTemplate +
+    buildQaContractAppendix("multiview_prompt_qa") +
     "\n\n--- INPUT MultiViewReferencePromptSpec ---\n" +
     JSON.stringify(data.multiviewReferencePrompt, null, 2);
 
   const multiviewQaPackage =
     data.multiviewQaTemplate +
+    buildQaContractAppendix("multiview_qa") +
     "\n\n--- APPROVED/REVIEWED A0 PROMPT SPEC ---\n" +
     JSON.stringify(data.multiviewReferencePrompt, null, 2);
 
   const motionQaPackage =
     data.motionQaTemplate +
+    buildQaContractAppendix("motion_qa") +
     "\n\n--- MOTION SPEC ---\n" +
     JSON.stringify(data.motionSpec, null, 2) +
     "\n\n--- STORYBOARD ---\n" +
@@ -105,6 +110,7 @@ export default function ProjectPage({
 
   const finalQaPackage =
     data.finalQaTemplate +
+    buildQaContractAppendix("final_qa") +
     "\n\nProject: " +
     data.manifest.topic +
     "\nExpected output: 1080x1920 vertical explainer video.";
