@@ -417,7 +417,7 @@ export function loadProjectDashboard(slug: string): DashboardData {
       stage: "visual_assets",
       status: "action_required",
       message: "Actual image-assets.json does not exist; the template is being used.",
-      action: "Import the first real image asset; the UI will create image-assets.json automatically.",
+      action: "Generate/import A0 from its approved multi-view prompt; the UI will create image-assets.json automatically.",
     });
   }
 
