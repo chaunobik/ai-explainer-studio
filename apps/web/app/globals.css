@@ -218,3 +218,5 @@ textarea { min-height: 170px; resize: vertical; font-family: ui-monospace, SFMon
   .health-column { grid-column: auto; }
   .topbar { flex-direction: column; }
 }
+
+.audio-preview { width: 100%; margin: 12px 0 4px; }
