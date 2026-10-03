@@ -1,4 +1,4 @@
-# Image Prompt QA Prompt V2
+# Image Prompt QA Prompt V3
 
 ## Purpose
 Review one ImagePromptSpec before image generation. You are reviewing the prompt contract, not the generated image.
@@ -37,15 +37,27 @@ The object MUST have exactly this top-level shape:
     "ambiguity": "pass",
     "completeness": "pass"
   },
+  "check_notes": {
+    "identity_lock": "Explain what identity features and reference constraints are locked.",
+    "camera_clarity": "Explain why the requested view, framing and perspective are unambiguous.",
+    "scene_alignment": "Explain how the prompt supports the intended narration and visual goal.",
+    "technical_correctness": "Explain whether technical content, directions and component relationships are physically correct.",
+    "continuity": "Explain how the prompt preserves the approved A0/parent identity, environment and materials.",
+    "ambiguity": "Explain whether any important visual decision is left open to the model.",
+    "completeness": "Explain whether all required visual, camera, technical, continuity, negative and output constraints are present."
+  },
+  "summary": "Concise human-readable conclusion stating whether this prompt is ready for image generation and why.",
   "critical_issues": [],
   "repair_actions": []
 }
 
 Rules:
 - Replace "IP1" with the exact prompt_id from the provided input.
-- status must be exactly one of: "pass", "fail", "needs_human_review".
-- Every check must be exactly one of: "pass", "fail", "needs_review".
+- status: "pass" | "fail" | "needs_human_review".
+- Every checks value: "pass" | "fail" | "needs_review".
+- Every check_notes field is REQUIRED and must be a concrete explanation.
+- summary is REQUIRED and should be 1–3 concise sentences.
 - If status="pass", critical_issues MUST be [] and repair_actions should normally be [].
 - If status="fail", list concrete defects in critical_issues and smallest actionable fixes in repair_actions.
-- Never add extra top-level fields.
-- Before answering, verify that JSON.parse(response) would succeed.
+- Never add extra top-level, checks, or check_notes fields.
+- Before answering, verify JSON.parse(response) succeeds.
