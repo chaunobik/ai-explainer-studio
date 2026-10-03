@@ -21,6 +21,7 @@
       "image-prompt-a6.json"
     ],
     "image_provider_jobs": [
+      "multiview-provider-job-a0.json",
       "anchor-provider-job.json",
       "derived-s2-provider-job.json",
       "derived-s5-provider-job.template.json",
@@ -39,6 +40,10 @@
       "image-prompt-qa-a5.json",
       "image-prompt-qa-a6.json"
     ],
-    "motion_qa_output": "motion-qa-output.json"
+    "motion_qa_output": "motion-qa-output.json",
+    "multiview_reference_prompt": "multiview-reference-prompt-a0.json",
+    "multiview_provider_job": "multiview-provider-job-a0.json",
+    "multiview_prompt_qa_output": "multiview-prompt-qa-a0.json",
+    "multiview_qa_output": "multiview-qa-a0.json"
   }
 }
