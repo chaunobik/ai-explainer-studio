@@ -135,6 +135,8 @@ const requiredArtifacts: Array<[string, string]> = [
   [p.asset_execution_plan, "asset-execution-plan.schema.json"],
   [p.motion_spec, "motion-spec.schema.json"],
   [p.voice_spec, "voice-spec.schema.json"],
+  [p.multiview_reference_prompt, "multiview-reference-prompt-spec.schema.json"],
+  [p.multiview_provider_job, "image-provider-job.schema.json"],
 ];
 
 for (const [file, schema] of requiredArtifacts) validateFile(file, schema);
@@ -240,6 +242,16 @@ if (voiceManifest) {
   }
 }
 
+validateFile(
+  p.multiview_prompt_qa_output,
+  "multiview-prompt-qa-output.schema.json",
+  {required: false},
+);
+validateFile(
+  p.multiview_qa_output,
+  "multiview-qa-output.schema.json",
+  {required: false},
+);
 validateFile(p.motion_qa_output, "motion-qa-output.schema.json", {required: false});
 validateFile(p.final_qa_output, "final-qa-output.schema.json", {required: false});
 
