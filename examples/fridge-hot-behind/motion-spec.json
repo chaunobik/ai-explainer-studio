@@ -1,0 +1,331 @@
+{
+  "motion_plan_id": "MP001",
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "scenes": [
+    {
+      "scene_id": "S1",
+      "duration_sec": 5,
+      "source_asset_ids": [
+        "A1"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "camera",
+          "start_sec": 0,
+          "end_sec": 5,
+          "from_scale": 1,
+          "to_scale": 1.06,
+          "from_x": 0,
+          "to_x": -0.02,
+          "from_y": 0,
+          "to_y": 0
+        }
+      ]
+    },
+    {
+      "scene_id": "S2",
+      "duration_sec": 9,
+      "source_asset_ids": [
+        "A2"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "camera",
+          "start_sec": 0,
+          "end_sec": 9,
+          "from_scale": 1,
+          "to_scale": 1.03,
+          "from_x": 0,
+          "to_x": 0,
+          "from_y": 0,
+          "to_y": 0
+        },
+        {
+          "type": "heat_flow",
+          "start_sec": 1.5,
+          "end_sec": 8.5,
+          "direction": "forward",
+          "speed": 1.2,
+          "paths": [
+            {
+              "x1": 0.45,
+              "y1": 0.55,
+              "x2": 0.76,
+              "y2": 0.52
+            },
+            {
+              "x1": 0.43,
+              "y1": 0.66,
+              "x2": 0.78,
+              "y2": 0.62
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "start_sec": 2,
+          "end_sec": 8,
+          "text": "Nhiệt",
+          "x": 0.64,
+          "y": 0.48,
+          "font_size": 42,
+          "align": "center"
+        }
+      ]
+    },
+    {
+      "scene_id": "S3",
+      "duration_sec": 8,
+      "source_asset_ids": [
+        "A1"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "highlight",
+          "start_sec": 0.5,
+          "end_sec": 3,
+          "x": 0.34,
+          "y": 0.28,
+          "width": 0.28,
+          "height": 0.22,
+          "opacity": 0.24,
+          "label": "Dàn bay hơi"
+        },
+        {
+          "type": "highlight",
+          "start_sec": 2.5,
+          "end_sec": 5.5,
+          "x": 0.58,
+          "y": 0.66,
+          "width": 0.18,
+          "height": 0.18,
+          "opacity": 0.28,
+          "label": "Máy nén"
+        },
+        {
+          "type": "highlight",
+          "start_sec": 5,
+          "end_sec": 8,
+          "x": 0.68,
+          "y": 0.24,
+          "width": 0.17,
+          "height": 0.48,
+          "opacity": 0.24,
+          "label": "Dàn ngưng"
+        },
+        {
+          "type": "heat_flow",
+          "start_sec": 1,
+          "end_sec": 7.5,
+          "direction": "forward",
+          "speed": 0.9,
+          "paths": [
+            {
+              "x1": 0.44,
+              "y1": 0.42,
+              "x2": 0.62,
+              "y2": 0.7
+            },
+            {
+              "x1": 0.62,
+              "y1": 0.7,
+              "x2": 0.74,
+              "y2": 0.46
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "S4",
+      "duration_sec": 9,
+      "source_asset_ids": [
+        "A1"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "camera",
+          "start_sec": 0,
+          "end_sec": 9,
+          "from_scale": 1.02,
+          "to_scale": 1.08,
+          "from_x": 0,
+          "to_x": -0.03,
+          "from_y": 0,
+          "to_y": 0
+        },
+        {
+          "type": "highlight",
+          "start_sec": 0.5,
+          "end_sec": 8.5,
+          "x": 0.68,
+          "y": 0.24,
+          "width": 0.17,
+          "height": 0.48,
+          "opacity": 0.3,
+          "label": "Khu vực thải nhiệt"
+        },
+        {
+          "type": "heat_flow",
+          "start_sec": 1,
+          "end_sec": 8.5,
+          "direction": "forward",
+          "speed": 1.3,
+          "paths": [
+            {
+              "x1": 0.74,
+              "y1": 0.35,
+              "x2": 0.91,
+              "y2": 0.31
+            },
+            {
+              "x1": 0.75,
+              "y1": 0.5,
+              "x2": 0.93,
+              "y2": 0.49
+            },
+            {
+              "x1": 0.74,
+              "y1": 0.65,
+              "x2": 0.91,
+              "y2": 0.69
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scene_id": "S5",
+      "duration_sec": 9,
+      "source_asset_ids": [
+        "A5"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "highlight",
+          "start_sec": 0.5,
+          "end_sec": 4.5,
+          "x": 0.69,
+          "y": 0.22,
+          "width": 0.16,
+          "height": 0.5,
+          "opacity": 0.24,
+          "label": "Phía sau"
+        },
+        {
+          "type": "highlight",
+          "start_sec": 4,
+          "end_sec": 8.5,
+          "x": 0.28,
+          "y": 0.2,
+          "width": 0.18,
+          "height": 0.56,
+          "opacity": 0.22,
+          "label": "Hai bên"
+        },
+        {
+          "type": "label",
+          "start_sec": 1,
+          "end_sec": 8,
+          "text": "Tùy thiết kế",
+          "x": 0.5,
+          "y": 0.12,
+          "font_size": 48,
+          "align": "center"
+        }
+      ]
+    },
+    {
+      "scene_id": "S6",
+      "duration_sec": 7,
+      "source_asset_ids": [
+        "A6"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "camera",
+          "start_sec": 0,
+          "end_sec": 7,
+          "from_scale": 1.03,
+          "to_scale": 1,
+          "from_x": -0.01,
+          "to_x": 0,
+          "from_y": 0,
+          "to_y": 0
+        },
+        {
+          "type": "highlight",
+          "start_sec": 0.8,
+          "end_sec": 6.5,
+          "x": 0.68,
+          "y": 0.26,
+          "width": 0.16,
+          "height": 0.46,
+          "opacity": 0.18,
+          "label": "Ấm lên khi hoạt động"
+        }
+      ]
+    },
+    {
+      "scene_id": "S7",
+      "duration_sec": 8,
+      "source_asset_ids": [
+        "A6"
+      ],
+      "background": "image",
+      "operations": [
+        {
+          "type": "camera",
+          "start_sec": 0,
+          "end_sec": 8,
+          "from_scale": 1,
+          "to_scale": 1.04,
+          "from_x": 0,
+          "to_x": 0,
+          "from_y": 0,
+          "to_y": 0
+        },
+        {
+          "type": "heat_flow",
+          "start_sec": 0.8,
+          "end_sec": 7.5,
+          "direction": "forward",
+          "speed": 1.15,
+          "paths": [
+            {
+              "x1": 0.43,
+              "y1": 0.55,
+              "x2": 0.72,
+              "y2": 0.5
+            },
+            {
+              "x1": 0.72,
+              "y1": 0.5,
+              "x2": 0.92,
+              "y2": 0.5
+            }
+          ]
+        },
+        {
+          "type": "label",
+          "start_sec": 1,
+          "end_sec": 7,
+          "text": "Bên trong lạnh → nhiệt được chuyển ra ngoài",
+          "x": 0.5,
+          "y": 0.12,
+          "font_size": 44,
+          "align": "center"
+        }
+      ]
+    }
+  ]
+}

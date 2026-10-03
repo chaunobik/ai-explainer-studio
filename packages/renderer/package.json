@@ -1,0 +1,16 @@
+{
+  "name": "@ai-explainer-studio/renderer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ai-explainer-studio/core": "0.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}
