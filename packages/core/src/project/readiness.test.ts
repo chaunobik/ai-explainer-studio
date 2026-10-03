@@ -89,4 +89,23 @@ describe("project readiness", () => {
     expect(report.overall_status).toBe("render_ready");
     expect(report.next_actions[0]).toContain("final project render");
   });
+  it("treats failed final QA as repair-required instead of asking to run QA again", () => {
+    const report = buildReadinessReport({
+      projectId: "P2",
+      deterministicChecks: [
+        {id: "contracts", stage: "pipeline", status: "pass", message: "ok", action: null},
+      ],
+      imageChecks: [
+        {id: "image:A1", stage: "visual_assets", status: "pass", message: "ok", action: null},
+      ],
+      voiceChecks: [
+        {id: "voice:V1", stage: "voice", status: "pass", message: "ok", action: null},
+      ],
+      outputExists: true,
+      finalQaStatus: "fail",
+    });
+
+    expect(report.overall_status).toBe("action_required");
+    expect(report.next_actions[0]).toContain("Final Video QA failed");
+  });
 });
