@@ -31,9 +31,10 @@ export interface ProjectReadinessReport {
 
 export interface ImageExecutionEntryLike {
   asset_id: string;
-  scene_id: string;
+  scene_id: string | null;
   executor: "image_provider" | "renderer";
   operation:
+    | "generate_reference_pack"
     | "generate_anchor"
     | "derive_scene"
     | "technical_diagram"
