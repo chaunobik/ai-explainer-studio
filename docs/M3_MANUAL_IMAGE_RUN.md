@@ -2,9 +2,15 @@
 
 Milestone 3 is now ready to execute at the manual ChatGPT Image boundary.
 
+## Step 0 — Build and approve the A1 image prompt
+
+Open `examples/fridge-hot-behind/image-prompt-a1.json`.
+Run `prompts/image-prompt-qa/IMAGE_PROMPT_QA_PROMPT.md` against that prompt spec.
+Only continue when Prompt QA passes.
+
 ## Step 1 — Generate A1
 
-Open `examples/fridge-hot-behind/anchor-provider-job.json`.
+Open `examples/fridge-hot-behind/anchor-provider-job.json`. This job now contains the fully compiled A1 ImagePromptSpec, not a generic visual goal.
 Use its prompt package in ChatGPT Image.
 Save/import the resulting 1080×1920 image as the project A1 candidate.
 
@@ -27,10 +33,10 @@ If QA fails:
 
 ## Step 3 — Generate derived image scenes
 
-After A1 is approved:
-- S2/A2: use `derived-s2-provider-job.json`
-- S5/A5: use `derived-s5-provider-job.template.json`
-- S6/A6: use `derived-s6-provider-job.template.json`
+After A1 is approved, Prompt QA must pass for each per-asset prompt spec before generation:
+- A2: `image-prompt-a2.json` → `derived-s2-provider-job.json`
+- A5: `image-prompt-a5.json` → `derived-s5-provider-job.template.json`
+- A6: `image-prompt-a6.json` → `derived-s6-provider-job.template.json`
 
 Each output must independently pass Visual QA before it can be used downstream.
 
