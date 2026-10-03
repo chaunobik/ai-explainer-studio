@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import {projectDirForSlug} from "../../../../../lib/project-runtime";
+import {projectDirForSlug} from "../../../../../../lib/project-runtime";
 
 export const dynamic = "force-dynamic";
 
