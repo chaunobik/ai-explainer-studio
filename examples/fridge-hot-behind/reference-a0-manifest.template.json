@@ -1,0 +1,28 @@
+{
+  "asset_id": "A0",
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "scene_id": null,
+  "asset_role": "anchor",
+  "status": "approved",
+  "entity_ids": [
+    "fridge_01"
+  ],
+  "parent_asset_ids": [],
+  "attempt": 0,
+  "provenance": {
+    "provider_id": "user-import",
+    "provider_mode": "import",
+    "operation": "import_existing",
+    "source_uri": null,
+    "prompt_snapshot": null,
+    "notes": "User-supplied product reference used only to lock refrigerator identity. It is not the final scene anchor."
+  },
+  "file": {
+    "uri": "assets/A0-product-reference.png",
+    "mime_type": "image/png",
+    "width": null,
+    "height": null,
+    "checksum": null
+  },
+  "qa_result_ids": []
+}

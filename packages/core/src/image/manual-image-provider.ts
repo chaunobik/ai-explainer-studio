@@ -13,7 +13,7 @@ export class ManualImageProvider implements ImageProvider {
   async generateAnchor(spec: GenerateAnchorSpec): Promise<ImageProviderResult> {
     return {
       kind: "requires_user_action",
-      job: this.buildJob("generate_anchor", spec, []),
+      job: this.buildJob("generate_anchor", spec, spec.referenceAssetIds ?? []),
     };
   }
 
@@ -34,6 +34,7 @@ export class ManualImageProvider implements ImageProvider {
     referenceAssetIds: string[],
   ): ImageProviderJob {
     return {
+      promptSpecId: spec.promptSpecId,
       jobId: [
         this.id,
         spec.projectId,

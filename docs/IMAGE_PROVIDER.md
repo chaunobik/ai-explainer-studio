@@ -7,6 +7,8 @@ Milestone 3 must support two execution modes without changing upstream VisualPla
 
 ## Provider contract
 
+ImageProvider consumes prompts that have already passed Image Prompt QA. `visual_goal` must never be sent directly to a provider.
+
 ImageProvider exposes two semantic operations:
 - generateAnchor(spec)
 - deriveScene(spec)

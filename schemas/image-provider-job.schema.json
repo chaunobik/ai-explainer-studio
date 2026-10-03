@@ -139,6 +139,13 @@
         "string",
         "null"
       ]
+    },
+    "prompt_spec_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^IP[0-9]+$"
     }
   },
   "additionalProperties": false

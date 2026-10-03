@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/image-prompt-qa-output.schema.json",
+  "title": "ImagePromptQAOutput",
+  "type": "object",
+  "required": [
+    "prompt_id",
+    "status",
+    "checks",
+    "critical_issues",
+    "repair_actions"
+  ],
+  "properties": {
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^IP[0-9]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "needs_human_review"
+      ]
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "identity_lock",
+        "camera_clarity",
+        "scene_alignment",
+        "technical_correctness",
+        "continuity",
+        "ambiguity",
+        "completeness"
+      ],
+      "properties": {
+        "identity_lock": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "camera_clarity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "scene_alignment": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "technical_correctness": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "continuity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "ambiguity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "completeness": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "critical_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

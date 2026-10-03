@@ -1,0 +1,15 @@
+{
+  "prompt_id": "IP1",
+  "status": "pass",
+  "checks": {
+    "identity_lock": "pass",
+    "camera_clarity": "pass",
+    "scene_alignment": "pass",
+    "technical_correctness": "pass",
+    "continuity": "pass",
+    "ambiguity": "pass",
+    "completeness": "pass"
+  },
+  "critical_issues": [],
+  "repair_actions": []
+}

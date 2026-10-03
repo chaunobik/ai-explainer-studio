@@ -19,6 +19,7 @@ export interface ImageOutputSpec {
 }
 
 export interface BaseImageSpec {
+  promptSpecId?: string;
   projectId: string;
   sceneId?: string;
   outputAssetId: string;
@@ -32,7 +33,7 @@ export interface BaseImageSpec {
 }
 
 export interface GenerateAnchorSpec extends BaseImageSpec {
-  referenceAssetIds?: never[];
+  referenceAssetIds?: string[];
 }
 
 export interface DeriveSceneSpec extends BaseImageSpec {
@@ -42,6 +43,7 @@ export interface DeriveSceneSpec extends BaseImageSpec {
 
 export interface ImageProviderJob {
   jobId: string;
+  promptSpecId?: string;
   providerId: string;
   providerMode: ImageProviderMode;
   operation: ImageOperation;
