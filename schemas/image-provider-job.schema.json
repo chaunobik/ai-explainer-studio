@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/image-provider-job.schema.json",
+  "title": "ImageProviderJob",
+  "type": "object",
+  "required": [
+    "job_id",
+    "provider_id",
+    "provider_mode",
+    "operation",
+    "project_id",
+    "output_asset_id",
+    "reference_asset_ids",
+    "prompt",
+    "output_spec",
+    "status",
+    "attempt"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider_mode": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "api"
+      ]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "generate_anchor",
+        "derive_scene"
+      ]
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^S[0-9]+$"
+    },
+    "output_asset_id": {
+      "type": "string",
+      "pattern": "^A[0-9]+$"
+    },
+    "reference_asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^A[0-9]+$"
+      }
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "negative_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "continuity_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "technical_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_spec": {
+      "type": "object",
+      "required": [
+        "aspect_ratio",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "aspect_ratio": {
+          "type": "string",
+          "enum": [
+            "9:16",
+            "16:9",
+            "1:1"
+          ]
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "transparent_background": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "requires_user_action",
+        "running",
+        "completed",
+        "failed"
+      ]
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "user_instructions": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
