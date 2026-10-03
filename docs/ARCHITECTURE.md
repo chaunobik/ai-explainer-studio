@@ -21,7 +21,17 @@ Visual Intelligence
   ├─ Scene Lineage
   └─ Continuity QA
         ↓
-Visual Assets
+ImagePromptSpec
+  ├─ exact camera/composition
+  ├─ identity lock
+  ├─ technical overlays
+  └─ negative/continuity constraints
+        ↓
+Image Prompt QA
+        ↓
+ImageProvider
+        ↓
+Visual Assets + Visual QA
         ↓
 MotionSpec
         ↓
