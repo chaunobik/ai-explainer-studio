@@ -1,0 +1,37 @@
+{
+  "action": "retry",
+  "next_attempt": 1,
+  "asset": {
+    "asset_id": "A2",
+    "project_id": "EXAMPLE-FRIDGE-001",
+    "scene_id": "S2",
+    "asset_role": "derived",
+    "status": "rejected",
+    "entity_ids": [
+      "fridge_01"
+    ],
+    "parent_asset_ids": [
+      "A1"
+    ],
+    "attempt": 0,
+    "provenance": {
+      "provider_id": "manual-chatgpt-image",
+      "provider_mode": "manual",
+      "operation": "derive_scene",
+      "source_uri": null,
+      "prompt_snapshot": "See derived-s2-provider-job.json",
+      "notes": "Synthetic candidate manifest used to demonstrate Visual QA retry handling."
+    },
+    "file": {
+      "uri": "assets/A2-attempt0.png",
+      "mime_type": "image/png",
+      "width": 1080,
+      "height": 1920,
+      "checksum": null
+    },
+    "qa_result_ids": [
+      "QA-VIS-A2-000"
+    ]
+  },
+  "repair_policy": "Retry A2 from approved parent A1 only; do not alter A1 or any passing scene asset."
+}

@@ -1,0 +1,34 @@
+{
+  "qa_result": {
+    "qa_id": "QA-VIS-A2-000",
+    "stage": "visual",
+    "artifact_id": "A2",
+    "status": "fail",
+    "scores": {
+      "technical_accuracy": 0.2,
+      "scene_compliance": 0.85,
+      "entity_continuity": 0.95,
+      "reality": 0.9
+    },
+    "critical_failures": [
+      "Heat-flow arrow direction is reversed relative to the approved storyboard mechanism."
+    ],
+    "warnings": [],
+    "repair_actions": [
+      "Reverse the heat-flow arrows so they move from the cooled interior toward the exterior heat-rejection area. Preserve all refrigerator geometry."
+    ],
+    "retry_count": 0
+  },
+  "checks": {
+    "technical_accuracy": "fail",
+    "scene_compliance": "pass",
+    "entity_continuity": "pass",
+    "reality": "pass"
+  },
+  "critical_violations": [
+    "Heat-flow arrow direction is reversed."
+  ],
+  "repair_actions": [
+    "Reverse the heat-flow arrows so they move from the cooled interior toward the exterior heat-rejection area. Preserve all refrigerator geometry."
+  ]
+}

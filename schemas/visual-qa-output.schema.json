@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/visual-qa-output.schema.json",
+  "title": "VisualQAOutput",
+  "type": "object",
+  "required": [
+    "qa_result",
+    "checks",
+    "critical_violations",
+    "repair_actions"
+  ],
+  "properties": {
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "technical_accuracy",
+        "scene_compliance",
+        "entity_continuity",
+        "reality"
+      ],
+      "properties": {
+        "technical_accuracy": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "scene_compliance": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "entity_continuity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "reality": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "critical_violations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
