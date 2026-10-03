@@ -1,5 +1,6 @@
 import React from "react";
-import {interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import {useCurrentFrame, useVideoConfig} from "remotion";
+import {windowOpacity} from "./fade";
 
 interface HeatPath {
   x1: number;
@@ -30,12 +31,7 @@ export const HeatFlow: React.FC<HeatFlowProps> = ({
 
   const progress = ((frame - start) * speed) / Math.max(1, fps);
   const dashOffset = -((progress * 80) % 80);
-  const opacity = interpolate(
-    frame,
-    [start, start + Math.min(8, (end - start) / 3), end - Math.min(8, (end - start) / 3), end],
-    [0, 1, 1, 0],
-    {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
-  );
+  const opacity = windowOpacity(frame, start, end, 8);
 
   return (
     <svg
