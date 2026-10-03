@@ -1,56 +1,87 @@
-# Milestone 3 Manual Image Run — Canonical Fridge Example
+# M3 Prompt-First Multi-View Image Run
 
-Milestone 3 is now ready to execute at the manual ChatGPT Image boundary.
+The canonical visual workflow no longer starts from a real product photograph.
 
-## Step 0 — Build and approve the A1 image prompt
+## Visual source of truth
 
-Open `examples/fridge-hot-behind/image-prompt-a1.json`.
-Run `prompts/image-prompt-qa/IMAGE_PROMPT_QA_PROMPT.md` against that prompt spec.
-Only continue when Prompt QA passes.
+```
+Detailed A0 Multi-View Prompt
+→ A0 Prompt QA
+→ Generate A0 with ChatGPT Image
+→ Import generated A0 board
+→ Multi-View Consistency QA
+→ APPROVED A0
+→ scene prompt QA
+→ A1 / A2 / A5 / A6 generation
+```
 
-## Step 1 — Generate A1
+A0 is an AI-generated canonical multi-view reference board. It locks the product's external identity and geometry across front, 45-degree, side, and rear views.
 
-Open `examples/fridge-hot-behind/anchor-provider-job.json`. This job now contains the fully compiled A1 ImagePromptSpec, not a generic visual goal.
-Use its prompt package in ChatGPT Image.
-Save/import the resulting 1080×1920 image as the project A1 candidate.
+## Normal operator path
 
-Do not generate A2, A5, or A6 yet.
+Use the guided dashboard:
 
-## Step 2 — Visual QA A1
+```bash
+npm run dev
+```
 
-Create/update an ImageAsset manifest for A1 with status `qa_pending`.
-Upload A1 together with the VisualQARequest context to ChatGPT and run `prompts/visual-qa/VISUAL_QA_PROMPT.md`.
+Open `http://localhost:3000` and follow **Next Action**. The dashboard recalculates readiness after every successful action.
 
-If QA passes:
-- set A1 status to `approved`
-- derived image jobs are unlocked
+## A0 capture profile
 
-If QA fails:
-- keep AssetBible unchanged
-- append only the returned repair actions
-- regenerate A1 at the next attempt
-- maximum total attempts: 3
+The refrigerator canonical example uses a realistic smartphone-documentation profile:
 
-## Step 3 — Generate derived image scenes
+- modern flagship-class smartphone main camera;
+- 26 mm full-frame-equivalent lens;
+- f/1.8;
+- 1/125 s;
+- ISO 80;
+- white balance 5000 K;
+- camera height 1.35 m;
+- subject distance 2.4 m;
+- natural restrained computational photography;
+- no studio flash, no CGI/showroom styling.
 
-After A1 is approved, Prompt QA must pass for each per-asset prompt spec before generation:
-- A2: `image-prompt-a2.json` → `derived-s2-provider-job.json`
-- A5: `image-prompt-a5.json` → `derived-s5-provider-job.template.json`
-- A6: `image-prompt-a6.json` → `derived-s6-provider-job.template.json`
+## A0 required views
 
-Each output must independently pass Visual QA before it can be used downstream.
+The canonical board contains:
 
-## Step 4 — Do not use GPT Image for programmatic scenes
+1. front;
+2. front-left 45°;
+3. front-right 45°;
+4. left;
+5. right;
+6. rear-left 45°;
+7. rear-right 45°;
+8. rear.
 
-A3, A4 and A7 are intentionally routed to the renderer:
-- A3: technical diagram
-- A4: animated heat rejection overlay
-- A7: final animated heat-path summary
+Every panel must depict the exact same physical product.
 
-These belong to Milestone 4 (Remotion/SVG), which is more deterministic and easier to QA.
+## Multi-View QA gate
 
-## Why Milestone 3 is not marked complete yet
+A0 cannot unlock scene generation until Multi-View QA passes:
 
-The contracts, provider, anchor workflow, derived workflow, QA and retry loop are implemented. Completion now requires actual imported image files and real Visual QA results for A1/A2/A5/A6.
+- same object identity;
+- coherent width/height/depth;
+- identical door/handle/divider geometry;
+- material/color consistency;
+- complete required-view coverage;
+- plausible smartphone perspective;
+- photographic realism;
+- no invented hidden refrigeration internals.
 
-This is an intentional human-in-the-loop boundary for V1, not missing automation.
+## Scene generation
+
+After A0 approval:
+
+- A1 uses rear-oriented A0 views to build the first vertical scene;
+- A2 uses A0 geometry + A1 scene continuity;
+- A5 uses A0 side/rear views + A1 continuity;
+- A6 uses A0 geometry + A1 continuity;
+- A3/A4/A7 remain deterministic renderer assets.
+
+Every physical scene prompt also carries a concrete PhotoCaptureSpec so realism does not disappear after A0.
+
+## Repair rule
+
+If one image fails QA, repair only that image. Do not replace an approved A0 unless Multi-View QA itself proves A0 is inconsistent.
