@@ -1,0 +1,20 @@
+{
+  "project_id": "P001",
+  "topic": "Tại sao tủ lạnh nóng phía sau?",
+  "language": "vi-VN",
+  "target_duration_sec": 55,
+  "audience": "Người xem phổ thông, không yêu cầu kiến thức nhiệt động lực học",
+  "context": "Video ngắn giải thích cơ chế chính xác nhưng dễ hiểu.",
+  "must_cover": [
+    "Nhiệt được chuyển từ trong tủ ra môi trường",
+    "Vai trò của bộ phận thải nhiệt phía sau"
+  ],
+  "must_avoid": [
+    "Giải thích rằng tủ lạnh tạo ra cái lạnh như một dạng năng lượng"
+  ],
+  "source_preferences": [
+    "manufacturer",
+    "textbook",
+    "official"
+  ]
+}

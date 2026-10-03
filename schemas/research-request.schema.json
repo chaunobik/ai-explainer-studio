@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/research-request.schema.json",
+  "title": "ResearchRequest",
+  "type": "object",
+  "required": [
+    "project_id",
+    "topic",
+    "language",
+    "target_duration_sec",
+    "audience"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "const": "vi-VN"
+    },
+    "target_duration_sec": {
+      "type": "number",
+      "minimum": 30,
+      "maximum": 90
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context": {
+      "type": "string"
+    },
+    "must_cover": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "must_avoid": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_preferences": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "official",
+          "standard",
+          "paper",
+          "manufacturer",
+          "textbook",
+          "news",
+          "other"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}
