@@ -41,6 +41,21 @@ describe("deriveGuidedNextAction", () => {
     expect(next.prompt_id).toBe("IP1");
   });
 
+  it("switches failed prompt QA into repair guidance", () => {
+    const next = deriveGuidedNextAction(
+      report([
+        {id: "image-reference:A0", stage: "visual_assets", status: "pass", message: "A0 approved", action: null},
+        {id: "prompt-qa:A1", stage: "image_prompt", status: "action_required", message: "Image Prompt QA failed for A1.", action: "Repair prompt IP1"},
+        {id: "image:A1", stage: "visual_assets", status: "ready", message: "A1 is ready for generation.", action: "Generate A1"},
+      ]),
+      {promptIdByAsset: {A1: "IP1"}},
+    );
+
+    expect(next.kind).toBe("prompt_qa");
+    expect(next.title).toContain("Sửa prompt");
+    expect(next.instructions.join(" ")).toContain("Repair Package");
+  });
+
   it("moves to A1 review after import", () => {
     const next = deriveGuidedNextAction(
       report([
