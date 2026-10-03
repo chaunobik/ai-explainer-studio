@@ -12,5 +12,9 @@
 - storyboard/STORYBOARD_PROMPT.md — verbatim script-to-scene decomposition
 - storyboard-qa/STORYBOARD_QA_PROMPT.md — timing, coverage, visual fit, feasibility and continuity-intent QA
 
+## Visual Intelligence
+- visual/VISUAL_PLAN_PROMPT.md — AssetBible, routing, lineage and transition planning
+- continuity-qa/CONTINUITY_QA_PROMPT.md — identity, routing and transition continuity QA
+
 ## Contract rule
 All prompt inputs and outputs are structured. A prompt is not allowed to bypass its upstream QA gate.
