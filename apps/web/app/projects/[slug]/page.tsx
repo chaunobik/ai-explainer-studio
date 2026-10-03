@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import {CopyButton} from "../../../components/CopyButton";
 import {loadProjectDashboard} from "../../../lib/project-runtime";
@@ -68,7 +67,9 @@ export default function ProjectPage({
 
   const qaPackage =
     data.guided.kind === "prompt_qa" && prompt
-      ? ${data.promptQaTemplate} + "\n\n--- INPUT ImagePromptSpec ---\n" + JSON.stringify(prompt, null, 2)
+      ? data.promptQaTemplate +
+        "\n\n--- INPUT ImagePromptSpec ---\n" +
+        JSON.stringify(prompt, null, 2)
       : "";
 
   return (
@@ -81,7 +82,7 @@ export default function ProjectPage({
             <span className="mono">{data.manifest.project_id}</span> · Guided local workflow
           </p>
         </div>
-        <span className={$status-pill ${overallClass(data.report.overall_status)}$}>
+        <span className={"status-pill " + overallClass(data.report.overall_status)}>
           {data.report.overall_status.replaceAll("_", " ")}
         </span>
       </div>
@@ -93,8 +94,8 @@ export default function ProjectPage({
         <aside>
           <section className="panel">
             <div className="eyebrow">Pipeline</div>
-            <div className="progress-track" aria-label={$Progress ${progress}%$}>
-              <div className="progress-bar" style={{width: $${progress}%$}} />
+            <div className="progress-track" aria-label={"Progress " + progress + "%"}>
+              <div className="progress-bar" style={{width: progress + "%"}} />
             </div>
             <p className="small muted">{progress}% stages PASS</p>
 
@@ -103,7 +104,7 @@ export default function ProjectPage({
                 const state = stageState(data.report.checks, stage);
                 const active = currentStage === stage;
                 return (
-                  <div className={$stage ${state} ${active ? "active" : ""}$} key={stage}>
+                  <div className={"stage " + state + (active ? " active" : "")} key={stage}>
                     <div className="stage-dot">
                       {state === "pass" ? "✓" : state === "action" ? "!" : state === "review" ? "?" : "·"}
                     </div>
@@ -157,8 +158,8 @@ export default function ProjectPage({
                 <div>
                   <img
                     className="asset-preview"
-                    src={$/api/projects/${params.slug}/assets/${assetId}$}
-                    alt={$Preview ${assetId}$}
+                    src={"/api/projects/" + params.slug + "/assets/" + assetId}
+                    alt={"Preview " + assetId}
                   />
                   <form action={setImageDecisionAction}>
                     <input type="hidden" name="slug" value={params.slug} />
@@ -202,7 +203,7 @@ export default function ProjectPage({
                       <textarea
                         id="qa-json"
                         name="qaJson"
-                        placeholder={${"prompt_id":"${prompt.prompt_id}","status":"pass",...}$}
+                        placeholder={'{"prompt_id":"' + prompt.prompt_id + '","status":"pass",...}'}
                         required
                       />
                     </div>
@@ -239,8 +240,7 @@ export default function ProjectPage({
               {!["upload_image", "review_image", "prompt_qa", "generate_image", "repair_image"].includes(data.guided.kind) ? (
                 <div>
                   <p className="muted">
-                    Bước này đã được hướng dẫn bởi readiness engine. UI action chuyên biệt sẽ dùng cùng core gate;
-                    hiện tại bạn có thể xem điều kiện hoàn thành ở bên dưới.
+                    Readiness engine đã xác định bước này. Điều kiện hoàn thành được hiển thị ngay bên dưới.
                   </p>
                 </div>
               ) : null}
@@ -291,7 +291,7 @@ export default function ProjectPage({
             <div className="eyebrow">Checks</div>
             <div className="details-list">
               {data.report.checks.map((check) => (
-                <div className={$detail-item ${check.status}$} key={check.id}>
+                <div className={"detail-item " + check.status} key={check.id}>
                   <div className="detail-head">
                     <span>{check.status === "pass" ? "✓" : check.status === "blocked" ? "·" : "!"}</span>
                     <span>{check.stage}</span>
