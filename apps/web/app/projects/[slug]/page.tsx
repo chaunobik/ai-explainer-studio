@@ -859,30 +859,8 @@ export default function ProjectPage({
         </section>
 
         <aside className="health-column">
-          <section className="panel">
-            <div className="eyebrow">Cần chú ý</div>
-            {data.report.checks.filter((check) => check.status !== "pass" && check.status !== "blocked").length === 0 ? (
-              <p className="small muted">Không có action phụ đang chờ.</p>
-            ) : (
-              <div className="details-list">
-                {data.report.checks
-                  .filter((check) => check.status === "action_required" || check.status === "ready" || check.status === "needs_human_review")
-                  .slice(0, 5)
-                  .map((check) => (
-                    <div className={"detail-item " + check.status} key={check.id}>
-                      <div className="detail-head">
-                        <span>!</span>
-                        <span>{check.stage}</span>
-                      </div>
-                      <p className="detail-message">{check.message}</p>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </section>
-
           <details className="panel compact-details">
-            <summary><strong>Advanced details</strong></summary>
+            <summary><strong>Advanced details</strong> · {data.health.errors} errors · {data.health.warnings} warnings</summary>
             <div className="health-grid">
               <div className="metric">
                 <div className="metric-value">{data.health.errors}</div>
