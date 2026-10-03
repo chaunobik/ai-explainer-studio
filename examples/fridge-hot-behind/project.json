@@ -32,6 +32,13 @@
     "voice_assets_template": "voice-assets.template.json",
     "images_dir": "assets",
     "output_file": "output/final.mp4",
-    "final_qa_output": "final-qa-output.json"
+    "final_qa_output": "final-qa-output.json",
+    "image_prompt_qa_outputs": [
+      "image-prompt-qa-a1.json",
+      "image-prompt-qa-a2.json",
+      "image-prompt-qa-a5.json",
+      "image-prompt-qa-a6.json"
+    ],
+    "motion_qa_output": "motion-qa-output.json"
   }
 }
