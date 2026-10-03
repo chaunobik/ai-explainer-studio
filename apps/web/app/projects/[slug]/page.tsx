@@ -55,6 +55,66 @@ function overallClass(status: string): string {
   return "action";
 }
 
+function humanizeCheckName(value: string): string {
+  return value
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function QaReviewPanel({title, qa}: {title: string; qa: any}) {
+  if (!qa) return null;
+  const status = qa.status ?? qa.qa_result?.status ?? "unknown";
+  const checks = qa.checks ?? {};
+  const notes = qa.check_notes ?? {};
+
+  return (
+    <div className="panel">
+      <div className="next-title-row">
+        <div>
+          <div className="eyebrow">Latest QA Review</div>
+          <h2>{title}</h2>
+        </div>
+        <span className={"status-pill " + (status === "pass" ? "pass" : status === "needs_human_review" ? "review" : "blocked")}>
+          {String(status).replaceAll("_", " ")}
+        </span>
+      </div>
+
+      {qa.summary ? <p className="next-reason">{qa.summary}</p> : null}
+
+      <div className="details-list">
+        {Object.entries(checks).map(([key, value]) => (
+          <div className={"detail-item " + (value === "pass" ? "pass" : value === "needs_review" ? "needs_human_review" : "blocked")} key={key}>
+            <div className="detail-head">
+              <span>{value === "pass" ? "✓" : value === "needs_review" ? "?" : "!"}</span>
+              <span>{humanizeCheckName(key)}</span>
+            </div>
+            {notes[key] ? <p className="detail-message">{notes[key]}</p> : null}
+          </div>
+        ))}
+      </div>
+
+      {(qa.critical_issues?.length ?? qa.critical_violations?.length ?? 0) > 0 ? (
+        <>
+          <h3>Critical issues</h3>
+          <ul className="check-list">
+            {(qa.critical_issues ?? qa.critical_violations).map((item: string) => <li key={item}>{item}</li>)}
+          </ul>
+        </>
+      ) : null}
+
+      {(qa.repair_actions?.length ?? 0) > 0 ? (
+        <>
+          <h3>Repair actions</h3>
+          <ul className="check-list">
+            {qa.repair_actions.map((item: string) => <li key={item}>{item}</li>)}
+          </ul>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
 export default function ProjectPage({
   params,
   searchParams,
@@ -79,6 +139,20 @@ export default function ProjectPage({
   const voiceSegment = assetId
     ? data.voiceSpec.segments.find((value: any) => value.output_asset_id === assetId)
     : undefined;
+
+  const activePromptQa = prompt ? data.promptQaById[prompt.prompt_id] : undefined;
+  const latestQa =
+    activePromptQa ??
+    data.multiviewQa ??
+    data.multiviewPromptQa ??
+    null;
+  const latestQaTitle = activePromptQa
+    ? "Image Prompt QA — " + prompt.prompt_id
+    : data.multiviewQa
+      ? "A0 Multi-View Consistency QA"
+      : data.multiviewPromptQa
+        ? "A0 Multi-View Prompt QA"
+        : "";
 
   const qaPackage =
     data.guided.kind === "prompt_qa" && prompt
@@ -217,7 +291,7 @@ export default function ProjectPage({
                       <textarea
                         id="mv-prompt-qa-json"
                         name="qaJson"
-                        placeholder={'{"prompt_id":"' + data.multiviewReferencePrompt.prompt_id + '","status":"pass",...}'}
+                        placeholder="Paste the complete MultiViewPromptQAOutput JSON returned by ChatGPT"
                         required
                       />
                     </div>
@@ -383,7 +457,7 @@ export default function ProjectPage({
                       <textarea
                         id="qa-json"
                         name="qaJson"
-                        placeholder={'{"prompt_id":"' + prompt.prompt_id + '","status":"pass",...}'}
+                        placeholder="Paste the complete ImagePromptQAOutput JSON returned by ChatGPT"
                         required
                       />
                     </div>
@@ -627,6 +701,8 @@ export default function ProjectPage({
               {data.guided.completion_criteria.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
+
+          {latestQa ? <QaReviewPanel title={latestQaTitle} qa={latestQa} /> : null}
 
           {asset ? (
             <div className="panel">
