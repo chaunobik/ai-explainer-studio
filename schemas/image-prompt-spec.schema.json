@@ -399,6 +399,13 @@
     "project_id": {
       "type": "string",
       "minLength": 1
+    },
+    "reference_view_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   },
   "additionalProperties": false
