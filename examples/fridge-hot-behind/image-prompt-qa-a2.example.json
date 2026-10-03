@@ -10,6 +10,16 @@
     "ambiguity": "pass",
     "completeness": "pass"
   },
+  "check_notes": {
+    "identity_lock": "The prompt explicitly derives A2 from approved A1/A0 references and prohibits redesigning the refrigerator.",
+    "camera_clarity": "The rear-oriented composition and required visible regions are explicitly constrained.",
+    "scene_alignment": "The derived image supports the explanation of heat rejection at the rear of the refrigerator.",
+    "technical_correctness": "Heat direction is constrained from the appliance toward the surrounding air and unsupported full refrigeration-loop details are forbidden.",
+    "continuity": "The refrigerator geometry, material, lighting family and environment remain tied to the approved parent assets.",
+    "ambiguity": "The prompt defines the relevant rear area and heat-flow relationship without leaving critical direction or placement decisions open.",
+    "completeness": "Required visual elements, reference usage, camera, heat relationship, continuity and negative constraints are specified."
+  },
+  "summary": "The A2 prompt is ready for derived generation and preserves the approved refrigerator while making the intended rear heat-rejection concept visible.",
   "critical_issues": [],
   "repair_actions": []
 }
