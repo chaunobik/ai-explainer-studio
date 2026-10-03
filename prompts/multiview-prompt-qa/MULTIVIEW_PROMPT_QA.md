@@ -1,4 +1,4 @@
-# Multi-View Reference Prompt QA V2
+# Multi-View Reference Prompt QA V3
 
 Review the A0 MultiViewReferencePromptSpec before image generation. A0 will become the canonical visual source of truth, so ambiguity is a critical defect.
 
@@ -35,6 +35,16 @@ The object MUST have exactly this top-level shape:
     "technical_safety": "pass",
     "ambiguity": "pass"
   },
+  "check_notes": {
+    "subject_lock": "Explain specifically what identity details are locked and why this check passes/fails.",
+    "view_coverage": "Explain whether every required view is explicitly covered and readable.",
+    "camera_specificity": "Explain whether the camera/capture parameters are concrete and mutually plausible.",
+    "cross_view_consistency": "Explain how the prompt prevents product geometry from drifting across views.",
+    "photographic_realism": "Explain what makes the requested result look like a real photograph rather than CGI.",
+    "technical_safety": "Explain whether hidden mechanisms or unsupported technical details are avoided.",
+    "ambiguity": "Explain whether any important visual decision is still left open to the image model."
+  },
+  "summary": "Concise human-readable conclusion stating whether the prompt is ready to generate A0 and why.",
   "critical_issues": [],
   "repair_actions": []
 }
@@ -42,8 +52,10 @@ The object MUST have exactly this top-level shape:
 Rules:
 - Replace "MVP1" with the exact input prompt_id.
 - status: "pass" | "fail" | "needs_human_review".
-- every check: "pass" | "fail" | "needs_review".
+- every checks value: "pass" | "fail" | "needs_review".
+- Every check_notes field is REQUIRED and must contain a concrete explanation, not "OK", "pass", or a copied criterion.
+- summary is REQUIRED and should be 1–3 concise sentences.
 - If status="pass", critical_issues MUST be [] and repair_actions should normally be [].
 - If status="fail", critical_issues and repair_actions must contain concrete strings.
-- Do not add any additional top-level or checks properties.
+- Do not add any additional top-level, checks, or check_notes properties.
 - Before answering, verify JSON.parse(response) succeeds.
