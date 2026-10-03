@@ -6,22 +6,31 @@
     "packages/*"
   ],
   "scripts": {
-    "typecheck": "tsc -b packages/core",
+    "typecheck": "tsc -b packages/core packages/renderer",
     "build:core": "tsc -b packages/core",
     "test": "vitest run",
     "validate:schemas": "node scripts/validate-schemas.mjs",
     "validate:examples": "node scripts/validate-examples.mjs",
     "dry-run": "tsx scripts/dry-run.ts",
-    "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run dry-run"
+    "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run validate:motion && npm run dry-run",
+    "validate:motion": "tsx scripts/validate-motion.ts",
+    "render:scene": "tsx scripts/render-scene.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
     "vitest": "^3.2.4",
     "tsx": "^4.20.5",
-    "@types/node": "^22.10.0"
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0"
   },
   "dependencies": {
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "@remotion/bundler": "^4.0.0",
+    "@remotion/renderer": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
   }
 }
