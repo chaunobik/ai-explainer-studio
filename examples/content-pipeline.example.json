@@ -112,7 +112,11 @@
           "refrigerator"
         ],
         "motion": {},
-        "qa_status": "pending"
+        "qa_status": "pending",
+        "script_part_ids": [
+          "hook"
+        ],
+        "narration_mode": "verbatim"
       },
       {
         "scene_id": "S2",
@@ -139,7 +143,11 @@
           "heat_flow_arrow"
         ],
         "motion": {},
-        "qa_status": "pending"
+        "qa_status": "pending",
+        "script_part_ids": [
+          "SG1"
+        ],
+        "narration_mode": "verbatim"
       }
     ]
   }
