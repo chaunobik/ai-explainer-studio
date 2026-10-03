@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {validateVoiceAssets} from "./voice-qa";
+import {validateVoiceAssets, validateVoiceSpecAgainstStoryboard} from "./voice-qa";
 import type {VoiceAsset, VoiceSpec} from "./types";
 
 const spec: VoiceSpec = {
@@ -32,4 +32,25 @@ describe("voice QA", () => {
     expect(codes).toContain("VOICE_TEXT_DRIFT");
     expect(codes).toContain("VOICE_OVERRUN");
   });
+});
+
+
+it("rejects VoiceSpec narration drift from storyboard", () => {
+  const drifted: VoiceSpec = {
+    ...spec,
+    segments: [
+      {
+        ...spec.segments[0],
+        text: "Nội dung khác.",
+      },
+    ],
+  };
+
+  const report = validateVoiceSpecAgainstStoryboard(drifted, {
+    scenes: [{scene_id: "S1", narration: "Một câu.", duration_sec: 2}],
+  });
+
+  expect(report.errors.map((value) => value.code)).toContain(
+    "VOICE_SPEC_TEXT_DRIFT",
+  );
 });
