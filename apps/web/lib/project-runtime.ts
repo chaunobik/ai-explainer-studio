@@ -49,7 +49,7 @@ export function examplesRoot(): string {
   return path.join(repoRoot(), "examples");
 }
 
-function safeProjectDir(slug: string): string {
+export function projectDirForSlug(slug: string): string {
   if (!/^[A-Za-z0-9._-]+$/.test(slug)) {
     throw new Error("Invalid project slug.");
   }
@@ -120,7 +120,7 @@ export function listProjects(): ProjectSummary[] {
 }
 
 export function loadProjectDashboard(slug: string): DashboardData {
-  const projectDir = safeProjectDir(slug);
+  const projectDir = projectDirForSlug(slug);
   const projectPath = path.join(projectDir, "project.json");
   if (!fs.existsSync(projectPath)) {
     throw new Error(`Project not found: ${slug}`);
