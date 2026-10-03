@@ -7,7 +7,10 @@ import crypto from "node:crypto";
 import {revalidatePath} from "next/cache";
 import {projectDirForSlug, repoRoot} from "../../../lib/project-runtime";
 import {renderFinalProject, renderScenePreview} from "../../../lib/render-service";
-import {parseAndValidateQaJson} from "../../../lib/qa-contract";
+import {
+  parseAndValidateImagePromptSpecJson,
+  parseAndValidateQaJson,
+} from "../../../lib/qa-contract";
 import {
   manualOperatorReviewId,
   statusAfterImageImport,
@@ -207,6 +210,78 @@ export async function setImageDecisionAction(formData: FormData): Promise<void> 
     }
 
     writeJson(manifestPath, manifest);
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+export async function saveRepairedPromptAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const assetId = String(formData.get("assetId") ?? "");
+    const raw = String(formData.get("promptJson") ?? "").trim();
+    if (!assetId) throw new Error("Thiếu asset ID.");
+    if (!raw) throw new Error("Hãy dán ImagePromptSpec đã sửa.");
+
+    const repaired = parseAndValidateImagePromptSpecJson(raw);
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+
+    const promptSpecEntry = (project.paths.image_prompt_specs as string[])
+      .map((relative: string) => ({
+        relative,
+        file: path.join(projectDir, relative),
+        value: readJson(path.join(projectDir, relative)),
+      }))
+      .find((item) => item.value.asset_id === assetId);
+
+    if (!promptSpecEntry) {
+      throw new Error(`Không tìm thấy ImagePromptSpec của ${assetId}.`);
+    }
+
+    const original = promptSpecEntry.value;
+    const immutableFields = ["project_id", "prompt_id", "asset_id", "scene_id", "operation"] as const;
+    for (const field of immutableFields) {
+      if (repaired[field] !== original[field]) {
+        throw new Error(
+          `Không được thay đổi ${field}. Mong đợi ${original[field]}, nhận ${repaired[field]}.`,
+        );
+      }
+    }
+
+    if (repaired.final_prompt === original.final_prompt) {
+      throw new Error("Prompt sửa chưa thay đổi final_prompt. Hãy áp dụng repair actions trước khi lưu.");
+    }
+
+    writeJson(promptSpecEntry.file, repaired);
+
+    // Keep the provider job synchronized with the repaired prompt contract.
+    for (const relative of project.paths.image_provider_jobs as string[]) {
+      const jobPath = path.join(projectDir, relative);
+      if (!fs.existsSync(jobPath)) continue;
+      const job = readJson(jobPath);
+      if (job.output_asset_id !== assetId) continue;
+
+      job.prompt_spec_id = repaired.prompt_id;
+      job.reference_asset_ids = repaired.reference_asset_ids;
+      job.prompt = repaired.final_prompt;
+      job.negative_constraints = repaired.negative_constraints;
+      job.continuity_constraints = repaired.continuity_constraints;
+      job.technical_constraints = repaired.technical_constraints;
+      job.output_spec = repaired.output_spec;
+      writeJson(jobPath, job);
+    }
+
+    // Remove stale FAIL/REVIEW QA so the guided engine asks for QA again.
+    const qaRelative = (project.paths.image_prompt_qa_outputs as string[]).find((relative) =>
+      path.basename(relative).toLowerCase().includes(assetId.toLowerCase()),
+    );
+    if (qaRelative) {
+      const qaPath = path.join(projectDir, qaRelative);
+      if (fs.existsSync(qaPath)) fs.unlinkSync(qaPath);
+    }
+
     refresh(slug);
   } catch (error) {
     actionError(error);

@@ -88,27 +88,40 @@ function imageAction(
     check.status !== "blocked"
   ) {
     const promptId = context.promptIdByAsset?.[assetId];
+    const failed = promptCheck.message.toLowerCase().includes("failed");
     return {
       id: `guided:prompt-qa:${assetId}`,
       kind: "prompt_qa",
       stage: "image_prompt",
-      title: `Kiểm tra prompt của ${assetId}`,
-      reason: `${assetId} chưa được phép tạo ảnh cho đến khi Image Prompt QA đạt PASS.`,
+      title: failed ? `Sửa prompt của ${assetId}` : `Kiểm tra prompt của ${assetId}`,
+      reason: failed
+        ? `Prompt QA của ${assetId} đã FAIL. Sửa đúng các lỗi được nêu rồi chạy QA lại.`
+        : `${assetId} chưa được phép tạo ảnh cho đến khi Image Prompt QA đạt PASS.`,
       asset_id: assetId,
       prompt_id: promptId,
-      instructions: [
-        `Mở prompt chi tiết của ${assetId}.`,
-        "Dùng Image Prompt QA trong ChatGPT để kiểm tra camera, continuity và tính đúng kỹ thuật.",
-        "Dán kết quả QA JSON trở lại giao diện.",
-      ],
-      required_inputs: ["ImagePromptSpec", "Prompt QA JSON từ ChatGPT"],
-      completion_criteria: [
-        `Prompt QA của ${assetId} có đúng prompt_id${promptId ? ` = ${promptId}` : ""}.`,
-        "QA status = pass.",
-      ],
+      instructions: failed
+        ? [
+            "Đọc Critical issues và Repair actions.",
+            "Sửa ImagePromptSpec trực tiếp hoặc dùng Copy Repair Package để nhờ ChatGPT sửa đúng contract.",
+            "Lưu prompt đã sửa; tool sẽ xóa QA FAIL cũ và yêu cầu chạy Prompt QA lại.",
+          ]
+        : [
+            `Mở prompt chi tiết của ${assetId}.`,
+            "Dùng Image Prompt QA trong ChatGPT để kiểm tra camera, continuity và tính đúng kỹ thuật.",
+            "Dán kết quả QA JSON trở lại giao diện.",
+          ],
+      required_inputs: failed
+        ? ["ImagePromptSpec hiện tại", "Repair actions từ QA"]
+        : ["ImagePromptSpec", "Prompt QA JSON từ ChatGPT"],
+      completion_criteria: failed
+        ? ["Prompt sửa đúng schema và giữ nguyên các ID.", "Prompt QA mới đạt PASS."]
+        : [
+            `Prompt QA của ${assetId} có đúng prompt_id${promptId ? ` = ${promptId}` : ""}.`,
+            "QA status = pass.",
+          ],
       primary_action: {
         type: "open_prompt_qa",
-        label: `Review prompt ${assetId}`,
+        label: failed ? `Repair prompt ${assetId}` : `Review prompt ${assetId}`,
       },
     };
   }

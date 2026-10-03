@@ -1,7 +1,10 @@
 import Link from "next/link";
 import {CopyButton} from "../../../components/CopyButton";
 import {loadProjectDashboard} from "../../../lib/project-runtime";
-import {buildQaContractAppendix} from "../../../lib/qa-contract";
+import {
+  buildImagePromptSpecContractAppendix,
+  buildQaContractAppendix,
+} from "../../../lib/qa-contract";
 import {
   renderFinalAction,
   renderScenePreviewAction,
@@ -10,6 +13,7 @@ import {
   saveMultiviewPromptQaAction,
   saveMultiviewQaAction,
   savePromptQaAction,
+  saveRepairedPromptAction,
   setImageDecisionAction,
   setVoiceDecisionAction,
   uploadImageAction,
@@ -67,49 +71,86 @@ function QaReviewPanel({title, qa}: {title: string; qa: any}) {
   const status = qa.status ?? qa.qa_result?.status ?? "unknown";
   const checks = qa.checks ?? {};
   const notes = qa.check_notes ?? {};
+  const attentionChecks = Object.entries(checks).filter(([, value]) => value !== "pass");
+  const passedChecks = Object.entries(checks).filter(([, value]) => value === "pass");
+  const critical = qa.critical_issues ?? qa.critical_violations ?? [];
+  const repairs = qa.repair_actions ?? [];
+
+  if (status === "pass") {
+    return (
+      <details className="panel compact-details">
+        <summary>
+          <strong>{title}</strong> <span className="mini-pass">PASS</span>
+        </summary>
+        {qa.summary ? <p className="small muted">{qa.summary}</p> : null}
+        <div className="details-list">
+          {passedChecks.map(([key]) => (
+            <div className="detail-item pass" key={key}>
+              <div className="detail-head"><span>✓</span><span>{humanizeCheckName(key)}</span></div>
+            </div>
+          ))}
+        </div>
+      </details>
+    );
+  }
 
   return (
-    <div className="panel">
+    <div className="panel qa-attention">
       <div className="next-title-row">
         <div>
-          <div className="eyebrow">Latest QA Review</div>
+          <div className="eyebrow">QA cần xử lý</div>
           <h2>{title}</h2>
         </div>
-        <span className={"status-pill " + (status === "pass" ? "pass" : status === "needs_human_review" ? "review" : "blocked")}>
+        <span className={"status-pill " + (status === "needs_human_review" ? "review" : "blocked")}>
           {String(status).replaceAll("_", " ")}
         </span>
       </div>
 
       {qa.summary ? <p className="next-reason">{qa.summary}</p> : null}
 
-      <div className="details-list">
-        {Object.entries(checks).map(([key, value]) => (
-          <div className={"detail-item " + (value === "pass" ? "pass" : value === "needs_review" ? "needs_human_review" : "blocked")} key={key}>
-            <div className="detail-head">
-              <span>{value === "pass" ? "✓" : value === "needs_review" ? "?" : "!"}</span>
-              <span>{humanizeCheckName(key)}</span>
-            </div>
-            {notes[key] ? <p className="detail-message">{notes[key]}</p> : null}
-          </div>
-        ))}
-      </div>
-
-      {(qa.critical_issues?.length ?? qa.critical_violations?.length ?? 0) > 0 ? (
-        <>
+      {critical.length > 0 ? (
+        <div className="repair-section">
           <h3>Critical issues</h3>
           <ul className="check-list">
-            {(qa.critical_issues ?? qa.critical_violations).map((item: string) => <li key={item}>{item}</li>)}
+            {critical.map((item: string) => <li key={item}>{item}</li>)}
           </ul>
-        </>
+        </div>
       ) : null}
 
-      {(qa.repair_actions?.length ?? 0) > 0 ? (
-        <>
+      {repairs.length > 0 ? (
+        <div className="repair-section">
           <h3>Repair actions</h3>
-          <ul className="check-list">
-            {qa.repair_actions.map((item: string) => <li key={item}>{item}</li>)}
-          </ul>
-        </>
+          <ol className="instruction-list">
+            {repairs.map((item: string) => <li key={item}>{item}</li>)}
+          </ol>
+        </div>
+      ) : null}
+
+      {attentionChecks.length > 0 ? (
+        <div className="details-list">
+          {attentionChecks.map(([key, value]) => (
+            <div className={"detail-item " + (value === "needs_review" ? "needs_human_review" : "blocked")} key={key}>
+              <div className="detail-head">
+                <span>{value === "needs_review" ? "?" : "!"}</span>
+                <span>{humanizeCheckName(key)}</span>
+              </div>
+              {notes[key] ? <p className="detail-message">{notes[key]}</p> : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {passedChecks.length > 0 ? (
+        <details className="compact-details">
+          <summary className="small">Xem {passedChecks.length} checks đã PASS</summary>
+          <div className="details-list">
+            {passedChecks.map(([key]) => (
+              <div className="detail-item pass" key={key}>
+                <div className="detail-head"><span>✓</span><span>{humanizeCheckName(key)}</span></div>
+              </div>
+            ))}
+          </div>
+        </details>
       ) : null}
     </div>
   );
@@ -156,12 +197,34 @@ export default function ProjectPage({
         ? "A0 Multi-View Prompt QA"
         : "";
 
+  const promptQaFailed =
+    Boolean(prompt && activePromptQa && activePromptQa.status !== "pass");
+
   const qaPackage =
     data.guided.kind === "prompt_qa" && prompt
       ? data.promptQaTemplate +
         buildQaContractAppendix("image_prompt_qa") +
         "\n\n--- INPUT ImagePromptSpec ---\n" +
         JSON.stringify(prompt, null, 2)
+      : "";
+
+  const promptRepairPackage =
+    prompt && promptQaFailed
+      ? [
+          "TASK: Repair the provided ImagePromptSpec using the QA failure below.",
+          "Apply the SMALLEST changes needed to resolve the failure.",
+          "Preserve prompt_id, asset_id, scene_id, project_id and operation exactly.",
+          "Keep already-correct constraints unchanged.",
+          "Update BOTH structured fields and final_prompt so they say the same thing.",
+          "Return ONLY the complete corrected ImagePromptSpec JSON.",
+          "",
+          "--- FAILED QA RESULT ---",
+          JSON.stringify(activePromptQa, null, 2),
+          "",
+          "--- CURRENT ImagePromptSpec ---",
+          JSON.stringify(prompt, null, 2),
+          buildImagePromptSpecContractAppendix(),
+        ].join("\n")
       : "";
 
   const multiviewPromptQaPackage =
@@ -447,29 +510,96 @@ export default function ProjectPage({
 
               {data.guided.kind === "prompt_qa" && prompt ? (
                 <div>
-                  <div className="button-row">
-                    <CopyButton text={qaPackage} label="Copy Prompt QA Package" />
-                  </div>
-                  <details>
-                    <summary className="small"><strong>Xem detailed prompt {prompt.prompt_id}</strong></summary>
-                    <pre className="prompt-box">{prompt.final_prompt}</pre>
-                  </details>
-                  <form action={savePromptQaAction}>
-                    <input type="hidden" name="slug" value={params.slug} />
-                    <input type="hidden" name="assetId" value={prompt.asset_id} />
-                    <div className="form-row">
-                      <label htmlFor="qa-json">Dán QA JSON từ ChatGPT</label>
-                      <textarea
-                        id="qa-json"
-                        name="qaJson"
-                        placeholder="Paste the complete ImagePromptQAOutput JSON returned by ChatGPT"
-                        required
-                      />
+                  {promptQaFailed ? (
+                    <div className="prompt-repair-flow">
+                      <div className="repair-hero">
+                        <div>
+                          <div className="eyebrow">Prompt QA failed</div>
+                          <h3>Sửa {prompt.prompt_id} ngay tại đây</h3>
+                          <p className="muted">
+                            Chỉ sửa các lỗi QA nêu ra. Không cần đọc lại toàn bộ các check đã PASS.
+                          </p>
+                        </div>
+                      </div>
+
+                      {(activePromptQa?.critical_issues?.length ?? 0) > 0 ? (
+                        <div className="repair-section">
+                          <strong>Lỗi cần sửa</strong>
+                          <ul className="check-list">
+                            {activePromptQa.critical_issues.map((item: string) => <li key={item}>{item}</li>)}
+                          </ul>
+                        </div>
+                      ) : null}
+
+                      {(activePromptQa?.repair_actions?.length ?? 0) > 0 ? (
+                        <div className="repair-section">
+                          <strong>Cách sửa đề xuất</strong>
+                          <ol className="instruction-list">
+                            {activePromptQa.repair_actions.map((item: string) => <li key={item}>{item}</li>)}
+                          </ol>
+                        </div>
+                      ) : null}
+
+                      <div className="button-row">
+                        <CopyButton text={promptRepairPackage} label="Copy Repair Package" />
+                      </div>
+                      <p className="small muted">
+                        Có thể tự sửa JSON bên dưới, hoặc paste Repair Package vào ChatGPT rồi copy toàn bộ ImagePromptSpec đã sửa trở lại editor.
+                      </p>
+
+                      <form action={saveRepairedPromptAction}>
+                        <input type="hidden" name="slug" value={params.slug} />
+                        <input type="hidden" name="assetId" value={prompt.asset_id} />
+                        <div className="form-row">
+                          <label htmlFor="prompt-repair-json">ImagePromptSpec đã sửa</label>
+                          <textarea
+                            id="prompt-repair-json"
+                            className="code-editor"
+                            name="promptJson"
+                            defaultValue={JSON.stringify(prompt, null, 2)}
+                            spellCheck={false}
+                            required
+                          />
+                        </div>
+                        <div className="button-row">
+                          <button className="button" type="submit">
+                            Lưu prompt sửa & quay lại QA
+                          </button>
+                        </div>
+                      </form>
+
+                      <details className="compact-details">
+                        <summary className="small">Advanced: xem prompt text hiện tại</summary>
+                        <pre className="prompt-box">{prompt.final_prompt}</pre>
+                      </details>
                     </div>
-                    <div className="button-row">
-                      <button className="button" type="submit">Lưu Prompt QA & tiếp tục</button>
+                  ) : (
+                    <div>
+                      <div className="button-row">
+                        <CopyButton text={qaPackage} label="Copy Prompt QA Package" />
+                      </div>
+                      <form action={savePromptQaAction}>
+                        <input type="hidden" name="slug" value={params.slug} />
+                        <input type="hidden" name="assetId" value={prompt.asset_id} />
+                        <div className="form-row">
+                          <label htmlFor="qa-json">Dán QA JSON từ ChatGPT</label>
+                          <textarea
+                            id="qa-json"
+                            name="qaJson"
+                            placeholder="Paste the complete ImagePromptQAOutput JSON returned by ChatGPT"
+                            required
+                          />
+                        </div>
+                        <div className="button-row">
+                          <button className="button" type="submit">Lưu Prompt QA & tiếp tục</button>
+                        </div>
+                      </form>
+                      <details className="compact-details">
+                        <summary className="small">Advanced: xem detailed prompt {prompt.prompt_id}</summary>
+                        <pre className="prompt-box">{prompt.final_prompt}</pre>
+                      </details>
                     </div>
-                  </form>
+                  )}
                 </div>
               ) : null}
 
@@ -707,7 +837,7 @@ export default function ProjectPage({
             </ul>
           </div>
 
-          {latestQa ? <QaReviewPanel title={latestQaTitle} qa={latestQa} /> : null}
+          {latestQa && !promptQaFailed ? <QaReviewPanel title={latestQaTitle} qa={latestQa} /> : null}
 
           {asset ? (
             <div className="panel">
@@ -729,8 +859,8 @@ export default function ProjectPage({
         </section>
 
         <aside className="health-column">
-          <section className="panel">
-            <div className="eyebrow">Project Health</div>
+          <details className="panel compact-details">
+            <summary><strong>Advanced details</strong> · {data.health.errors} errors · {data.health.warnings} warnings</summary>
             <div className="health-grid">
               <div className="metric">
                 <div className="metric-value">{data.health.errors}</div>
@@ -741,11 +871,7 @@ export default function ProjectPage({
                 <div className="metric-label">Warnings</div>
               </div>
             </div>
-          </section>
-
-          <section className="panel">
-            <div className="eyebrow">Checks</div>
-            <div className="details-list">
+            <div className="details-list advanced-checks">
               {data.report.checks.map((check) => (
                 <div className={"detail-item " + check.status} key={check.id}>
                   <div className="detail-head">
@@ -756,7 +882,7 @@ export default function ProjectPage({
                 </div>
               ))}
             </div>
-          </section>
+          </details>
         </aside>
       </div>
     </main>

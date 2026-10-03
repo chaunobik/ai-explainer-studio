@@ -114,3 +114,56 @@ export function parseAndValidateQaJson(
 
   return value;
 }
+
+
+export function buildImagePromptSpecContractAppendix(): string {
+  const schema = readSchema("image-prompt-spec.schema.json");
+  const photoCapture = readSchema("photo-capture-spec.schema.json");
+  return [
+    "",
+    "=== STRICT REPAIRED IMAGEPROMPTSPEC CONTRACT ===",
+    "Return exactly ONE complete ImagePromptSpec JSON object and nothing else.",
+    "No markdown fences. No prose. No comments. No ellipsis. No omitted required fields.",
+    "Preserve prompt_id, asset_id, scene_id, project_id and operation exactly.",
+    "Apply only the smallest changes required by the QA failure.",
+    "Update structured fields AND final_prompt so they are semantically consistent.",
+    "AUTHORITATIVE ImagePromptSpec JSON SCHEMA:",
+    JSON.stringify(schema, null, 2),
+    "",
+    "REFERENCED photo-capture-spec.schema.json:",
+    JSON.stringify(photoCapture, null, 2),
+    "=== END REPAIRED IMAGEPROMPTSPEC CONTRACT ===",
+  ].join("\n");
+}
+
+export function parseAndValidateImagePromptSpecJson(raw: string): any {
+  const normalized = stripSingleCodeFence(raw);
+  let value: any;
+  try {
+    value = JSON.parse(normalized);
+  } catch (error) {
+    throw new Error(
+      "ImagePromptSpec JSON không hợp lệ. " +
+        (error instanceof Error ? error.message : String(error)),
+    );
+  }
+
+  const ajv = new Ajv2020({allErrors: true, strict: false});
+  const photoCapture = readSchema("photo-capture-spec.schema.json");
+  ajv.addSchema(photoCapture);
+  const schema = readSchema("image-prompt-spec.schema.json");
+  const validate = ajv.compile(schema);
+
+  if (!validate(value)) {
+    const details = (validate.errors ?? [])
+      .slice(0, 16)
+      .map((error) => {
+        const where = error.instancePath || "/";
+        return where + " " + (error.message ?? "schema error");
+      })
+      .join(" | ");
+    throw new Error("ImagePromptSpec sai contract. " + details);
+  }
+
+  return value;
+}

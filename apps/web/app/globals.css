@@ -80,7 +80,7 @@ h3 { font-size: 16px; margin-bottom: 8px; }
 
 .dashboard {
   display: grid;
-  grid-template-columns: minmax(230px, 0.8fr) minmax(430px, 2fr) minmax(260px, 0.9fr);
+  grid-template-columns: minmax(210px, 0.72fr) minmax(0, 2.8fr);
   gap: 18px;
   align-items: start;
 }
@@ -278,4 +278,62 @@ textarea { min-height: 170px; resize: vertical; font-family: ui-monospace, SFMon
 }
 .reference-board-preview {
   max-height: 720px;
+}
+
+
+/* Action-first prompt repair UX */
+.qa-attention {
+  border-color: #efc5c1;
+}
+.repair-hero {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #f0dfae;
+  background: var(--warn-soft);
+  margin-bottom: 12px;
+}
+.repair-hero h3 {
+  margin: 4px 0 6px;
+}
+.repair-section {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+}
+.prompt-repair-flow > .repair-section:first-of-type {
+  border-color: #f3c8c4;
+  background: var(--danger-soft);
+}
+.code-editor {
+  min-height: 520px;
+  max-height: 72vh;
+  font-size: 12px;
+  line-height: 1.55;
+  tab-size: 2;
+}
+.compact-details {
+  margin-top: 12px;
+}
+.compact-details > summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+.compact-details[open] > summary {
+  margin-bottom: 10px;
+}
+.advanced-checks {
+  max-height: 460px;
+  overflow: auto;
+}
+.health-column .detail-message {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.health-column {
+  grid-column: 2;
 }

@@ -455,6 +455,30 @@ export function loadProjectDashboard(slug: string): DashboardData {
     imageAssets,
   );
 
+  // A scene image is not generation-ready until its own Image Prompt QA passes.
+  // Keep the readiness report semantically consistent with the guided gate.
+  imageChecks = imageChecks.map((check) => {
+    if (!check.id.startsWith("image:")) return check;
+    const assetId = check.id.slice("image:".length);
+    const prompt = promptSpecs.find((value: any) => value.asset_id === assetId);
+    if (!prompt) return check; // A0 reference pack has its own prompt gate.
+
+    const assetRecord = imageManifest.assets.find(
+      (value: any) => value.asset_id === assetId,
+    );
+    if (assetRecord?.status === "approved") return check;
+
+    const qa = promptQaById.get(prompt.prompt_id);
+    if (qa?.status === "pass") return check;
+
+    return {
+      ...check,
+      status: "blocked" as const,
+      message: `${assetId} waits for Image Prompt QA PASS.`,
+      action: null,
+    };
+  });
+
   if (usingImageTemplate) {
     imageChecks.unshift({
       id: "image-manifest",
