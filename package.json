@@ -20,7 +20,9 @@
     "project:status": "tsx scripts/project-status.ts",
     "project:doctor": "tsx scripts/project-doctor.ts",
     "image:import": "tsx scripts/import-image.ts",
-    "image:status": "tsx scripts/set-image-status.ts"
+    "image:status": "tsx scripts/set-image-status.ts",
+    "voice:import": "tsx scripts/import-voice.ts",
+    "voice:status": "tsx scripts/set-voice-status.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
