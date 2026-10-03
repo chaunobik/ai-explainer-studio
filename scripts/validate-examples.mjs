@@ -52,6 +52,10 @@ const cases = [
   ["visual-qa-a2-candidate.example.json", "image-asset.schema.json"],
   ["visual-qa-a2-fail.example.json", "visual-qa-output.schema.json"],
   ["asset-execution-plan.json", "asset-execution-plan.schema.json"],
+  ["motion-spec.json", "motion-spec.schema.json"],
+  ["voice-spec.json", "voice-spec.schema.json"],
+  ["voice-jobs.json", "voice-jobs.schema.json"],
+  ["voice-assets.template.json", "voice-assets-manifest.schema.json"],
 ];
 
 const failures = [];
