@@ -4,6 +4,7 @@
   "title": "ImagePromptSpec",
   "type": "object",
   "required": [
+    "project_id",
     "prompt_id",
     "asset_id",
     "scene_id",
@@ -394,6 +395,10 @@
     "final_prompt": {
       "type": "string",
       "minLength": 200
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "additionalProperties": false
