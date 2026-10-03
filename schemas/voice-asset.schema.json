@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/voice-asset.schema.json",
+  "title": "VoiceAsset",
+  "type": "object",
+  "required": [
+    "asset_id",
+    "project_id",
+    "scene_id",
+    "status",
+    "text",
+    "attempt",
+    "provider_id",
+    "file"
+  ],
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "pattern": "^V[0-9]+$"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "awaiting_generation",
+        "awaiting_import",
+        "qa_pending",
+        "approved",
+        "rejected",
+        "needs_human_review"
+      ]
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "file": {
+      "type": "object",
+      "required": [
+        "uri",
+        "mime_type",
+        "duration_sec"
+      ],
+      "properties": {
+        "uri": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mime_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duration_sec": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0
+        },
+        "checksum": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "qa_result_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
