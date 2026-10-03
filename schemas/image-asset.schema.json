@@ -33,6 +33,7 @@
     "asset_role": {
       "type": "string",
       "enum": [
+        "reference_pack",
         "anchor",
         "derived"
       ]
@@ -90,6 +91,7 @@
         "operation": {
           "type": "string",
           "enum": [
+            "generate_reference_pack",
             "generate_anchor",
             "derive_scene",
             "import_existing"
@@ -161,6 +163,33 @@
       "type": "array",
       "items": {
         "type": "string"
+      }
+    },
+    "reference_views": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "view_id",
+          "label"
+        ],
+        "properties": {
+          "view_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "panel_hint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
