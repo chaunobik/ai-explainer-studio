@@ -7,6 +7,7 @@ import crypto from "node:crypto";
 import {revalidatePath} from "next/cache";
 import {projectDirForSlug, repoRoot} from "../../../lib/project-runtime";
 import {renderFinalProject, renderScenePreview} from "../../../lib/render-service";
+import {parseAndValidateQaJson} from "../../../lib/qa-contract";
 import {validateVoiceAssets} from "../../../../../packages/core/src/index";
 
 function readJson(filePath: string): any {
@@ -199,12 +200,7 @@ export async function savePromptQaAction(formData: FormData): Promise<void> {
     const raw = String(formData.get("qaJson") ?? "").trim();
     if (!raw) throw new Error("Hãy dán Prompt QA JSON từ ChatGPT.");
 
-    let qa: any;
-    try {
-      qa = JSON.parse(raw);
-    } catch {
-      throw new Error("Prompt QA không phải JSON hợp lệ.");
-    }
+    const qa = parseAndValidateQaJson(raw, "image_prompt_qa");
 
     const projectDir = projectDirForSlug(slug);
     const project = readJson(path.join(projectDir, "project.json"));
@@ -417,23 +413,13 @@ export async function setVoiceDecisionAction(formData: FormData): Promise<void> 
 
 function parseQaJson(raw: string, expectedStage: "motion" | "final"): any {
   if (!raw.trim()) throw new Error("Hãy dán QA JSON.");
-  let qa: any;
-  try {
-    qa = JSON.parse(raw);
-  } catch {
-    throw new Error("QA result không phải JSON hợp lệ.");
-  }
+  const qa = parseAndValidateQaJson(
+    raw,
+    expectedStage === "motion" ? "motion_qa" : "final_qa",
+  );
 
   if (qa?.qa_result?.stage !== expectedStage) {
-    throw new Error(
-      "qa_result.stage phải là " + expectedStage + ".",
-    );
-  }
-
-  if (!["pass", "fail", "needs_human_review"].includes(qa?.qa_result?.status)) {
-    throw new Error(
-      "qa_result.status phải là pass, fail hoặc needs_human_review.",
-    );
+    throw new Error("qa_result.stage phải là " + expectedStage + ".");
   }
 
   return qa;
@@ -505,12 +491,7 @@ export async function saveMultiviewPromptQaAction(formData: FormData): Promise<v
     const raw = String(formData.get("qaJson") ?? "").trim();
     if (!raw) throw new Error("Hãy dán Multi-View Prompt QA JSON từ ChatGPT.");
 
-    let qa: any;
-    try {
-      qa = JSON.parse(raw);
-    } catch {
-      throw new Error("Multi-View Prompt QA không phải JSON hợp lệ.");
-    }
+    const qa = parseAndValidateQaJson(raw, "multiview_prompt_qa");
 
     const projectDir = projectDirForSlug(slug);
     const project = readJson(path.join(projectDir, "project.json"));
@@ -543,12 +524,7 @@ export async function saveMultiviewQaAction(formData: FormData): Promise<void> {
     const raw = String(formData.get("qaJson") ?? "").trim();
     if (!raw) throw new Error("Hãy dán Multi-View QA JSON từ ChatGPT.");
 
-    let qa: any;
-    try {
-      qa = JSON.parse(raw);
-    } catch {
-      throw new Error("Multi-View QA không phải JSON hợp lệ.");
-    }
+    const qa = parseAndValidateQaJson(raw, "multiview_qa");
 
     const projectDir = projectDirForSlug(slug);
     const project = readJson(path.join(projectDir, "project.json"));
