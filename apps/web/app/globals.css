@@ -220,3 +220,41 @@ textarea { min-height: 170px; resize: vertical; font-family: ui-monospace, SFMon
 }
 
 .audio-preview { width: 100%; margin: 12px 0 4px; }
+
+.video-preview {
+  width: 100%;
+  max-height: 620px;
+  margin: 12px 0;
+  border-radius: 12px;
+  background: #0b0d12;
+  border: 1px solid var(--border);
+}
+.small-video { max-height: 360px; }
+.scene-preview-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 14px 0;
+}
+.scene-preview-card {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+}
+.scene-preview-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.mini-pass, .mini-wait {
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.mini-pass { background: var(--success-soft); color: var(--success); }
+.mini-wait { background: #f0f1f3; color: var(--blocked); }
