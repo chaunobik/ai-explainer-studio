@@ -1,6 +1,6 @@
 # Roadmap
 
-## Milestone 1 — Content Intelligence
+## Milestone 1 — Content Intelligence ✅ COMPLETE
 Goal: produce a validated storyboard from a topic.
 
 Deliverables:
@@ -14,8 +14,9 @@ Deliverables:
 - manual ChatGPT Web workflow documented
 - example topic processed end-to-end
 
-Exit condition:
-A topic can consistently produce structured, reviewable JSON through the content pipeline.
+Exit condition: ✅ Met
+
+A topic can produce structured, reviewable JSON through the full content pipeline, with the canonical refrigerator example stored in `examples/fridge-hot-behind/`.
 
 ## Milestone 2 — Visual Intelligence
 Goal: turn storyboard scenes into a coherent visual plan.
