@@ -7,6 +7,8 @@ import {
   validateCrossStageArtifacts,
   validateMotionSpec,
   validateVoiceSpecAgainstStoryboard,
+  validateImageManifestIntegrity,
+  validatePromptQaIntegrity,
   type ReadinessCheck,
 } from "../packages/core/src/index";
 
@@ -265,11 +267,42 @@ for (const [promptId] of promptQaById) {
   }
 }
 
+const promptQaIntegrity = validatePromptQaIntegrity(
+  imagePromptSpecs,
+  [...promptQaById.values()],
+);
+if (!promptQaIntegrity.ok) {
+  contractErrors += promptQaIntegrity.errors.length;
+  deterministicChecks.push({
+    id: "prompt-qa-integrity",
+    stage: "image_prompt",
+    status: "blocked",
+    message: promptQaIntegrity.errors
+      .map((value) => `[${value.code}] ${value.message}`)
+      .join(" | "),
+    action: null,
+  });
+}
+
 const imageManifestPath = rel(p.image_assets_manifest);
 const usingImageTemplate = !fs.existsSync(imageManifestPath);
 const imageManifest = readJson(
   usingImageTemplate ? rel(p.image_assets_template) : imageManifestPath,
 );
+
+const imageManifestIntegrity = validateImageManifestIntegrity(imageManifest);
+if (!imageManifestIntegrity.ok) {
+  contractErrors += imageManifestIntegrity.errors.length;
+  deterministicChecks.push({
+    id: "image-manifest-integrity",
+    stage: "visual_assets",
+    status: "blocked",
+    message: imageManifestIntegrity.errors
+      .map((value) => `[${value.code}] ${value.message}`)
+      .join(" | "),
+    action: null,
+  });
+}
 
 const imageAssets = imageManifest.assets.map((asset: any) => ({
   assetId: asset.asset_id,
