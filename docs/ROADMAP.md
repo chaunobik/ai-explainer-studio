@@ -34,7 +34,7 @@ Exit condition: ✅ Met
 
 Each storyboard scene now has a deliberate route, anchor/derivation lineage, and transition relationship to adjacent scenes. The canonical refrigerator example includes a passing Continuity QA artifact.
 
-## Milestone 3 — Visual Generation
+## Milestone 3 — Visual Generation 🚧 IN PROGRESS
 Goal: generate/edit scene assets and validate them.
 
 Deliverables:
