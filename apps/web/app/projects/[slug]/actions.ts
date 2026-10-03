@@ -8,7 +8,11 @@ import {revalidatePath} from "next/cache";
 import {projectDirForSlug, repoRoot} from "../../../lib/project-runtime";
 import {renderFinalProject, renderScenePreview} from "../../../lib/render-service";
 import {parseAndValidateQaJson} from "../../../lib/qa-contract";
-import {validateVoiceAssets} from "../../../../../packages/core/src/index";
+import {
+  manualOperatorReviewId,
+  statusAfterImageImport,
+  validateVoiceAssets,
+} from "../../../../../packages/core/src/index";
 
 function readJson(filePath: string): any {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -125,7 +129,23 @@ export async function uploadImageAction(formData: FormData): Promise<void> {
     fs.writeFileSync(target, bytes);
 
     const dimensions = imageDimensions(bytes, ext);
-    asset.status = "qa_pending";
+
+    const nextStatus = statusAfterImageImport(asset.provenance.provider_mode);
+    if (nextStatus === "approved") {
+      for (const parentId of asset.parent_asset_ids ?? []) {
+        const parent = manifest.assets.find((value: any) => value.asset_id === parentId);
+        if (!parent || parent.status !== "approved") {
+          throw new Error(`Parent ${parentId} phải approved trước ${assetId}.`);
+        }
+      }
+      asset.qa_result_ids = [
+        ...new Set([
+          ...(asset.qa_result_ids ?? []),
+          manualOperatorReviewId(assetId),
+        ]),
+      ];
+    }
+    asset.status = nextStatus;
     asset.provenance.source_uri = file.name;
     asset.file.uri = path.relative(projectDir, target).replaceAll(path.sep, "/");
     asset.file.mime_type = mimeFor(ext);
