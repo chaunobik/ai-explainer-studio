@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/scene-lineage.schema.json",
+  "title": "SceneLineage",
+  "type": "object",
+  "required": [
+    "scene_id",
+    "relationship",
+    "anchor_asset_ids",
+    "inherited_entity_ids",
+    "introduced_entity_ids",
+    "preserved_features",
+    "continuity_risks"
+  ],
+  "properties": {
+    "scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "parent_scene_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^S[0-9]+$"
+    },
+    "relationship": {
+      "type": "string",
+      "enum": [
+        "anchor",
+        "continuation",
+        "derived",
+        "context_switch"
+      ]
+    },
+    "anchor_asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^A[0-9]+$"
+      }
+    },
+    "inherited_entity_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "introduced_entity_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "visual_transforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preserved_features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "continuity_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
