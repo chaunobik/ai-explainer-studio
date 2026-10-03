@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/research-qa-output.schema.json",
+  "title": "ResearchQAOutput",
+  "type": "object",
+  "required": [
+    "claims",
+    "qa_result"
+  ],
+  "properties": {
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "claim.schema.json"
+      }
+    },
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "research_repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
