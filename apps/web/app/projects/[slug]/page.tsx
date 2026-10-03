@@ -563,7 +563,7 @@ export default function ProjectPage({
                         </div>
                         <div className="button-row">
                           <button className="button" type="submit">
-                            Lưu prompt sửa & chạy QA lại
+                            Lưu prompt sửa & quay lại QA
                           </button>
                         </div>
                       </form>
