@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/storyboard-qa-output.schema.json",
+  "title": "StoryboardQAOutput",
+  "type": "object",
+  "required": [
+    "qa_result",
+    "scene_checks",
+    "timing_check",
+    "repair_actions"
+  ],
+  "properties": {
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "scene_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "scene_id",
+          "status",
+          "issues"
+        ],
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "pattern": "^S[0-9]+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "needs_review"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "timing_check": {
+      "type": "object",
+      "required": [
+        "declared_total_sec",
+        "scene_sum_sec",
+        "delta_sec",
+        "status"
+      ],
+      "properties": {
+        "declared_total_sec": {
+          "type": "number"
+        },
+        "scene_sum_sec": {
+          "type": "number"
+        },
+        "delta_sec": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

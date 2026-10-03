@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/storyboard-request.schema.json",
+  "title": "StoryboardRequest",
+  "type": "object",
+  "required": [
+    "project_id",
+    "topic",
+    "target_duration_sec",
+    "script"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_duration_sec": {
+      "type": "number",
+      "minimum": 30,
+      "maximum": 90
+    },
+    "script": {
+      "$ref": "script-spec.schema.json"
+    },
+    "target_scene_count": {
+      "type": "integer",
+      "minimum": 4,
+      "maximum": 12,
+      "default": 8
+    },
+    "visual_policy": {
+      "type": "object",
+      "properties": {
+        "continuity_priority": {
+          "type": "string",
+          "enum": [
+            "high"
+          ],
+          "default": "high"
+        },
+        "prefer_real_assets": {
+          "type": "boolean",
+          "default": true
+        },
+        "allow_context_switch": {
+          "type": "boolean",
+          "default": true
+        },
+        "avoid_independent_regeneration": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "production_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
