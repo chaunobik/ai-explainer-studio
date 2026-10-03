@@ -2,14 +2,26 @@
   "project_id": "EXAMPLE-FRIDGE-001",
   "assets": [
     {
+      "asset_id": "A0",
+      "scene_id": null,
+      "executor": "image_provider",
+      "operation": "generate_reference_pack",
+      "depends_on_approved_assets": [],
+      "status": "ready",
+      "provider_job_path": "multiview-provider-job-a0.json",
+      "notes": "Generate the canonical eight-view A0 reference board from prompt only; approve it through Multi-View QA before any scene image is created."
+    },
+    {
       "asset_id": "A1",
       "scene_id": "S1",
       "executor": "image_provider",
       "operation": "generate_anchor",
-      "depends_on_approved_assets": [],
-      "status": "ready",
+      "depends_on_approved_assets": [
+        "A0"
+      ],
+      "status": "blocked",
       "provider_job_path": "anchor-provider-job.json",
-      "notes": "Generate/import first; all derived image assets are blocked until A1 passes Visual QA."
+      "notes": "Scene anchor derived from approved A0 reference-board views."
     },
     {
       "asset_id": "A2",
@@ -17,11 +29,12 @@
       "executor": "image_provider",
       "operation": "derive_scene",
       "depends_on_approved_assets": [
+        "A0",
         "A1"
       ],
       "status": "blocked",
       "provider_job_path": "derived-s2-provider-job.json",
-      "notes": "Cutaway derivative of approved A1."
+      "notes": "Cutaway derivative of approved A1. Use A0 reference views to cross-check geometry while preserving A1 scene continuity."
     },
     {
       "asset_id": "A3",
@@ -53,11 +66,12 @@
       "executor": "image_provider",
       "operation": "derive_scene",
       "depends_on_approved_assets": [
+        "A0",
         "A1"
       ],
       "status": "blocked",
       "provider_job_path": "derived-s5-provider-job.template.json",
-      "notes": "Rear-versus-side layout comparison must preserve fridge_01 identity."
+      "notes": "Rear-versus-side layout comparison must preserve fridge_01 identity. Use A0 reference views to cross-check geometry while preserving A1 scene continuity."
     },
     {
       "asset_id": "A6",
@@ -65,11 +79,12 @@
       "executor": "image_provider",
       "operation": "derive_scene",
       "depends_on_approved_assets": [
+        "A0",
         "A1"
       ],
       "status": "blocked",
       "provider_job_path": "derived-s6-provider-job.template.json",
-      "notes": "Return to the canonical exterior from approved A1."
+      "notes": "Return to the canonical exterior from approved A1. Use A0 reference views to cross-check geometry while preserving A1 scene continuity."
     },
     {
       "asset_id": "A7",
