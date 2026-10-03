@@ -126,3 +126,79 @@ export function validateVoiceAssets(
   const warnings = issues.filter((value) => value.severity === "warning");
   return {ok: errors.length === 0, errors, warnings};
 }
+
+
+export interface StoryboardNarrationLike {
+  scenes: Array<{
+    scene_id: string;
+    narration: string;
+    duration_sec: number;
+  }>;
+}
+
+export function validateVoiceSpecAgainstStoryboard(
+  spec: VoiceSpec,
+  storyboard: StoryboardNarrationLike,
+): ValidationReport {
+  const issues: ValidationIssue[] = [];
+  const sceneMap = new Map(
+    storyboard.scenes.map((scene) => [scene.scene_id, scene]),
+  );
+  const segmentSceneIds = spec.segments.map((segment) => segment.scene_id);
+  const assetIds = spec.segments.map((segment) => segment.output_asset_id);
+
+  if (new Set(segmentSceneIds).size !== segmentSceneIds.length) {
+    add(issues, "VOICE_SPEC_DUP_SCENE", "voice.segments", "VoiceSpec scene IDs must be unique.");
+  }
+
+  if (new Set(assetIds).size !== assetIds.length) {
+    add(issues, "VOICE_SPEC_DUP_ASSET", "voice.segments", "Voice output asset IDs must be unique.");
+  }
+
+  for (const [index, segment] of spec.segments.entries()) {
+    const scene = sceneMap.get(segment.scene_id);
+    if (!scene) {
+      add(
+        issues,
+        "VOICE_SPEC_UNKNOWN_SCENE",
+        `voice.segments[${index}].scene_id`,
+        `Voice segment references unknown scene ${segment.scene_id}.`,
+      );
+      continue;
+    }
+
+    if (segment.text !== scene.narration) {
+      add(
+        issues,
+        "VOICE_SPEC_TEXT_DRIFT",
+        `voice.segments[${index}].text`,
+        `Voice text for ${segment.scene_id} must exactly match storyboard narration.`,
+      );
+    }
+
+    if (Math.abs(segment.target_duration_sec - scene.duration_sec) > 0.001) {
+      add(
+        issues,
+        "VOICE_SPEC_DURATION_DRIFT",
+        `voice.segments[${index}].target_duration_sec`,
+        `Voice target ${segment.target_duration_sec}s does not match scene duration ${scene.duration_sec}s.`,
+      );
+    }
+  }
+
+  const expectedSceneIds = new Set(storyboard.scenes.map((scene) => scene.scene_id));
+  for (const sceneId of expectedSceneIds) {
+    if (!segmentSceneIds.includes(sceneId)) {
+      add(
+        issues,
+        "VOICE_SPEC_MISSING_SCENE",
+        "voice.segments",
+        `VoiceSpec is missing narration for ${sceneId}.`,
+      );
+    }
+  }
+
+  const errors = issues.filter((value) => value.severity === "error");
+  const warnings = issues.filter((value) => value.severity === "warning");
+  return {ok: errors.length === 0, errors, warnings};
+}
