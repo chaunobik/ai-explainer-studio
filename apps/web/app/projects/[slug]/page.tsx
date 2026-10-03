@@ -4,7 +4,9 @@ import {loadProjectDashboard} from "../../../lib/project-runtime";
 import {
   savePromptQaAction,
   setImageDecisionAction,
+  setVoiceDecisionAction,
   uploadImageAction,
+  uploadVoiceAction,
 } from "./actions";
 
 type SearchParams = {
@@ -63,6 +65,12 @@ export default function ProjectPage({
     : undefined;
   const asset = assetId
     ? data.imageManifest.assets.find((value: any) => value.asset_id === assetId)
+    : undefined;
+  const voiceAsset = assetId
+    ? data.voiceManifest.assets.find((value: any) => value.asset_id === assetId)
+    : undefined;
+  const voiceSegment = assetId
+    ? data.voiceSpec.segments.find((value: any) => value.output_asset_id === assetId)
     : undefined;
 
   const qaPackage =
@@ -237,7 +245,76 @@ export default function ProjectPage({
                 </div>
               ) : null}
 
-              {!["upload_image", "review_image", "prompt_qa", "generate_image", "repair_image"].includes(data.guided.kind) ? (
+              {data.guided.kind === "upload_voice" && assetId && voiceSegment ? (
+                <div>
+                  <div className="action-box">
+                    <div className="eyebrow">Narration</div>
+                    <p>{voiceSegment.text}</p>
+                    <p className="small muted">
+                      Scene {voiceSegment.scene_id} · target {voiceSegment.target_duration_sec}s
+                    </p>
+                  </div>
+                  <form action={uploadVoiceAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <input type="hidden" name="assetId" value={assetId} />
+                    <div className="form-row">
+                      <label htmlFor="voice-file">Chọn audio {assetId}</label>
+                      <input id="voice-file" name="file" type="file" accept="audio/mpeg,audio/wav,audio/mp4" required />
+                    </div>
+                    <div className="form-row">
+                      <label htmlFor="voice-duration">Duration thực tế (giây)</label>
+                      <input
+                        id="voice-duration"
+                        name="duration"
+                        type="number"
+                        min="0.1"
+                        step="0.01"
+                        placeholder="WAV có thể để trống; MP3/M4A cần nhập"
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button" type="submit">Import {assetId} & sang Voice QA</button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
+              {data.guided.kind === "review_voice" && assetId && voiceAsset ? (
+                <div>
+                  <div className="action-box">
+                    <div className="eyebrow">Narration</div>
+                    <p>{voiceAsset.text}</p>
+                  </div>
+                  <audio
+                    className="audio-preview"
+                    controls
+                    src={"/api/projects/" + params.slug + "/voice/" + assetId}
+                  />
+                  <form action={setVoiceDecisionAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <input type="hidden" name="assetId" value={assetId} />
+                    <div className="form-row">
+                      <label htmlFor="voice-qa-id">Voice QA ID</label>
+                      <input
+                        id="voice-qa-id"
+                        name="qaId"
+                        type="text"
+                        placeholder={"VD: QA-VOICE-" + assetId}
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button success" name="decision" value="approved" type="submit">
+                        Approve {assetId}
+                      </button>
+                      <button className="button danger" name="decision" value="rejected" type="submit">
+                        Reject {assetId}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
+              {!["upload_image", "review_image", "prompt_qa", "generate_image", "repair_image", "upload_voice", "review_voice"].includes(data.guided.kind) ? (
                 <div>
                   <p className="muted">
                     Readiness engine đã xác định bước này. Điều kiện hoàn thành được hiển thị ngay bên dưới.
