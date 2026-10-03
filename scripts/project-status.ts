@@ -424,6 +424,22 @@ let finalQaStatus: "pass" | "fail" | "needs_human_review" | null = null;
 if (fs.existsSync(finalQaPath)) {
   const finalQa = readJson(finalQaPath);
   finalQaStatus = finalQa?.qa_result?.status ?? null;
+
+  if (finalQaStatus === "fail") {
+    const repairs = Array.isArray(finalQa.repair_actions)
+      ? finalQa.repair_actions.filter((value: unknown) => typeof value === "string")
+      : [];
+    deterministicChecks.push({
+      id: "final-qa-failed",
+      stage: "final",
+      status: "action_required",
+      message: "Final Video QA failed.",
+      action:
+        repairs.length > 0
+          ? `Apply Final QA repairs: ${repairs.join(" | ")}`
+          : "Review the failed Final QA checks, repair affected scenes/stages, re-render, then rerun Final Video QA.",
+    });
+  }
 }
 
 const report = buildReadinessReport({
