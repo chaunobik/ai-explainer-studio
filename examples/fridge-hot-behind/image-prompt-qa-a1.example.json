@@ -10,6 +10,16 @@
     "ambiguity": "pass",
     "completeness": "pass"
   },
+  "check_notes": {
+    "identity_lock": "The prompt requires A1 to preserve the approved A0 refrigerator identity, proportions, door layout, handles and material finish.",
+    "camera_clarity": "The requested camera angle, product distance, framing and perspective are explicit enough to avoid a materially different composition.",
+    "scene_alignment": "The composition supports the opening refrigerator scene and presents the appliance clearly before technical overlays are introduced.",
+    "technical_correctness": "No unsupported internal mechanism is requested and visible heat-related elements remain physically plausible.",
+    "continuity": "A0 is authoritative for product identity and the prompt carries forward environment, material and lighting constraints.",
+    "ambiguity": "Important product and camera choices are constrained rather than delegated to the image model.",
+    "completeness": "Identity, camera, scene, continuity, realism, negative constraints and output requirements are all present."
+  },
+  "summary": "The A1 prompt is ready for generation and should produce a realistic canonical scene image consistent with A0.",
   "critical_issues": [],
   "repair_actions": []
 }
