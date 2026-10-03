@@ -46,7 +46,11 @@
         "output_file",
         "final_qa_output",
         "image_prompt_qa_outputs",
-        "motion_qa_output"
+        "motion_qa_output",
+        "multiview_reference_prompt",
+        "multiview_provider_job",
+        "multiview_prompt_qa_output",
+        "multiview_qa_output"
       ],
       "properties": {
         "research_result": {
@@ -143,6 +147,22 @@
           }
         },
         "motion_qa_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "multiview_reference_prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "multiview_provider_job": {
+          "type": "string",
+          "minLength": 1
+        },
+        "multiview_prompt_qa_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "multiview_qa_output": {
           "type": "string",
           "minLength": 1
         }
