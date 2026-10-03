@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/script-qa-output.schema.json",
+  "title": "ScriptQAOutput",
+  "type": "object",
+  "required": [
+    "qa_result",
+    "segment_checks",
+    "repair_actions"
+  ],
+  "properties": {
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "segment_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "part_id",
+          "status",
+          "issues"
+        ],
+        "properties": {
+          "part_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "needs_review"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
