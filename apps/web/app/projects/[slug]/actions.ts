@@ -6,6 +6,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import {revalidatePath} from "next/cache";
 import {projectDirForSlug} from "../../../lib/project-runtime";
+import {validateVoiceAssets} from "../../../../../packages/core/src/index";
 
 function readJson(filePath: string): any {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -229,6 +230,183 @@ export async function savePromptQaAction(formData: FormData): Promise<void> {
     if (!qaPath) throw new Error(`Không tìm thấy QA output path cho ${assetId}.`);
 
     writeJson(path.join(projectDir, qaPath), qa);
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+
+function audioExtension(file: File): string {
+  const ext = path.extname(file.name).toLowerCase();
+  if ([".mp3", ".wav", ".m4a", ".mp4"].includes(ext)) return ext;
+  if (file.type === "audio/mpeg") return ".mp3";
+  if (file.type === "audio/wav" || file.type === "audio/x-wav") return ".wav";
+  if (file.type === "audio/mp4") return ".m4a";
+  throw new Error("Chỉ hỗ trợ MP3, WAV hoặc M4A.");
+}
+
+function audioMime(ext: string): string {
+  if (ext === ".mp3") return "audio/mpeg";
+  if (ext === ".wav") return "audio/wav";
+  if (ext === ".m4a" || ext === ".mp4") return "audio/mp4";
+  throw new Error("Audio extension không hợp lệ.");
+}
+
+function wavDuration(buffer: Buffer): number | null {
+  if (
+    buffer.length < 44 ||
+    buffer.toString("ascii", 0, 4) !== "RIFF" ||
+    buffer.toString("ascii", 8, 12) !== "WAVE"
+  ) {
+    return null;
+  }
+
+  let offset = 12;
+  let byteRate: number | null = null;
+  let dataSize: number | null = null;
+
+  while (offset + 8 <= buffer.length) {
+    const id = buffer.toString("ascii", offset, offset + 4);
+    const size = buffer.readUInt32LE(offset + 4);
+    const dataStart = offset + 8;
+    if (dataStart + size > buffer.length) break;
+
+    if (id === "fmt " && size >= 16) {
+      byteRate = buffer.readUInt32LE(dataStart + 8);
+    } else if (id === "data") {
+      dataSize = size;
+    }
+
+    offset = dataStart + size + (size % 2);
+  }
+
+  if (!byteRate || dataSize == null) return null;
+  return dataSize / byteRate;
+}
+
+export async function uploadVoiceAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const assetId = String(formData.get("assetId") ?? "");
+    const file = formData.get("file");
+    const durationInput = String(formData.get("duration") ?? "").trim();
+
+    if (!assetId) throw new Error("Thiếu voice asset ID.");
+    if (!(file instanceof File) || file.size === 0) {
+      throw new Error("Bạn chưa chọn file audio.");
+    }
+    if (file.size > 30 * 1024 * 1024) {
+      throw new Error("Audio vượt quá giới hạn 30 MB.");
+    }
+
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+    const actualManifest = path.join(projectDir, project.paths.voice_assets_manifest);
+    const templateManifest = path.join(projectDir, project.paths.voice_assets_template);
+
+    if (!fs.existsSync(actualManifest)) {
+      if (!fs.existsSync(templateManifest)) {
+        throw new Error("Không tìm thấy voice-assets template.");
+      }
+      fs.copyFileSync(templateManifest, actualManifest);
+    }
+
+    const manifest = readJson(actualManifest);
+    const asset = manifest.assets.find((value: any) => value.asset_id === assetId);
+    if (!asset) throw new Error("Không tìm thấy voice asset " + assetId + ".");
+
+    const ext = audioExtension(file);
+    const bytes = Buffer.from(await file.arrayBuffer());
+    let duration =
+      durationInput.length > 0 ? Number(durationInput) : null;
+
+    if (duration != null && (!Number.isFinite(duration) || duration <= 0)) {
+      throw new Error("Duration phải là số giây > 0.");
+    }
+    if (duration == null && ext === ".wav") {
+      duration = wavDuration(bytes);
+    }
+    if (duration == null) {
+      throw new Error("MP3/M4A cần nhập duration thực tế theo giây.");
+    }
+
+    const voiceDir = path.join(projectDir, "voice");
+    fs.mkdirSync(voiceDir, {recursive: true});
+    const target = path.join(voiceDir, assetId + ext);
+    fs.writeFileSync(target, bytes);
+
+    asset.status = "qa_pending";
+    asset.file.uri = path.relative(projectDir, target).replaceAll(path.sep, "/");
+    asset.file.mime_type = audioMime(ext);
+    asset.file.duration_sec = duration;
+    asset.file.checksum = crypto.createHash("sha256").update(bytes).digest("hex");
+
+    writeJson(actualManifest, manifest);
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+export async function setVoiceDecisionAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const assetId = String(formData.get("assetId") ?? "");
+    const decision = String(formData.get("decision") ?? "");
+    const qaId = String(formData.get("qaId") ?? "").trim();
+
+    if (!["approved", "rejected"].includes(decision)) {
+      throw new Error("Decision không hợp lệ.");
+    }
+
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+    const manifestPath = path.join(projectDir, project.paths.voice_assets_manifest);
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error("Chưa có voice-assets.json. Hãy import audio trước.");
+    }
+
+    const manifest = readJson(manifestPath);
+    const asset = manifest.assets.find((value: any) => value.asset_id === assetId);
+    if (!asset) throw new Error("Không tìm thấy voice asset " + assetId + ".");
+
+    if (decision === "approved") {
+      if (!qaId) throw new Error("Approve voice cần QA ID.");
+      if (!asset.file?.uri || asset.file?.duration_sec == null) {
+        throw new Error("Voice asset thiếu file hoặc duration.");
+      }
+      const filePath = path.resolve(projectDir, asset.file.uri);
+      if (!fs.existsSync(filePath)) throw new Error("File audio không tồn tại.");
+
+      const fullSpec = readJson(path.join(projectDir, project.paths.voice_spec));
+      const segment = fullSpec.segments.find(
+        (value: any) => value.output_asset_id === assetId,
+      );
+      if (!segment) throw new Error("Không có VoiceSpec segment tương ứng.");
+
+      const report = validateVoiceAssets(
+        {...fullSpec, segments: [segment]},
+        [asset],
+        {requireApproved: false},
+      );
+      if (!report.ok) {
+        throw new Error(
+          "Deterministic Voice QA failed: " +
+            report.errors.map((value) => "[" + value.code + "] " + value.message).join(" | "),
+        );
+      }
+
+      asset.status = "approved";
+      asset.qa_result_ids = [...new Set([...(asset.qa_result_ids ?? []), qaId])];
+    } else {
+      asset.status = "rejected";
+      if (qaId) {
+        asset.qa_result_ids = [...new Set([...(asset.qa_result_ids ?? []), qaId])];
+      }
+    }
+
+    writeJson(manifestPath, manifest);
     refresh(slug);
   } catch (error) {
     actionError(error);
