@@ -1,0 +1,232 @@
+{
+  "storyboard_id": "SB001",
+  "target_duration_sec": 55,
+  "scenes": [
+    {
+      "scene_id": "S1",
+      "script_part_ids": [
+        "hook"
+      ],
+      "duration_sec": 5,
+      "narration": "Vì sao phía sau tủ lạnh lại nóng, trong khi bên trong thì lạnh?",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Establish one realistic refrigerator and the viewer's observation that its rear area feels warm.",
+      "visual_type": "real_asset",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": null,
+      "relationship": "anchor",
+      "camera_action": "slow_push_toward_rear",
+      "visual_transforms": [],
+      "transition_out": "continue_push",
+      "transition_reason": "Move into the same refrigerator for the explanation.",
+      "required_objects": [
+        "refrigerator"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    },
+    {
+      "scene_id": "S2",
+      "script_part_ids": [
+        "SG1"
+      ],
+      "duration_sec": 9,
+      "narration": "Tủ lạnh không tạo ra cái lạnh. Nó lấy nhiệt từ khoang bên trong rồi chuyển nhiệt ra môi trường.",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Reveal that heat is being moved from the cold compartment to the surroundings.",
+      "visual_type": "reference_edit",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": "S1",
+      "relationship": "derived",
+      "camera_action": "maintain_angle_with_cutaway",
+      "visual_transforms": [
+        "interior_cutaway",
+        "heat_flow_inside_to_outside"
+      ],
+      "transition_out": "follow_refrigerant_path",
+      "transition_reason": "Continue from the real object into its internal mechanism.",
+      "required_objects": [
+        "refrigerator",
+        "heat_flow_arrows"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    },
+    {
+      "scene_id": "S3",
+      "script_part_ids": [
+        "SG2"
+      ],
+      "duration_sec": 8,
+      "narration": "Môi chất lạnh hấp thụ nhiệt ở dàn bay hơi, sau đó được máy nén đẩy sang dàn ngưng.",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Show the simplified evaporator → compressor → condenser path without changing refrigerator identity.",
+      "visual_type": "technical_diagram",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": "S2",
+      "relationship": "derived",
+      "camera_action": "locked_cutaway",
+      "visual_transforms": [
+        "highlight_evaporator",
+        "trace_refrigerant_path",
+        "highlight_compressor",
+        "highlight_condenser"
+      ],
+      "transition_out": "hold_on_condenser",
+      "transition_reason": "End at the heat-rejection component for the next explanation.",
+      "required_objects": [
+        "evaporator",
+        "compressor",
+        "condenser",
+        "refrigerant_path"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    },
+    {
+      "scene_id": "S4",
+      "script_part_ids": [
+        "SG3"
+      ],
+      "duration_sec": 9,
+      "narration": "Ở dàn ngưng, nhiệt được truyền ra không khí. Vì vậy khu vực thải nhiệt sẽ ấm lên khi tủ hoạt động.",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Animate heat leaving the condenser/heat-rejection area into room air.",
+      "visual_type": "programmatic_animation",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": "S3",
+      "relationship": "continuation",
+      "camera_action": "close_on_heat_rejection_area",
+      "visual_transforms": [
+        "heat_arrows_outward",
+        "warm_surface_highlight"
+      ],
+      "transition_out": "widen_for_design_comparison",
+      "transition_reason": "Prepare to show that the rejection location can vary by design.",
+      "required_objects": [
+        "heat_rejection_area",
+        "outward_heat_arrows"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    },
+    {
+      "scene_id": "S5",
+      "script_part_ids": [
+        "SG4"
+      ],
+      "duration_sec": 9,
+      "narration": "Vị trí này tùy thiết kế: có tủ thải nhiệt phía sau, có tủ tích hợp đường tản nhiệt ở hai bên.",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Compare rear and side heat-rejection layouts while preserving the same refrigerator as the main visual anchor.",
+      "visual_type": "reference_edit",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": "S4",
+      "relationship": "derived",
+      "camera_action": "controlled_rotate_or_split_overlay",
+      "visual_transforms": [
+        "rear_layout_overlay",
+        "side_layout_overlay"
+      ],
+      "transition_out": "return_to_primary_example",
+      "transition_reason": "Resolve the design variation and return to the video's rear-warm example.",
+      "required_objects": [
+        "refrigerator",
+        "rear_heat_rejection_overlay",
+        "side_heat_rejection_overlay"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    },
+    {
+      "scene_id": "S6",
+      "script_part_ids": [
+        "SG5"
+      ],
+      "duration_sec": 7,
+      "narration": "Do đó, mặt ngoài ấm lên có thể là một phần bình thường của quá trình làm lạnh.",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Return to the exterior and show warmth as a normal consequence at the designed heat-rejection surface.",
+      "visual_type": "reference_edit",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": "S5",
+      "relationship": "continuation",
+      "camera_action": "return_to_rear_three_quarter_view",
+      "visual_transforms": [
+        "subtle_warm_surface_highlight"
+      ],
+      "transition_out": "pull_back",
+      "transition_reason": "Prepare the final answer using the same anchor shot.",
+      "required_objects": [
+        "refrigerator"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    },
+    {
+      "scene_id": "S7",
+      "script_part_ids": [
+        "payoff"
+      ],
+      "duration_sec": 8,
+      "narration": "Nói ngắn gọn: bên trong lạnh được vì nhiệt đã được chuyển ra ngoài — và phía sau nóng là một dấu hiệu của quá trình đó.",
+      "narration_mode": "verbatim",
+      "on_screen_text": "",
+      "visual_goal": "Summarize the full heat path from interior to the exterior heat-rejection area.",
+      "visual_type": "programmatic_animation",
+      "primary_entity_ids": [
+        "fridge_01"
+      ],
+      "anchor_asset_id": "A1",
+      "parent_scene_id": "S6",
+      "relationship": "derived",
+      "camera_action": "wide_summary_view",
+      "visual_transforms": [
+        "interior_to_exterior_heat_path",
+        "final_rear_highlight"
+      ],
+      "transition_out": "end",
+      "transition_reason": "Close on the original question with the same refrigerator.",
+      "required_objects": [
+        "refrigerator",
+        "heat_path"
+      ],
+      "motion": {},
+      "qa_status": "pending"
+    }
+  ],
+  "total_duration_sec": 55,
+  "continuity_notes": [
+    "Use fridge_01 and anchor asset A1 throughout all seven scenes.",
+    "All cutaways and diagrams should visually derive from the same refrigerator rather than creating unrelated appliances.",
+    "Scene 5 shows a design comparison but returns to the same primary example immediately."
+  ],
+  "feasibility_notes": [
+    "The sequence can be produced with one real/reference refrigerator image plus overlays, cutaway edits, SVG arrows, and Remotion motion primitives.",
+    "No full-scene generative video is required."
+  ]
+}
