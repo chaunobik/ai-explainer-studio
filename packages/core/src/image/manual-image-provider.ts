@@ -2,6 +2,7 @@ import type { ImageProvider } from "./image-provider";
 import type {
   DeriveSceneSpec,
   GenerateAnchorSpec,
+  GenerateReferencePackSpec,
   ImageProviderJob,
   ImageProviderResult,
 } from "./types";
@@ -9,6 +10,15 @@ import type {
 export class ManualImageProvider implements ImageProvider {
   readonly id = "manual-chatgpt-image";
   readonly mode = "manual" as const;
+
+  async generateReferencePack(
+    spec: GenerateReferencePackSpec,
+  ): Promise<ImageProviderResult> {
+    return {
+      kind: "requires_user_action",
+      job: this.buildJob("generate_reference_pack", spec, []),
+    };
+  }
 
   async generateAnchor(spec: GenerateAnchorSpec): Promise<ImageProviderResult> {
     return {
@@ -29,8 +39,8 @@ export class ManualImageProvider implements ImageProvider {
   }
 
   private buildJob(
-    operation: "generate_anchor" | "derive_scene",
-    spec: GenerateAnchorSpec | DeriveSceneSpec,
+    operation: "generate_reference_pack" | "generate_anchor" | "derive_scene",
+    spec: GenerateReferencePackSpec | GenerateAnchorSpec | DeriveSceneSpec,
     referenceAssetIds: string[],
   ): ImageProviderJob {
     return {
@@ -57,9 +67,11 @@ export class ManualImageProvider implements ImageProvider {
       status: "requires_user_action",
       attempt: spec.attempt,
       userInstructions:
-        operation === "generate_anchor"
-          ? "Use this prompt package in ChatGPT Image, then import the approved result into the project."
-          : "Upload the approved reference asset(s) to ChatGPT Image, apply this edit prompt, then import the derived result.",
+        operation === "generate_reference_pack"
+          ? "Use this exact prompt in ChatGPT Image to create one multi-view reference board, then import the result for Multi-View QA."
+          : operation === "generate_anchor"
+            ? "Use this prompt package in ChatGPT Image with the approved reference-pack view(s), then import the result into the project."
+            : "Upload the approved reference asset(s) to ChatGPT Image, apply this edit prompt, then import the derived result.",
     };
   }
 }
