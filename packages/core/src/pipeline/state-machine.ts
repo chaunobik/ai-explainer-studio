@@ -54,6 +54,7 @@ export function refreshPipelineState(
     if (
       current.status === "passed" ||
       current.status === "in_progress" ||
+      current.status === "failed" ||
       current.status === "needs_human_review"
     ) {
       continue;
