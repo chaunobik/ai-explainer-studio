@@ -19,6 +19,16 @@
     "photographic_realism": "pass",
     "technical_safety": "pass"
   },
+  "check_notes": {
+    "same_object_identity": "All panels depict the same two-door top-freezer refrigerator without a product-variant change.",
+    "geometry_consistency": "Door proportions, divider, handles, side depth, feet and rear outline remain coherent across the example views.",
+    "material_consistency": "Dark-charcoal finish, trim and reflection behavior remain stable across the reference board.",
+    "required_view_coverage": "All eight required views are represented once and are recognizable from the intended direction.",
+    "camera_plausibility": "Perspective is compatible with a normal smartphone wide camera without fisheye or impossible orthographic mixing.",
+    "photographic_realism": "Lighting, contact shadows, material reflections and processing read as plausible household product photography.",
+    "technical_safety": "No unsupported hidden refrigeration internals are introduced in the reference board."
+  },
+  "summary": "Example A0 is suitable as a canonical reference pack because identity, geometry, materials, required views and photographic realism remain consistent.",
   "view_results": [
     {
       "view_id": "front",
