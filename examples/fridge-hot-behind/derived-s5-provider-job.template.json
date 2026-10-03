@@ -1,0 +1,44 @@
+{
+  "job_id": "manual-chatgpt-image:EXAMPLE-FRIDGE-001:S5:A5:0",
+  "provider_id": "manual-chatgpt-image",
+  "provider_mode": "manual",
+  "operation": "derive_scene",
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "scene_id": "S5",
+  "output_asset_id": "A5",
+  "reference_asset_ids": [
+    "A1"
+  ],
+  "prompt": "Create a derived scene image from the supplied approved reference asset(s).\nDo not redesign or independently regenerate the primary entity.\n\nScene objective:\nCompare rear and side heat-rejection layouts while preserving the same refrigerator as the main visual anchor.\n\nApply only these visual transforms:\n- rear versus side heat-rejection overlays\n\nPreserve these identity features exactly:\n- same fridge body\n- same finish\n- same proportions\n\nTreat all unmentioned visual details as inherited from the approved reference.\nKeep camera geometry and physical proportions plausible unless a specified transform requires a controlled change.",
+  "negative_constraints": [
+    "change to stainless-steel finish",
+    "change to French-door or side-by-side layout",
+    "change door count or proportions",
+    "replace with a different refrigerator model",
+    "move to an unrelated kitchen without a context switch",
+    "alter component locations merely for visual convenience"
+  ],
+  "continuity_constraints": [
+    "Preserve: same fridge body",
+    "Preserve: same finish",
+    "Preserve: same proportions",
+    "All physical refrigerator scenes must derive from A1 or an approved derivative.",
+    "Technical abstractions should preserve the recognizable fridge_01 silhouette when shown together with the appliance.",
+    "Scene 5 may compare heat-rejection layouts but must keep fridge_01 as the primary example."
+  ],
+  "technical_constraints": [
+    "Show rear-versus-side heat-rejection locations as a comparison overlay on the same fridge_01 body.",
+    "Do not imply that every refrigerator uses both layouts simultaneously.",
+    "Do not introduce a second refrigerator model."
+  ],
+  "output_spec": {
+    "aspect_ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "transparent_background": false
+  },
+  "status": "requires_user_action",
+  "attempt": 0,
+  "user_instructions": "Upload the approved reference asset(s) to ChatGPT Image, apply this edit prompt, then import the derived result.",
+  "error": null
+}

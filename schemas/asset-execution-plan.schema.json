@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/asset-execution-plan.schema.json",
+  "title": "AssetExecutionPlan",
+  "type": "object",
+  "required": [
+    "project_id",
+    "assets"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "asset_id",
+          "scene_id",
+          "executor",
+          "operation",
+          "depends_on_approved_assets",
+          "status",
+          "notes"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^A[0-9]+$"
+          },
+          "scene_id": {
+            "type": "string",
+            "pattern": "^S[0-9]+$"
+          },
+          "executor": {
+            "type": "string",
+            "enum": [
+              "image_provider",
+              "renderer"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "generate_anchor",
+              "derive_scene",
+              "technical_diagram",
+              "programmatic_animation"
+            ]
+          },
+          "depends_on_approved_assets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^A[0-9]+$"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked",
+              "deferred",
+              "completed"
+            ]
+          },
+          "provider_job_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,88 @@
+{
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "assets": [
+    {
+      "asset_id": "A1",
+      "scene_id": "S1",
+      "executor": "image_provider",
+      "operation": "generate_anchor",
+      "depends_on_approved_assets": [],
+      "status": "ready",
+      "provider_job_path": "anchor-provider-job.json",
+      "notes": "Generate/import first; all derived image assets are blocked until A1 passes Visual QA."
+    },
+    {
+      "asset_id": "A2",
+      "scene_id": "S2",
+      "executor": "image_provider",
+      "operation": "derive_scene",
+      "depends_on_approved_assets": [
+        "A1"
+      ],
+      "status": "blocked",
+      "provider_job_path": "derived-s2-provider-job.json",
+      "notes": "Cutaway derivative of approved A1."
+    },
+    {
+      "asset_id": "A3",
+      "scene_id": "S3",
+      "executor": "renderer",
+      "operation": "technical_diagram",
+      "depends_on_approved_assets": [
+        "A1"
+      ],
+      "status": "deferred",
+      "provider_job_path": null,
+      "notes": "Build as deterministic SVG/Remotion technical diagram in Milestone 4 rather than AI image generation."
+    },
+    {
+      "asset_id": "A4",
+      "scene_id": "S4",
+      "executor": "renderer",
+      "operation": "programmatic_animation",
+      "depends_on_approved_assets": [
+        "A3"
+      ],
+      "status": "deferred",
+      "provider_job_path": null,
+      "notes": "Heat-rejection animation belongs to the code renderer."
+    },
+    {
+      "asset_id": "A5",
+      "scene_id": "S5",
+      "executor": "image_provider",
+      "operation": "derive_scene",
+      "depends_on_approved_assets": [
+        "A1"
+      ],
+      "status": "blocked",
+      "provider_job_path": "derived-s5-provider-job.template.json",
+      "notes": "Rear-versus-side layout comparison must preserve fridge_01 identity."
+    },
+    {
+      "asset_id": "A6",
+      "scene_id": "S6",
+      "executor": "image_provider",
+      "operation": "derive_scene",
+      "depends_on_approved_assets": [
+        "A1"
+      ],
+      "status": "blocked",
+      "provider_job_path": "derived-s6-provider-job.template.json",
+      "notes": "Return to the canonical exterior from approved A1."
+    },
+    {
+      "asset_id": "A7",
+      "scene_id": "S7",
+      "executor": "renderer",
+      "operation": "programmatic_animation",
+      "depends_on_approved_assets": [
+        "A3",
+        "A6"
+      ],
+      "status": "deferred",
+      "provider_job_path": null,
+      "notes": "Final heat-path summary is best produced programmatically in Milestone 4."
+    }
+  ]
+}
