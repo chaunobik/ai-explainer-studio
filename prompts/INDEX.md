@@ -12,6 +12,10 @@
 - storyboard/STORYBOARD_PROMPT.md — verbatim script-to-scene decomposition
 - storyboard-qa/STORYBOARD_QA_PROMPT.md — timing, coverage, visual fit, feasibility and continuity-intent QA
 
+## Image Prompting
+- image-prompt/IMAGE_PROMPT_SPEC_PROMPT.md — compile one precise per-asset visual instruction package
+- image-prompt-qa/IMAGE_PROMPT_QA_PROMPT.md — reject ambiguous or technically unsafe image prompts before generation
+
 ## Visual Intelligence
 - visual/VISUAL_PLAN_PROMPT.md — AssetBible, routing, lineage and transition planning
 - continuity-qa/CONTINUITY_QA_PROMPT.md — identity, routing and transition continuity QA
