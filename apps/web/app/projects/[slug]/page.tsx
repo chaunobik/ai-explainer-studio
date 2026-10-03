@@ -2,6 +2,10 @@ import Link from "next/link";
 import {CopyButton} from "../../../components/CopyButton";
 import {loadProjectDashboard} from "../../../lib/project-runtime";
 import {
+  renderFinalAction,
+  renderScenePreviewAction,
+  saveFinalQaAction,
+  saveMotionQaAction,
   savePromptQaAction,
   setImageDecisionAction,
   setVoiceDecisionAction,
@@ -79,6 +83,19 @@ export default function ProjectPage({
         "\n\n--- INPUT ImagePromptSpec ---\n" +
         JSON.stringify(prompt, null, 2)
       : "";
+
+  const motionQaPackage =
+    data.motionQaTemplate +
+    "\n\n--- MOTION SPEC ---\n" +
+    JSON.stringify(data.motionSpec, null, 2) +
+    "\n\n--- STORYBOARD ---\n" +
+    JSON.stringify(data.storyboard, null, 2);
+
+  const finalQaPackage =
+    data.finalQaTemplate +
+    "\n\nProject: " +
+    data.manifest.topic +
+    "\nExpected output: 1080x1920 vertical explainer video.";
 
   return (
     <main className="shell">
@@ -314,7 +331,133 @@ export default function ProjectPage({
                 </div>
               ) : null}
 
-              {!["upload_image", "review_image", "prompt_qa", "generate_image", "repair_image", "upload_voice", "review_voice"].includes(data.guided.kind) ? (
+
+              {data.guided.kind === "motion_qa" ? (
+                <div>
+                  <div className="button-row">
+                    <CopyButton text={motionQaPackage} label="Copy Motion QA Package" />
+                  </div>
+                  <p className="small muted">
+                    Render từng scene cần kiểm tra. Sau đó xem preview và upload video preview vào ChatGPT cùng Motion QA Package.
+                  </p>
+                  <div className="scene-preview-grid">
+                    {data.storyboard.scenes.map((scene: any) => {
+                      const rendered = data.previewSceneIds.includes(scene.scene_id);
+                      return (
+                        <div className="scene-preview-card" key={scene.scene_id}>
+                          <div className="scene-preview-head">
+                            <strong>{scene.scene_id}</strong>
+                            <span className={rendered ? "mini-pass" : "mini-wait"}>
+                              {rendered ? "Rendered" : "Not rendered"}
+                            </span>
+                          </div>
+                          <p className="small muted">{scene.narration}</p>
+                          {rendered ? (
+                            <video
+                              className="video-preview small-video"
+                              controls
+                              src={"/api/projects/" + params.slug + "/previews/" + scene.scene_id}
+                            />
+                          ) : null}
+                          <form action={renderScenePreviewAction}>
+                            <input type="hidden" name="slug" value={params.slug} />
+                            <input type="hidden" name="sceneId" value={scene.scene_id} />
+                            <button className="button secondary" type="submit">
+                              {rendered ? "Render lại " + scene.scene_id : "Render " + scene.scene_id}
+                            </button>
+                          </form>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <form action={saveMotionQaAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <div className="form-row">
+                      <label htmlFor="motion-qa-json">Dán Motion QA JSON từ ChatGPT</label>
+                      <textarea
+                        id="motion-qa-json"
+                        name="qaJson"
+                        placeholder='{"qa_result":{"stage":"motion","status":"pass",...},...}'
+                        required
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button" type="submit">Lưu Motion QA & tiếp tục</button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
+              {data.guided.kind === "render_project" ? (
+                <div>
+                  <p className="muted">
+                    Tất cả gate trước render đã PASS. Final render sẽ dùng đúng approved images, voice, checksum và Motion QA.
+                  </p>
+                  <form action={renderFinalAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <button className="button" type="submit">Render Final Video</button>
+                  </form>
+                </div>
+              ) : null}
+
+              {data.guided.kind === "final_qa" ? (
+                <div>
+                  {data.outputExists ? (
+                    <video
+                      className="video-preview"
+                      controls
+                      src={"/api/projects/" + params.slug + "/final"}
+                    />
+                  ) : null}
+                  <div className="button-row">
+                    <CopyButton text={finalQaPackage} label="Copy Final QA Package" />
+                  </div>
+                  <p className="small muted">
+                    Xem toàn bộ video, sau đó upload final.mp4 vào ChatGPT cùng package trên để lấy Final QA JSON.
+                  </p>
+                  <form action={saveFinalQaAction}>
+                    <input type="hidden" name="slug" value={params.slug} />
+                    <div className="form-row">
+                      <label htmlFor="final-qa-json">Dán Final QA JSON</label>
+                      <textarea
+                        id="final-qa-json"
+                        name="qaJson"
+                        placeholder='{"qa_result":{"stage":"final","status":"pass",...},...}'
+                        required
+                      />
+                    </div>
+                    <div className="button-row">
+                      <button className="button" type="submit">Lưu Final QA</button>
+                    </div>
+                  </form>
+                </div>
+              ) : null}
+
+              {data.guided.kind === "complete" && data.outputExists ? (
+                <div>
+                  <video
+                    className="video-preview"
+                    controls
+                    src={"/api/projects/" + params.slug + "/final"}
+                  />
+                  <p className="notice">Project COMPLETE — Final Video QA đã PASS.</p>
+                </div>
+              ) : null}
+
+              {![
+                "upload_image",
+                "review_image",
+                "prompt_qa",
+                "generate_image",
+                "repair_image",
+                "upload_voice",
+                "review_voice",
+                "motion_qa",
+                "render_project",
+                "final_qa",
+                "complete",
+              ].includes(data.guided.kind) ? (
                 <div>
                   <p className="muted">
                     Readiness engine đã xác định bước này. Điều kiện hoàn thành được hiển thị ngay bên dưới.
