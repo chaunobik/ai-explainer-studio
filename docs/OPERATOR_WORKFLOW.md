@@ -65,3 +65,22 @@ Do this after every import/approval. The readiness report should unlock only the
 ## Key safety rule
 
 Do not edit `image-assets.json` manually unless debugging the tool. Use the CLI so checksum, file metadata, dependency gates, and status changes stay consistent.
+
+
+## 6. Import voice clips
+
+```bash
+npm run voice:import -- --asset=V1 --file="D:/path/V1.mp3" --duration=4.8
+```
+
+- WAV duration can be measured automatically.
+- MP3/M4A require `--duration=<seconds>`.
+- Import sets the clip to `qa_pending` and records SHA-256.
+
+Approve only after Voice QA:
+
+```bash
+npm run voice:status -- --asset=V1 --status=approved --qa-id=QA-VOICE-V1
+```
+
+The approval command re-runs deterministic voice checks and rejects clips with text/timing metadata problems.
