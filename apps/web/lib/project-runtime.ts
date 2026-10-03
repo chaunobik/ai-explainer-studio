@@ -32,6 +32,8 @@ export interface DashboardData {
   promptSpecs: any[];
   promptQaById: Record<string, any>;
   promptQaTemplate: string;
+  motionQaTemplate: string;
+  finalQaTemplate: string;
   imageManifest: any;
   voiceManifest: any;
   voiceSpec: any;
@@ -481,6 +483,14 @@ export function loadProjectDashboard(slug: string): DashboardData {
     promptQaById: Object.fromEntries(promptQaById),
     promptQaTemplate: fs.readFileSync(
       path.join(repoRoot(), "prompts", "image-prompt-qa", "IMAGE_PROMPT_QA_PROMPT.md"),
+      "utf8",
+    ),
+    motionQaTemplate: fs.readFileSync(
+      path.join(repoRoot(), "prompts", "motion-qa", "MOTION_QA_PROMPT.md"),
+      "utf8",
+    ),
+    finalQaTemplate: fs.readFileSync(
+      path.join(repoRoot(), "prompts", "final-qa", "FINAL_QA_PROMPT.md"),
       "utf8",
     ),
     imageManifest,
