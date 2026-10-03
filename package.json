@@ -1,0 +1,15 @@
+{
+  "name": "ai-explainer-studio",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc -b packages/core",
+    "build:core": "tsc -b packages/core"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
