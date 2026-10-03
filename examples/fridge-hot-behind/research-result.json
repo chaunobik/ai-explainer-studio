@@ -1,0 +1,95 @@
+{
+  "research_id": "R001",
+  "topic": "Tại sao tủ lạnh nóng phía sau?",
+  "research_questions": [
+    "Tủ lạnh thực sự làm lạnh bằng cơ chế nào?",
+    "Nhiệt từ bên trong tủ đi đâu?",
+    "Dàn bay hơi, máy nén và dàn ngưng đóng vai trò gì?",
+    "Vì sao bề mặt ngoài của tủ có thể ấm hoặc nóng?",
+    "Vị trí thải nhiệt có giống nhau ở mọi thiết kế không?"
+  ],
+  "sources": [
+    {
+      "source_id": "SRC1",
+      "title": "Refrigerator & Freezer - Sealed System Operation",
+      "url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=16911",
+      "publisher": "GE Appliances",
+      "published_at": null,
+      "accessed_at": null,
+      "source_type": "manufacturer",
+      "notes": "Describes compressor, condenser, capillary tube, evaporator, and where condenser heat is rejected."
+    },
+    {
+      "source_id": "SRC2",
+      "title": "4.3 Refrigerators and Heat Pumps - University Physics Volume 2",
+      "url": "https://openstax.org/books/university-physics-volume-2/pages/4-3-refrigerators-and-heat-pumps",
+      "publisher": "OpenStax",
+      "published_at": null,
+      "accessed_at": null,
+      "source_type": "textbook",
+      "notes": "Explains that a refrigerator removes heat from the cold reservoir, requires work input, and rejects heat to the outside at the condenser."
+    },
+    {
+      "source_id": "SRC3",
+      "title": "Vì sao tủ lạnh Samsung nóng hai bên cạnh tủ?",
+      "url": "https://www.samsung.com/vn/support/home-appliances/why-are-the-side-walls-of-a-samsung-refrigerator-heating-up/",
+      "publisher": "Samsung Vietnam",
+      "published_at": null,
+      "accessed_at": null,
+      "source_type": "manufacturer",
+      "notes": "Explains that some refrigerator designs dissipate heat through pipes integrated into the side walls."
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F1",
+      "summary": "A refrigerator removes heat from the cooled interior and rejects that heat to the warmer surroundings; the cycle requires work input.",
+      "source_ids": [
+        "SRC2"
+      ],
+      "notes": "Core thermodynamic explanation."
+    },
+    {
+      "finding_id": "F2",
+      "summary": "In a household refrigeration system, refrigerant absorbs heat at the evaporator, is compressed, and then rejects heat at the condenser.",
+      "source_ids": [
+        "SRC1",
+        "SRC2"
+      ],
+      "notes": "Mechanism-level sequence for the explainer."
+    },
+    {
+      "finding_id": "F3",
+      "summary": "GE notes that condenser heat may be discharged from the front or rear depending on refrigerator/freezer design.",
+      "source_ids": [
+        "SRC1"
+      ],
+      "notes": "Prevents overgeneralizing rear heating to every model."
+    },
+    {
+      "finding_id": "F4",
+      "summary": "Samsung documents designs where heat-dissipation piping is integrated into the side walls, causing the sides to become warm during operation.",
+      "source_ids": [
+        "SRC3"
+      ],
+      "notes": "Useful design variation for continuity-safe explanation."
+    },
+    {
+      "finding_id": "F5",
+      "summary": "Exterior warmth at the designed heat-rejection area can be a normal consequence of the refrigeration process.",
+      "source_ids": [
+        "SRC1",
+        "SRC3"
+      ],
+      "notes": "Should not be generalized to every abnormal overheating symptom."
+    }
+  ],
+  "uncertainties": [
+    {
+      "uncertainty_id": "U1",
+      "description": "The exact location and temperature of the heat-rejection surface depend on refrigerator model and installation, so the video must avoid claiming that every unit becomes hot specifically at the rear.",
+      "severity": "medium",
+      "resolution_needed": false
+    }
+  ]
+}

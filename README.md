@@ -26,7 +26,9 @@ AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually c
 - [QAResult](schemas/qa-result.schema.json)
 
 ## Current development phase
-**Milestone 1 — Content Intelligence**
+**Milestone 1 — Content Intelligence: COMPLETE**
+
+The structured pipeline is now defined for:
 
 ```
 Topic
@@ -38,4 +40,8 @@ Topic
 → Storyboard QA
 ```
 
-The first implementation goal is to make this pipeline produce structured, reviewable JSON before adding visual generation and rendering.
+A canonical end-to-end example is available under `examples/fridge-hot-behind/`.
+
+**Next: Milestone 2 — Visual Intelligence**
+
+AssetBible → entity continuity → scene lineage → visual routing → continuity QA

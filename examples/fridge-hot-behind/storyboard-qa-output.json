@@ -1,0 +1,65 @@
+{
+  "qa_result": {
+    "qa_id": "QA-SB-001",
+    "stage": "storyboard",
+    "artifact_id": "SB001",
+    "status": "pass",
+    "scores": {
+      "script_fidelity": 1,
+      "timing": 1,
+      "visual_match": 0.98,
+      "feasibility": 0.98,
+      "continuity_intent": 0.99
+    },
+    "critical_failures": [],
+    "warnings": [
+      "Scene 5 must visually communicate that rear-versus-side heat rejection is model-dependent without replacing the canonical fridge_01 identity."
+    ],
+    "repair_actions": [],
+    "retry_count": 0
+  },
+  "scene_checks": [
+    {
+      "scene_id": "S1",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S2",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S3",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S4",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S5",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S6",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "scene_id": "S7",
+      "status": "pass",
+      "issues": []
+    }
+  ],
+  "timing_check": {
+    "declared_total_sec": 55,
+    "scene_sum_sec": 55,
+    "delta_sec": 0,
+    "status": "pass"
+  },
+  "repair_actions": []
+}

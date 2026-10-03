@@ -1,0 +1,95 @@
+{
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Tủ lạnh làm mát bằng cách chuyển nhiệt từ khoang bên trong ra môi trường xung quanh.",
+      "claim_type": "mechanism",
+      "status": "approved",
+      "source_ids": [
+        "SRC2"
+      ],
+      "evidence_summary": "OpenStax describes a refrigerator as removing heat from the cold reservoir and rejecting heat to the hot reservoir.",
+      "confidence": 0.98,
+      "criticality": "critical",
+      "rejection_reason": null,
+      "allowed_for_script": true
+    },
+    {
+      "claim_id": "C2",
+      "text": "Trong chu trình làm lạnh, môi chất hấp thụ nhiệt ở dàn bay hơi, được máy nén nén rồi đi tới dàn ngưng, nơi nhiệt được thải ra ngoài.",
+      "claim_type": "mechanism",
+      "status": "approved",
+      "source_ids": [
+        "SRC1",
+        "SRC2"
+      ],
+      "evidence_summary": "GE and OpenStax describe the evaporator-compressor-condenser sequence and condenser heat rejection.",
+      "confidence": 0.97,
+      "criticality": "critical",
+      "rejection_reason": null,
+      "allowed_for_script": true
+    },
+    {
+      "claim_id": "C3",
+      "text": "Tùy thiết kế, nhiệt từ dàn ngưng có thể được thải ra phía trước hoặc phía sau tủ.",
+      "claim_type": "context",
+      "status": "approved",
+      "source_ids": [
+        "SRC1"
+      ],
+      "evidence_summary": "GE states that condenser heat can be blown out the front or rear depending on the model.",
+      "confidence": 0.95,
+      "criticality": "high",
+      "rejection_reason": null,
+      "allowed_for_script": true
+    },
+    {
+      "claim_id": "C4",
+      "text": "Một số tủ lạnh tích hợp đường tản nhiệt vào hai bên thành tủ nên hai bên có thể ấm khi hoạt động.",
+      "claim_type": "context",
+      "status": "approved",
+      "source_ids": [
+        "SRC3"
+      ],
+      "evidence_summary": "Samsung Vietnam explains that heat-dissipation pipes can be installed in the side walls.",
+      "confidence": 0.95,
+      "criticality": "medium",
+      "rejection_reason": null,
+      "allowed_for_script": true
+    },
+    {
+      "claim_id": "C5",
+      "text": "Bề mặt tại khu vực được thiết kế để thải nhiệt có thể ấm lên khi tủ hoạt động; vị trí cụ thể phụ thuộc thiết kế.",
+      "claim_type": "cause_effect",
+      "status": "approved",
+      "source_ids": [
+        "SRC1",
+        "SRC3"
+      ],
+      "evidence_summary": "Manufacturer documentation links exterior warmth to heat rejection and shows that the location varies by design.",
+      "confidence": 0.94,
+      "criticality": "high",
+      "rejection_reason": null,
+      "allowed_for_script": true
+    }
+  ],
+  "qa_result": {
+    "qa_id": "QA-R-001",
+    "stage": "research",
+    "artifact_id": "R001",
+    "status": "pass",
+    "scores": {
+      "source_quality": 0.95,
+      "traceability": 0.98,
+      "mechanism_accuracy": 0.98,
+      "scope_fit": 0.96
+    },
+    "critical_failures": [],
+    "warnings": [
+      "Do not imply that every refrigerator rejects heat specifically at the rear; preserve the model-dependent design nuance."
+    ],
+    "repair_actions": [],
+    "retry_count": 0
+  },
+  "research_repair_actions": []
+}

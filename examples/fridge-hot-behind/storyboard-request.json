@@ -1,0 +1,91 @@
+{
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "topic": "Tại sao tủ lạnh nóng phía sau?",
+  "target_duration_sec": 55,
+  "script": {
+    "script_id": "SC001",
+    "language": "vi-VN",
+    "target_duration_sec": 55,
+    "hook": {
+      "spoken_text": "Vì sao phía sau tủ lạnh lại nóng, trong khi bên trong thì lạnh?",
+      "claim_ids": []
+    },
+    "segments": [
+      {
+        "segment_id": "SG1",
+        "spoken_text": "Tủ lạnh không tạo ra cái lạnh. Nó lấy nhiệt từ khoang bên trong rồi chuyển nhiệt ra môi trường.",
+        "claim_ids": [
+          "C1"
+        ],
+        "purpose": "reveal",
+        "visualizability_notes": "Start from the same refrigerator anchor and reveal heat leaving the interior."
+      },
+      {
+        "segment_id": "SG2",
+        "spoken_text": "Môi chất lạnh hấp thụ nhiệt ở dàn bay hơi, sau đó được máy nén đẩy sang dàn ngưng.",
+        "claim_ids": [
+          "C2"
+        ],
+        "purpose": "explain",
+        "visualizability_notes": "Use a simplified cutaway path: evaporator → compressor → condenser."
+      },
+      {
+        "segment_id": "SG3",
+        "spoken_text": "Ở dàn ngưng, nhiệt được truyền ra không khí. Vì vậy khu vực thải nhiệt sẽ ấm lên khi tủ hoạt động.",
+        "claim_ids": [
+          "C2",
+          "C5"
+        ],
+        "purpose": "explain",
+        "visualizability_notes": "Animate heat arrows from the condenser/heat-rejection area to room air."
+      },
+      {
+        "segment_id": "SG4",
+        "spoken_text": "Vị trí này tùy thiết kế: có tủ thải nhiệt phía sau, có tủ tích hợp đường tản nhiệt ở hai bên.",
+        "claim_ids": [
+          "C3",
+          "C4"
+        ],
+        "purpose": "contrast",
+        "visualizability_notes": "Keep the same refrigerator identity while contrasting rear versus side heat-rejection layouts."
+      },
+      {
+        "segment_id": "SG5",
+        "spoken_text": "Do đó, mặt ngoài ấm lên có thể là một phần bình thường của quá trình làm lạnh.",
+        "claim_ids": [
+          "C5"
+        ],
+        "purpose": "payoff_support",
+        "visualizability_notes": "Return to the exterior view and highlight the designed heat-rejection surface."
+      }
+    ],
+    "payoff": {
+      "spoken_text": "Nói ngắn gọn: bên trong lạnh được vì nhiệt đã được chuyển ra ngoài — và phía sau nóng là một dấu hiệu của quá trình đó.",
+      "claim_ids": [
+        "C1",
+        "C5"
+      ]
+    },
+    "approved_claim_ids": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "estimated_word_count": 142,
+    "estimated_duration_sec": 56,
+    "style": "curious_explorer"
+  },
+  "target_scene_count": 7,
+  "visual_policy": {
+    "continuity_priority": "high",
+    "prefer_real_assets": true,
+    "allow_context_switch": true,
+    "avoid_independent_regeneration": true
+  },
+  "production_constraints": [
+    "Use one canonical refrigerator entity through the whole sequence.",
+    "Prefer derived/cutaway views instead of generating unrelated refrigerators."
+  ]
+}

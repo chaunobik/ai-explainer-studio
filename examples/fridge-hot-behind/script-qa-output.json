@@ -1,0 +1,59 @@
+{
+  "qa_result": {
+    "qa_id": "QA-S-001",
+    "stage": "script",
+    "artifact_id": "SC001",
+    "status": "pass",
+    "scores": {
+      "factual_grounding": 0.98,
+      "claim_traceability": 1,
+      "spoken_naturalness": 0.94,
+      "duration_fit": 0.96,
+      "visualizability": 0.97
+    },
+    "critical_failures": [],
+    "warnings": [
+      "The payoff says 'phía sau nóng'; retain the earlier design-dependent nuance visually and contextually so it is understood as the video's example case, not a universal model layout."
+    ],
+    "repair_actions": [],
+    "retry_count": 0
+  },
+  "segment_checks": [
+    {
+      "part_id": "hook",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "part_id": "SG1",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "part_id": "SG2",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "part_id": "SG3",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "part_id": "SG4",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "part_id": "SG5",
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "part_id": "payoff",
+      "status": "pass",
+      "issues": []
+    }
+  ],
+  "repair_actions": []
+}
