@@ -160,6 +160,9 @@ const visualPlan = readJson(path.resolve(projectDir, p.visual_plan));
 const executionPlan = readJson(path.resolve(projectDir, p.asset_execution_plan));
 const motion = readJson(path.resolve(projectDir, p.motion_spec));
 const voiceSpec = readJson(path.resolve(projectDir, p.voice_spec));
+const multiviewReferencePrompt = readJson(
+  path.resolve(projectDir, p.multiview_reference_prompt),
+);
 
 const cross = validateCrossStageArtifacts({
   researchResult: research,
@@ -168,6 +171,7 @@ const cross = validateCrossStageArtifacts({
   storyboard,
   visualPlan,
   imagePromptSpecs: promptSpecs,
+  referencePromptSpecs: [multiviewReferencePrompt],
   providerJobs,
   executionPlan,
 });
