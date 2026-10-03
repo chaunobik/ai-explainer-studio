@@ -8,5 +8,6 @@ export type {
 export type {VoiceProvider} from "./voice-provider";
 export {ManualVoiceProvider} from "./manual-voice-provider";
 export type {VoiceQaOptions} from "./voice-qa";
-export {validateVoiceAssets} from "./voice-qa";
+export type {StoryboardNarrationLike} from "./voice-qa";
+export {validateVoiceAssets, validateVoiceSpecAgainstStoryboard} from "./voice-qa";
 export {buildSceneSubtitleCues, buildSubtitleCues} from "./subtitle";
