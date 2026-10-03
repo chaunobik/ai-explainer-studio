@@ -32,7 +32,7 @@ export interface BaseImageSpec {
 }
 
 export interface GenerateAnchorSpec extends BaseImageSpec {
-  referenceAssetIds?: never[];
+  referenceAssetIds?: string[];
 }
 
 export interface DeriveSceneSpec extends BaseImageSpec {
