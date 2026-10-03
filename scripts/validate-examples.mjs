@@ -56,6 +56,8 @@ const cases = [
   ["voice-spec.json", "voice-spec.schema.json"],
   ["voice-jobs.json", "voice-jobs.schema.json"],
   ["voice-assets.template.json", "voice-assets-manifest.schema.json"],
+  ["image-assets.template.json", "image-assets-manifest.schema.json"],
+  ["project.json", "project-manifest.schema.json"],
 ];
 
 const failures = [];
