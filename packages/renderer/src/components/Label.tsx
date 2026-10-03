@@ -1,5 +1,6 @@
 import React from "react";
-import {interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import {useCurrentFrame, useVideoConfig} from "remotion";
+import {windowOpacity} from "./fade";
 
 interface LabelProps {
   startSec: number;
@@ -26,12 +27,7 @@ export const Label: React.FC<LabelProps> = ({
   const end = endSec * fps;
   if (frame < start || frame > end) return null;
 
-  const opacity = interpolate(
-    frame,
-    [start, start + 5, end - 5, end],
-    [0, 1, 1, 0],
-    {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
-  );
+  const opacity = windowOpacity(frame, start, end, 5);
 
   const translate =
     align === "center" ? "translateX(-50%)" : align === "right" ? "translateX(-100%)" : undefined;
