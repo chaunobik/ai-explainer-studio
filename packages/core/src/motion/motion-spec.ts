@@ -84,6 +84,22 @@ export function validateMotionSpec(
   const issues: ValidationIssue[] = [];
   const sceneIds = spec.scenes.map((scene) => scene.scene_id);
 
+  if (storyboardSceneDurations) {
+    const storyboardIds = [...storyboardSceneDurations.keys()];
+    const motionSet = new Set(sceneIds);
+    const missing = storyboardIds.filter((id) => !motionSet.has(id));
+    const extra = sceneIds.filter((id) => !storyboardSceneDurations.has(id));
+
+    if (missing.length > 0 || extra.length > 0) {
+      add(
+        issues,
+        "MOTION_SCENE_COVERAGE",
+        "motion.scenes",
+        `Motion scenes must exactly match storyboard scenes. Missing: ${missing.join(", ") || "none"}; extra: ${extra.join(", ") || "none"}.`,
+      );
+    }
+  }
+
   if (new Set(sceneIds).size !== sceneIds.length) {
     add(issues, "MOTION_DUP_SCENE", "motion.scenes", "Motion scene IDs must be unique.");
   }
