@@ -49,6 +49,10 @@ Topic
 
 The canonical end-to-end example is under `examples/fridge-hot-behind/`.
 
-**Next: Milestone 3 — Visual Generation**
+**Milestone 3 — Visual Generation: IN PROGRESS**
 
-Anchor asset → derived scene assets → Visual QA → repair/retry
+Implemented: provider abstraction → anchor workflow → derived workflow → Visual QA → repair/retry.
+
+Current manual integration gate: generate/import and approve A1, then A2/A5/A6 using `docs/M3_MANUAL_IMAGE_RUN.md`.
+
+Programmatic assets A3/A4/A7 are intentionally deferred to Milestone 4 (Remotion/SVG).
