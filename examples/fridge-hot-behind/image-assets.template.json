@@ -5,29 +5,71 @@
       "asset_id": "A0",
       "project_id": "EXAMPLE-FRIDGE-001",
       "scene_id": null,
-      "asset_role": "anchor",
-      "status": "awaiting_import",
+      "asset_role": "reference_pack",
+      "status": "planned",
       "entity_ids": [
         "fridge_01"
       ],
       "parent_asset_ids": [],
       "attempt": 0,
       "provenance": {
-        "provider_id": "user-import",
-        "provider_mode": "import",
-        "operation": "import_existing",
+        "provider_id": "manual-chatgpt-image",
+        "provider_mode": "manual",
+        "operation": "generate_reference_pack",
         "source_uri": null,
-        "prompt_snapshot": null,
-        "notes": "User-supplied product reference. Copy/import the actual file and approve this reference before A1 generation."
+        "prompt_snapshot": "MVP1",
+        "notes": "AI-generated canonical multi-view reference board. No real product image is required."
       },
       "file": {
-        "uri": "assets/A0-product-reference.png",
+        "uri": "assets/A0-reference-board.png",
         "mime_type": "image/png",
         "width": null,
         "height": null,
         "checksum": null
       },
-      "qa_result_ids": []
+      "qa_result_ids": [],
+      "reference_views": [
+        {
+          "view_id": "front",
+          "label": "FRONT",
+          "panel_hint": null
+        },
+        {
+          "view_id": "front_left_45",
+          "label": "FRONT LEFT 45°",
+          "panel_hint": null
+        },
+        {
+          "view_id": "front_right_45",
+          "label": "FRONT RIGHT 45°",
+          "panel_hint": null
+        },
+        {
+          "view_id": "left",
+          "label": "LEFT SIDE",
+          "panel_hint": null
+        },
+        {
+          "view_id": "right",
+          "label": "RIGHT SIDE",
+          "panel_hint": null
+        },
+        {
+          "view_id": "rear_left_45",
+          "label": "REAR LEFT 45°",
+          "panel_hint": null
+        },
+        {
+          "view_id": "rear_right_45",
+          "label": "REAR RIGHT 45°",
+          "panel_hint": null
+        },
+        {
+          "view_id": "rear",
+          "label": "REAR",
+          "panel_hint": null
+        }
+      ]
     },
     {
       "asset_id": "A1",
@@ -48,7 +90,7 @@
         "operation": "generate_anchor",
         "source_uri": null,
         "prompt_snapshot": "image-prompt-a1.json",
-        "notes": "Canonical kitchen anchor. Generate only after A0 is imported and approved."
+        "notes": "Scene anchor generated from approved A0 rear reference views."
       },
       "file": {
         "uri": "assets/A1.png",
@@ -69,6 +111,7 @@
         "fridge_01"
       ],
       "parent_asset_ids": [
+        "A0",
         "A1"
       ],
       "attempt": 0,
@@ -99,6 +142,7 @@
         "fridge_01"
       ],
       "parent_asset_ids": [
+        "A0",
         "A1"
       ],
       "attempt": 0,
@@ -129,6 +173,7 @@
         "fridge_01"
       ],
       "parent_asset_ids": [
+        "A0",
         "A1"
       ],
       "attempt": 0,
