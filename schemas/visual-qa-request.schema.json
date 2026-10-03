@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/visual-qa-request.schema.json",
+  "title": "VisualQARequest",
+  "type": "object",
+  "required": [
+    "project_id",
+    "asset",
+    "visual_goal",
+    "entity_ids",
+    "invariant_features",
+    "required_objects",
+    "forbidden_variations",
+    "technical_constraints",
+    "max_attempts"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^S[0-9]+$"
+    },
+    "asset": {
+      "$ref": "image-asset.schema.json"
+    },
+    "reference_assets": {
+      "type": "array",
+      "items": {
+        "$ref": "image-asset.schema.json"
+      }
+    },
+    "visual_goal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entity_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "invariant_features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "required_objects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_variations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "technical_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "max_attempts": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 3
+    }
+  },
+  "additionalProperties": false
+}
