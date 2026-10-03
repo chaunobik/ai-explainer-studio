@@ -1,0 +1,191 @@
+{
+  "prompt_id": "IP5",
+  "asset_id": "A5",
+  "scene_id": "S5",
+  "subject_lock": {
+    "entity_ids": [
+      "fridge_01"
+    ],
+    "canonical_description": "A dark charcoal/black freestanding two-door top-freezer refrigerator matching the supplied product reference: rectangular body, upper freezer door smaller than lower refrigerator door, thin silver horizontal divider/trim between doors, minimal recessed vertical black handles along the left edge, flat dark side panels, compact household proportions.",
+    "must_preserve": [
+      "dark charcoal/black body color",
+      "top-freezer two-door layout",
+      "upper freezer door smaller than lower refrigerator door",
+      "thin silver horizontal divider between doors",
+      "recessed vertical handle geometry on the left side",
+      "same height-to-width proportions as the product reference",
+      "same flat-sided rectangular body design"
+    ],
+    "must_not_change": [
+      "do not convert to French-door, side-by-side, single-door, or bottom-freezer layout",
+      "do not change body color to white or stainless steel",
+      "do not add external water/ice dispenser",
+      "do not add large protruding handles",
+      "do not change door proportions",
+      "do not invent a different appliance model"
+    ]
+  },
+  "environment": {
+    "location": "Ordinary modern home kitchen with enough clearance around the refrigerator to view its side/rear area.",
+    "fixed_elements": [
+      "warm light-wood cabinetry",
+      "light neutral wall",
+      "simple light-colored tile or wood-look floor",
+      "one small green plant or modest kitchen accessory",
+      "no people"
+    ],
+    "allowed_changes": [
+      "small crop adjustments",
+      "subtle camera repositioning required by each scene",
+      "minor background blur consistent with the same kitchen"
+    ],
+    "forbidden_changes": [
+      "no showroom or appliance-store setting",
+      "no industrial kitchen",
+      "no dramatic location change",
+      "no neon or sci-fi environment",
+      "no unrelated refrigerator in the background"
+    ]
+  },
+  "lighting": {
+    "style": "Natural residential daylight with soft practical kitchen fill.",
+    "direction": "Main daylight from camera-right/front-right; soft fill from room lighting.",
+    "intensity": "Moderate, realistic indoor exposure; refrigerator surfaces remain dark but readable.",
+    "color_temperature": "Neutral-warm daylight, approximately household natural-light appearance.",
+    "consistency_rules": [
+      "keep shadow direction consistent across A1/A2/A5/A6",
+      "avoid dramatic rim light or studio spotlight",
+      "do not make the refrigerator glossy or mirror-like"
+    ]
+  },
+  "appearance": {
+    "materials": [
+      "matte or satin dark-coated metal refrigerator exterior",
+      "thin brushed-metal/silver divider trim",
+      "ordinary painted kitchen walls",
+      "wood cabinetry",
+      "realistic floor material"
+    ],
+    "surface_finish": [
+      "subtle real-world texture",
+      "small natural reflections only",
+      "no perfect CGI plastic smoothness"
+    ],
+    "realism_notes": [
+      "ordinary lived-in kitchen, not a product advertisement set",
+      "physically plausible contact shadows and floor reflections",
+      "straight edges remain geometrically consistent",
+      "no melted, duplicated, or warped appliance parts"
+    ]
+  },
+  "output_spec": {
+    "aspect_ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "transparent_background": false
+  },
+  "operation": "derive_scene",
+  "reference_asset_ids": [
+    "A1"
+  ],
+  "continuity_constraints": [
+    "A1 is the authoritative identity and environment reference.",
+    "Do not replace or redesign fridge_01.",
+    "Preserve refrigerator geometry, proportions, materials, kitchen, shadow direction, and camera-family continuity."
+  ],
+  "scene_intent": {
+    "narration": "Vị trí này tùy thiết kế: có tủ thải nhiệt phía sau, có tủ tích hợp đường tản nhiệt ở hai bên.",
+    "visual_goal": "Compare two possible heat-rejection locations using the same A1 refrigerator identity as the visual anchor, without introducing a second refrigerator model.",
+    "viewer_should_understand": [
+      "heat-rejection location depends on refrigerator design",
+      "rear and side-wall rejection are alternative design examples",
+      "the comparison is conceptual, not a claim that both layouts operate simultaneously on this exact model"
+    ]
+  },
+  "camera": {
+    "view": "Use the A1 rear three-quarter view as the base image.",
+    "angle": "Exactly match A1.",
+    "distance": "Exactly match A1.",
+    "height": "Exactly match A1.",
+    "framing": "Exactly match A1 vertical composition.",
+    "perspective": "Exactly match A1.",
+    "lens_style": "Exactly match A1."
+  },
+  "composition": {
+    "subject_position": "Same as A1.",
+    "crop_rules": [
+      "keep full refrigerator silhouette",
+      "do not duplicate the refrigerator body",
+      "keep enough margin for two overlay states"
+    ],
+    "background_visibility": "Same kitchen as A1, unchanged.",
+    "negative_space": "Use existing negative space for small explanatory legends if required.",
+    "layering": [
+      "base: A1",
+      "overlay state 1: rear heat-rejection highlight",
+      "overlay state 2: side-wall heat-rejection highlight"
+    ]
+  },
+  "required_visual_elements": [
+    {
+      "element": "same refrigerator A1",
+      "placement": "unchanged",
+      "state": "single physical refrigerator only",
+      "purpose": "identity continuity"
+    },
+    {
+      "element": "rear heat-rejection example overlay",
+      "placement": "rear plane",
+      "state": "subtle highlighted path/zone",
+      "purpose": "example design A"
+    },
+    {
+      "element": "side-wall heat-rejection example overlay",
+      "placement": "visible side wall",
+      "state": "subtle highlighted path/zone",
+      "purpose": "example design B"
+    }
+  ],
+  "technical_overlay": {
+    "overlay_type": "alternative-design comparison overlay",
+    "elements": [
+      "rear highlight/path",
+      "side-wall highlight/path",
+      "small 'Tùy thiết kế' cue if text is used"
+    ],
+    "directions": [
+      "heat indication should move outward from the highlighted exterior surfaces into room air"
+    ],
+    "labels": [
+      "optional 'Phía sau' and 'Hai bên'"
+    ],
+    "must_not_imply": [
+      "do not imply both heat-rejection layouts are simultaneously active on the exact same model",
+      "do not show two different refrigerator models",
+      "do not relocate the refrigerator"
+    ]
+  },
+  "allowed_transforms": [
+    "overlay two alternative heat-rejection zones on the same refrigerator identity",
+    "use split-state or toggled overlay treatment without duplicating the physical appliance"
+  ],
+  "technical_constraints": [
+    "Treat rear and side-wall layouts as alternative design examples.",
+    "Do not invent exposed coils.",
+    "Use subtle technical overlay, not flames or glowing hot metal."
+  ],
+  "negative_constraints": [
+    "do not convert to French-door, side-by-side, single-door, or bottom-freezer layout",
+    "do not change body color to white or stainless steel",
+    "do not add external water/ice dispenser",
+    "do not add large protruding handles",
+    "do not change door proportions",
+    "do not invent a different appliance model",
+    "no second refrigerator",
+    "no side-by-side comparison using different appliance models",
+    "no camera change",
+    "no layout change",
+    "no simultaneous-actual-operation implication"
+  ],
+  "final_prompt": "IMAGE TASK: EDIT/DERIVE FROM APPROVED REFERENCE\nAsset: A5 | Scene: S5\nReference assets: A1\nSUBJECT IDENTITY LOCK\nA dark charcoal/black freestanding two-door top-freezer refrigerator matching the supplied product reference: rectangular body, upper freezer door smaller than lower refrigerator door, thin silver horizontal divider/trim between doors, minimal recessed vertical black handles along the left edge, flat dark side panels, compact household proportions.\nMust preserve:\n- dark charcoal/black body color\n- top-freezer two-door layout\n- upper freezer door smaller than lower refrigerator door\n- thin silver horizontal divider between doors\n- recessed vertical handle geometry on the left side\n- same height-to-width proportions as the product reference\n- same flat-sided rectangular body design\nMust never change:\n- do not convert to French-door, side-by-side, single-door, or bottom-freezer layout\n- do not change body color to white or stainless steel\n- do not add external water/ice dispenser\n- do not add large protruding handles\n- do not change door proportions\n- do not invent a different appliance model\nSCENE INTENT\nNarration: Vị trí này tùy thiết kế: có tủ thải nhiệt phía sau, có tủ tích hợp đường tản nhiệt ở hai bên.\nVisual goal: Compare two possible heat-rejection locations using the same A1 refrigerator identity as the visual anchor, without introducing a second refrigerator model.\nViewer should understand:\n- heat-rejection location depends on refrigerator design\n- rear and side-wall rejection are alternative design examples\n- the comparison is conceptual, not a claim that both layouts operate simultaneously on this exact model\nCAMERA\nView: Use the A1 rear three-quarter view as the base image.\nAngle: Exactly match A1.\nDistance: Exactly match A1.\nHeight: Exactly match A1.\nFraming: Exactly match A1 vertical composition.\nPerspective: Exactly match A1.\nLens style: Exactly match A1.\nCOMPOSITION\nSubject position: Same as A1.\nBackground visibility: Same kitchen as A1, unchanged.\nNegative space: Use existing negative space for small explanatory legends if required.\nCrop rules:\n- keep full refrigerator silhouette\n- do not duplicate the refrigerator body\n- keep enough margin for two overlay states\nLayering:\n- base: A1\n- overlay state 1: rear heat-rejection highlight\n- overlay state 2: side-wall heat-rejection highlight\nENVIRONMENT\nLocation: Ordinary modern home kitchen with enough clearance around the refrigerator to view its side/rear area.\nFixed elements:\n- warm light-wood cabinetry\n- light neutral wall\n- simple light-colored tile or wood-look floor\n- one small green plant or modest kitchen accessory\n- no people\nAllowed changes:\n- small crop adjustments\n- subtle camera repositioning required by each scene\n- minor background blur consistent with the same kitchen\nForbidden changes:\n- no showroom or appliance-store setting\n- no industrial kitchen\n- no dramatic location change\n- no neon or sci-fi environment\n- no unrelated refrigerator in the background\nLIGHTING\nStyle: Natural residential daylight with soft practical kitchen fill.\nDirection: Main daylight from camera-right/front-right; soft fill from room lighting.\nIntensity: Moderate, realistic indoor exposure; refrigerator surfaces remain dark but readable.\nColor temperature: Neutral-warm daylight, approximately household natural-light appearance.\nConsistency rules:\n- keep shadow direction consistent across A1/A2/A5/A6\n- avoid dramatic rim light or studio spotlight\n- do not make the refrigerator glossy or mirror-like\nMATERIALS AND REALISM\nMaterials:\n- matte or satin dark-coated metal refrigerator exterior\n- thin brushed-metal/silver divider trim\n- ordinary painted kitchen walls\n- wood cabinetry\n- realistic floor material\nSurface finish:\n- subtle real-world texture\n- small natural reflections only\n- no perfect CGI plastic smoothness\nReality notes:\n- ordinary lived-in kitchen, not a product advertisement set\n- physically plausible contact shadows and floor reflections\n- straight edges remain geometrically consistent\n- no melted, duplicated, or warped appliance parts\nREQUIRED VISUAL ELEMENTS\n1. same refrigerator A1\n   Placement: unchanged\n   State: single physical refrigerator only\n   Purpose: identity continuity\n2. rear heat-rejection example overlay\n   Placement: rear plane\n   State: subtle highlighted path/zone\n   Purpose: example design A\n3. side-wall heat-rejection example overlay\n   Placement: visible side wall\n   State: subtle highlighted path/zone\n   Purpose: example design B\nTECHNICAL OVERLAY\nType: alternative-design comparison overlay\nElements:\n- rear highlight/path\n- side-wall highlight/path\n- small 'Tùy thiết kế' cue if text is used\nDirections:\n- heat indication should move outward from the highlighted exterior surfaces into room air\nLabels:\n- optional 'Phía sau' and 'Hai bên'\nMust not imply:\n- do not imply both heat-rejection layouts are simultaneously active on the exact same model\n- do not show two different refrigerator models\n- do not relocate the refrigerator\nALLOWED TRANSFORMS\n- overlay two alternative heat-rejection zones on the same refrigerator identity\n- use split-state or toggled overlay treatment without duplicating the physical appliance\nTECHNICAL CONSTRAINTS\n- Treat rear and side-wall layouts as alternative design examples.\n- Do not invent exposed coils.\n- Use subtle technical overlay, not flames or glowing hot metal.\nCONTINUITY CONSTRAINTS\n- A1 is the authoritative identity and environment reference.\n- Do not replace or redesign fridge_01.\n- Preserve refrigerator geometry, proportions, materials, kitchen, shadow direction, and camera-family continuity.\nNEGATIVE CONSTRAINTS\n- do not convert to French-door, side-by-side, single-door, or bottom-freezer layout\n- do not change body color to white or stainless steel\n- do not add external water/ice dispenser\n- do not add large protruding handles\n- do not change door proportions\n- do not invent a different appliance model\n- no second refrigerator\n- no side-by-side comparison using different appliance models\n- no camera change\n- no layout change\n- no simultaneous-actual-operation implication\nOUTPUT\n1080x1920, aspect ratio 9:16\nOpaque background.\nFINAL RULE\nDo not create a new version of the primary subject. Treat the supplied reference asset as the authoritative identity and edit only what is explicitly requested above."
+}
