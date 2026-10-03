@@ -13,6 +13,7 @@
     "validate:schemas": "node scripts/validate-schemas.mjs",
     "validate:examples": "node scripts/validate-examples.mjs",
     "dry-run": "tsx scripts/dry-run.ts",
+    "autopilot": "tsx scripts/autopilot.ts",
     "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run project:doctor && npm run validate:motion && npm run validate:voice-plan && npm run dry-run && npm run project:status -- --ci",
     "validate:motion": "tsx scripts/validate-motion.ts",
     "render:scene": "tsx scripts/render-scene.ts",

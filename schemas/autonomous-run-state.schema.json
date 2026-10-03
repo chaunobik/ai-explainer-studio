@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/autonomous-run-state.schema.json",
+  "title": "AutonomousRunState",
+  "type": "object",
+  "required": [
+    "runId",
+    "projectId",
+    "topic",
+    "currentStage",
+    "stages",
+    "revisionHistory",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "runId": {"type": "string", "minLength": 1},
+    "projectId": {"type": "string", "minLength": 1},
+    "topic": {"type": "string", "minLength": 1},
+    "currentStage": {"$ref": "#/$defs/stage"},
+    "stages": {
+      "type": "object",
+      "minProperties": 19,
+      "maxProperties": 19,
+      "propertyNames": {"$ref": "#/$defs/stage"},
+      "additionalProperties": {"$ref": "#/$defs/stageState"}
+    },
+    "revisionHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["checkpoint", "targetStage", "note", "createdAt"],
+        "properties": {
+          "checkpoint": {
+            "enum": [
+              "checkpoint_canonical",
+              "checkpoint_storyboard",
+              "checkpoint_final"
+            ]
+          },
+          "targetStage": {"$ref": "#/$defs/stage"},
+          "note": {"type": "string"},
+          "createdAt": {"type": "string", "format": "date-time"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "createdAt": {"type": "string", "format": "date-time"},
+    "updatedAt": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "stage": {
+      "enum": [
+        "research",
+        "script",
+        "storyboard",
+        "asset_plan",
+        "canonical_prompt",
+        "canonical_generation",
+        "canonical_qa",
+        "checkpoint_canonical",
+        "scene_prompts",
+        "storyboard_preview",
+        "checkpoint_storyboard",
+        "scene_generation",
+        "scene_qa",
+        "voice",
+        "motion",
+        "final_render",
+        "final_qa",
+        "checkpoint_final",
+        "complete"
+      ]
+    },
+    "stageState": {
+      "type": "object",
+      "required": ["stage", "status", "attempt", "maxAttempts", "lastMessage"],
+      "properties": {
+        "stage": {"$ref": "#/$defs/stage"},
+        "status": {
+          "enum": [
+            "waiting",
+            "ready",
+            "running",
+            "passed",
+            "auto_repair",
+            "needs_human_review",
+            "approved",
+            "complete"
+          ]
+        },
+        "attempt": {"type": "integer", "minimum": 0},
+        "maxAttempts": {"type": "integer", "minimum": 1},
+        "lastMessage": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
