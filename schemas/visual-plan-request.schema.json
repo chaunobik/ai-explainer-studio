@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/visual-plan-request.schema.json",
+  "title": "VisualPlanRequest",
+  "type": "object",
+  "required": [
+    "project_id",
+    "topic",
+    "storyboard",
+    "visual_preferences"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "storyboard": {
+      "$ref": "storyboard-spec.schema.json"
+    },
+    "visual_preferences": {
+      "type": "object",
+      "required": [
+        "realism_priority",
+        "continuity_priority",
+        "default_anchor_strategy"
+      ],
+      "properties": {
+        "realism_priority": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium"
+          ]
+        },
+        "continuity_priority": {
+          "type": "string",
+          "enum": [
+            "high"
+          ]
+        },
+        "default_anchor_strategy": {
+          "type": "string",
+          "enum": [
+            "real_or_reference_first",
+            "generated_anchor_allowed"
+          ]
+        },
+        "camera_style": {
+          "type": "string"
+        },
+        "environment_notes": {
+          "type": "string"
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "available_assets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "production_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
