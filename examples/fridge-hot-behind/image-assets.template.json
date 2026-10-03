@@ -121,7 +121,7 @@
         "operation": "derive_scene",
         "source_uri": null,
         "prompt_snapshot": "image-prompt-a2.json",
-        "notes": "Derived cutaway image. Generate only from approved A1."
+        "notes": "Derived cutaway scene. Preserve A0 canonical geometry and A1 scene/environment continuity."
       },
       "file": {
         "uri": "assets/A2.png",
@@ -152,7 +152,7 @@
         "operation": "derive_scene",
         "source_uri": null,
         "prompt_snapshot": "image-prompt-a5.json",
-        "notes": "Design-comparison derivative. Generate only from approved A1."
+        "notes": "Design-comparison derivative. Use A0 side/rear views to lock geometry and A1 for scene continuity."
       },
       "file": {
         "uri": "assets/A5.png",
@@ -183,7 +183,7 @@
         "operation": "derive_scene",
         "source_uri": null,
         "prompt_snapshot": "image-prompt-a6.json",
-        "notes": "Exterior return derivative. Generate only from approved A1."
+        "notes": "Exterior return derivative. Preserve A0 canonical geometry and A1 kitchen/lighting continuity."
       },
       "file": {
         "uri": "assets/A6.png",
