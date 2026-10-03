@@ -26,7 +26,7 @@ const defaultProps: ExplainerVideoProps = {
 
 export const RemotionRoot: React.FC = () => {
   return (
-    <Composition
+    <Composition<ExplainerVideoProps>
       id="ExplainerVideo"
       component={ExplainerVideo}
       durationInFrames={30}
