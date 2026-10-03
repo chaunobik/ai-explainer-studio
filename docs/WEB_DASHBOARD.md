@@ -147,3 +147,26 @@ A0 Multi-View Prompt QA
 ```
 
 The exact next step is recalculated after every successful action. The operator does not need to manually run Project Doctor or Project Status during the normal UI workflow.
+
+
+## Prompt QA failure repair flow
+
+The dashboard is action-first when Image Prompt QA does not pass.
+
+Instead of showing every successful check, it surfaces:
+- the QA summary;
+- critical issues;
+- repair actions;
+- an editable full ImagePromptSpec JSON editor;
+- **Copy Repair Package** for ChatGPT-assisted repair.
+
+The operator can either edit the ImagePromptSpec directly or paste the Repair Package into ChatGPT and paste the returned complete corrected ImagePromptSpec into the editor.
+
+On **Lưu prompt sửa & chạy QA lại**, the dashboard:
+1. validates the repaired ImagePromptSpec against the authoritative schema;
+2. refuses changes to project_id, prompt_id, asset_id, scene_id, or operation;
+3. synchronizes the matching image-provider job;
+4. deletes the stale failed Prompt QA result;
+5. recalculates readiness and returns to Image Prompt QA.
+
+Passed QA checks and the complete Project Health report are collapsed under Advanced details so the current action remains visually dominant.
