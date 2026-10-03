@@ -1,11 +1,14 @@
 import React from "react";
-import {AbsoluteFill, Sequence} from "remotion";
+import {AbsoluteFill, Audio, Sequence} from "remotion";
 import type {ExplainerVideoProps} from "./types";
 import {SceneFrame} from "./components/SceneFrame";
+import {SceneSubtitle} from "./components/SceneSubtitle";
 
 export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
   motionSpec,
   assets,
+  audioByScene = {},
+  subtitleCues = [],
 }) => {
   let from = 0;
 
@@ -18,6 +21,10 @@ export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
         );
         const start = from;
         from += durationInFrames;
+        const audio = audioByScene[scene.scene_id];
+        const cues = subtitleCues.filter(
+          (cue) => cue.scene_id === scene.scene_id,
+        );
 
         return (
           <Sequence
@@ -27,6 +34,8 @@ export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
             name={scene.scene_id}
           >
             <SceneFrame scene={scene} assets={assets} />
+            {audio ? <Audio src={audio} /> : null}
+            <SceneSubtitle cues={cues} />
           </Sequence>
         );
       })}

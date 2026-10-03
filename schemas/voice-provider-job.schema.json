@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/voice-provider-job.schema.json",
+  "title": "VoiceProviderJob",
+  "type": "object",
+  "required": [
+    "job_id",
+    "provider_id",
+    "provider_mode",
+    "project_id",
+    "scene_id",
+    "text",
+    "target_duration_sec",
+    "output_asset_id",
+    "status",
+    "attempt"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider_mode": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "api"
+      ]
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_duration_sec": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "output_asset_id": {
+      "type": "string",
+      "pattern": "^V[0-9]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "requires_user_action",
+        "running",
+        "completed",
+        "failed"
+      ]
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "delivery_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "user_instructions": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

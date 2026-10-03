@@ -1,0 +1,59 @@
+import React from "react";
+import {interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import type {SubtitleCue} from "@ai-explainer-studio/core";
+
+interface SceneSubtitleProps {
+  cues: SubtitleCue[];
+}
+
+export const SceneSubtitle: React.FC<SceneSubtitleProps> = ({cues}) => {
+  const frame = useCurrentFrame();
+  const {fps, width, height} = useVideoConfig();
+  const seconds = frame / fps;
+
+  const cue = cues.find(
+    (value) => seconds >= value.start_sec && seconds < value.end_sec,
+  );
+  if (!cue) return null;
+
+  const start = cue.start_sec * fps;
+  const end = cue.end_sec * fps;
+  const opacity = interpolate(
+    frame,
+    [start, start + Math.min(4, Math.max(1, (end - start) / 4)), end - Math.min(4, Math.max(1, (end - start) / 4)), end],
+    [0, 1, 1, 0],
+    {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
+  );
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: width * 0.08,
+        right: width * 0.08,
+        bottom: height * 0.09,
+        display: "flex",
+        justifyContent: "center",
+        opacity,
+        pointerEvents: "none",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: width * 0.84,
+          padding: "16px 24px",
+          borderRadius: 18,
+          background: "rgba(0,0,0,0.62)",
+          color: "white",
+          fontSize: 52,
+          fontWeight: 700,
+          lineHeight: 1.2,
+          textAlign: "center",
+          textShadow: "0 2px 6px rgba(0,0,0,0.8)",
+        }}
+      >
+        {cue.text}
+      </div>
+    </div>
+  );
+};

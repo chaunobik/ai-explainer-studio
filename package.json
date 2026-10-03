@@ -12,9 +12,11 @@
     "validate:schemas": "node scripts/validate-schemas.mjs",
     "validate:examples": "node scripts/validate-examples.mjs",
     "dry-run": "tsx scripts/dry-run.ts",
-    "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run validate:motion && npm run dry-run",
+    "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run validate:motion && npm run validate:voice-plan && npm run dry-run",
     "validate:motion": "tsx scripts/validate-motion.ts",
-    "render:scene": "tsx scripts/render-scene.ts"
+    "render:scene": "tsx scripts/render-scene.ts",
+    "validate:voice-plan": "tsx scripts/validate-voice-plan.ts",
+    "render:project": "tsx scripts/render-project.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

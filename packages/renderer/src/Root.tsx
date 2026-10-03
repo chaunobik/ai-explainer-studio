@@ -22,6 +22,8 @@ const defaultProps: ExplainerVideoProps = {
     ],
   },
   assets: {},
+  audioByScene: {},
+  subtitleCues: [],
 };
 
 export const RemotionRoot: React.FC = () => {

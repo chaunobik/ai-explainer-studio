@@ -1,0 +1,117 @@
+{
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "assets": [
+    {
+      "asset_id": "V1",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S1",
+      "status": "awaiting_import",
+      "text": "Vì sao phía sau tủ lạnh lại nóng, trong khi bên trong thì lạnh?",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    },
+    {
+      "asset_id": "V2",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S2",
+      "status": "awaiting_import",
+      "text": "Tủ lạnh không tạo ra cái lạnh. Nó lấy nhiệt từ khoang bên trong rồi chuyển nhiệt ra môi trường.",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    },
+    {
+      "asset_id": "V3",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S3",
+      "status": "awaiting_import",
+      "text": "Môi chất lạnh hấp thụ nhiệt ở dàn bay hơi, sau đó được máy nén đẩy sang dàn ngưng.",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    },
+    {
+      "asset_id": "V4",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S4",
+      "status": "awaiting_import",
+      "text": "Ở dàn ngưng, nhiệt được truyền ra không khí. Vì vậy khu vực thải nhiệt sẽ ấm lên khi tủ hoạt động.",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    },
+    {
+      "asset_id": "V5",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S5",
+      "status": "awaiting_import",
+      "text": "Vị trí này tùy thiết kế: có tủ thải nhiệt phía sau, có tủ tích hợp đường tản nhiệt ở hai bên.",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    },
+    {
+      "asset_id": "V6",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S6",
+      "status": "awaiting_import",
+      "text": "Do đó, mặt ngoài ấm lên có thể là một phần bình thường của quá trình làm lạnh.",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    },
+    {
+      "asset_id": "V7",
+      "project_id": "EXAMPLE-FRIDGE-001",
+      "scene_id": "S7",
+      "status": "awaiting_import",
+      "text": "Nói ngắn gọn: bên trong lạnh được vì nhiệt đã được chuyển ra ngoài — và phía sau nóng là một dấu hiệu của quá trình đó.",
+      "attempt": 0,
+      "provider_id": "manual-tts",
+      "file": {
+        "uri": null,
+        "mime_type": null,
+        "duration_sec": null,
+        "checksum": null
+      },
+      "qa_result_ids": []
+    }
+  ]
+}
