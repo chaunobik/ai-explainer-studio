@@ -5,7 +5,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import {revalidatePath} from "next/cache";
-import {projectDirForSlug} from "../../../lib/project-runtime";
+import {projectDirForSlug, repoRoot} from "../../../lib/project-runtime";
+import {renderFinalProject, renderScenePreview} from "../../../lib/render-service";
 import {validateVoiceAssets} from "../../../../../packages/core/src/index";
 
 function readJson(filePath: string): any {
@@ -407,6 +408,90 @@ export async function setVoiceDecisionAction(formData: FormData): Promise<void> 
     }
 
     writeJson(manifestPath, manifest);
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+
+function parseQaJson(raw: string, expectedStage: "motion" | "final"): any {
+  if (!raw.trim()) throw new Error("Hãy dán QA JSON.");
+  let qa: any;
+  try {
+    qa = JSON.parse(raw);
+  } catch {
+    throw new Error("QA result không phải JSON hợp lệ.");
+  }
+
+  if (qa?.qa_result?.stage !== expectedStage) {
+    throw new Error(
+      "qa_result.stage phải là " + expectedStage + ".",
+    );
+  }
+
+  if (!["pass", "fail", "needs_human_review"].includes(qa?.qa_result?.status)) {
+    throw new Error(
+      "qa_result.status phải là pass, fail hoặc needs_human_review.",
+    );
+  }
+
+  return qa;
+}
+
+export async function renderScenePreviewAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const sceneId = String(formData.get("sceneId") ?? "");
+    if (!/^S[0-9]+$/.test(sceneId)) throw new Error("Scene ID không hợp lệ.");
+
+    await renderScenePreview({
+      repoRoot: repoRoot(),
+      projectDir: projectDirForSlug(slug),
+      sceneId,
+    });
+
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+export async function saveMotionQaAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const raw = String(formData.get("qaJson") ?? "");
+    const qa = parseQaJson(raw, "motion");
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+    writeJson(path.join(projectDir, project.paths.motion_qa_output), qa);
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+export async function renderFinalAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    await renderFinalProject({
+      repoRoot: repoRoot(),
+      projectDir: projectDirForSlug(slug),
+    });
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+export async function saveFinalQaAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const raw = String(formData.get("qaJson") ?? "");
+    const qa = parseQaJson(raw, "final");
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+    writeJson(path.join(projectDir, project.paths.final_qa_output), qa);
     refresh(slug);
   } catch (error) {
     actionError(error);
