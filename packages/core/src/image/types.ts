@@ -1,6 +1,9 @@
 export type ImageProviderMode = "manual" | "api";
 
-export type ImageOperation = "generate_anchor" | "derive_scene";
+export type ImageOperation =
+  | "generate_reference_pack"
+  | "generate_anchor"
+  | "derive_scene";
 
 export type ImageAssetStatus =
   | "planned"
@@ -12,7 +15,7 @@ export type ImageAssetStatus =
   | "needs_human_review";
 
 export interface ImageOutputSpec {
-  aspectRatio: "9:16" | "16:9" | "1:1";
+  aspectRatio: "9:16" | "16:9" | "4:3" | "1:1";
   width: number;
   height: number;
   transparentBackground?: boolean;
@@ -30,6 +33,10 @@ export interface BaseImageSpec {
   technicalConstraints: string[];
   outputSpec: ImageOutputSpec;
   attempt: number;
+}
+
+export interface GenerateReferencePackSpec extends BaseImageSpec {
+  referenceAssetIds?: never[];
 }
 
 export interface GenerateAnchorSpec extends BaseImageSpec {
@@ -66,7 +73,7 @@ export interface ImageAsset {
   assetId: string;
   projectId: string;
   sceneId?: string;
-  assetRole: "anchor" | "derived";
+  assetRole: "reference_pack" | "anchor" | "derived";
   status: ImageAssetStatus;
   entityIds: string[];
   parentAssetIds: string[];

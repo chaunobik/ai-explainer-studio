@@ -1,0 +1,15 @@
+{
+  "prompt_id": "MVP1",
+  "status": "pass",
+  "checks": {
+    "subject_lock": "pass",
+    "view_coverage": "pass",
+    "camera_specificity": "pass",
+    "cross_view_consistency": "pass",
+    "photographic_realism": "pass",
+    "technical_safety": "pass",
+    "ambiguity": "pass"
+  },
+  "critical_issues": [],
+  "repair_actions": []
+}

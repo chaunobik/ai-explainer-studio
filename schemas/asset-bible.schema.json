@@ -153,7 +153,8 @@
               "reference_image",
               "generated_image",
               "diagram",
-              "programmatic_asset"
+              "programmatic_asset",
+              "reference_pack"
             ]
           },
           "entity_ids": {

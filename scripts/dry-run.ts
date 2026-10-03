@@ -31,7 +31,10 @@ const promptFiles = [
 ];
 const imagePromptSpecs = promptFiles.map(read);
 
+const multiviewReferencePrompt = read("multiview-reference-prompt-a0.json");
+
 const providerJobFiles = [
+  "multiview-provider-job-a0.json",
   "anchor-provider-job.json",
   "derived-s2-provider-job.json",
   "derived-s5-provider-job.template.json",
@@ -46,6 +49,7 @@ const report = validateCrossStageArtifacts({
   storyboard,
   visualPlan,
   imagePromptSpecs,
+  referencePromptSpecs: [multiviewReferencePrompt],
   providerJobs,
   executionPlan,
 });
@@ -78,7 +82,7 @@ const a0Template = read("reference-a0-manifest.template.json");
 const beforeReferenceApproval = planManualImageActions(providerJobs, [a0Template]);
 const blockedA1 = beforeReferenceApproval.find((action) => action.assetId === "A1");
 if (blockedA1?.ready) {
-  console.error("✗ A1 must remain blocked until A0 is imported and approved.");
+  console.error("✗ A1 must remain blocked until generated A0 passes Multi-View QA and is approved.");
   process.exit(1);
 }
 
@@ -88,7 +92,7 @@ const actions = planManualImageActions(providerJobs, [simulatedApprovedA0]);
 console.log("✓ Cross-stage invariants pass.");
 console.log(`✓ Ready pipeline stages: ${getReadyStages(state).join(", ")}`);
 console.log("Manual image dependency simulation:");
-console.log("  - A0 template: IMPORT/APPROVE required");
+console.log("  - A0 reference pack: GENERATE → IMPORT → MULTI-VIEW QA → APPROVE");
 for (const action of actions) {
   console.log(
     `  - ${action.assetId}: ${action.ready ? "READY" : "BLOCKED"}${action.blockers.length ? ` — ${action.blockers.join("; ")}` : ""}`,
@@ -111,4 +115,4 @@ if (premature.length > 0) {
   process.exit(1);
 }
 
-console.log("✓ Dry run confirms the intended gates: import/approve A0 → A1 → derived images.");
+console.log("✓ Dry run confirms the intended gates: A0 Prompt QA → generate/import A0 → Multi-View QA/approve → A1 → derived images.");

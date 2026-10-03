@@ -1,10 +1,10 @@
 {
   "style_guide": {
     "realism_target": "technical_realistic",
-    "lighting": "Soft natural indoor daylight with believable room shadows; no studio glow.",
-    "camera_style": "Grounded real-camera perspective, mostly rear three-quarter and controlled cutaway views.",
-    "environment": "Ordinary compact home kitchen; realistic wall clearance and everyday surfaces.",
-    "color_notes": "Neutral household colors; refrigerator remains matte white.",
+    "lighting": "Soft natural indoor daylight, matching the canonical smartphone capture profile; believable household shadows and restrained HDR.",
+    "camera_style": "Realistic modern-smartphone documentation photography, 26 mm-equivalent main-camera look, stable geometry across multi-view references.",
+    "environment": "Ordinary modern home kitchen / utility area with neutral wall, light floor and restrained cabinetry.",
+    "color_notes": "Neutral household colors; refrigerator remains dark charcoal matte/satin coated metal.",
     "forbidden_style_traits": [
       "hyper-polished CGI",
       "neon rim lighting",
@@ -18,60 +18,75 @@
       "entity_id": "fridge_01",
       "name": "Canonical refrigerator",
       "role": "primary",
-      "canonical_description": "Matte white freestanding two-door top-freezer refrigerator in an ordinary home kitchen, viewed initially from a rear three-quarter angle.",
+      "canonical_description": "Dark charcoal freestanding two-door top-freezer refrigerator, designed as one believable mass-produced household appliance and locked first through an AI-generated multi-view reference pack.",
       "visual_properties": {
-        "body_color": "matte white",
+        "body_color": "dark charcoal",
         "door_layout": "top-freezer two-door",
-        "finish": "slightly used household appliance",
+        "finish": "matte/satin coated metal",
         "environment": "ordinary home kitchen",
-        "baseline_view": "rear three-quarter"
+        "baseline_view": "multi-view reference pack; rear-left/rear-right 45° preferred for rear-heat scenes"
       },
       "invariant_features": [
-        "matte white body",
+        "dark charcoal matte/satin body",
         "same top-freezer/two-door geometry",
-        "same door proportions",
-        "same handle/recess geometry",
-        "same overall width-height proportions",
-        "same kitchen environment when the physical object is visible"
+        "upper freezer door smaller than lower fresh-food door",
+        "thin brushed-silver horizontal divider trim",
+        "same recessed vertical left-edge handle geometry",
+        "same cabinet width-height-depth proportions",
+        "same feet, panel seams, edge radii and door thickness across views"
       ],
       "allowed_variations": [
+        "select a different approved A0 reference view for the target camera direction",
         "crop and zoom",
-        "rear/side camera rotation consistent with the same object",
         "transparent cutaway overlays",
         "technical labels and arrows",
         "warm-surface highlight",
         "diagram overlay while preserving silhouette"
       ],
       "forbidden_variations": [
-        "change to stainless-steel finish",
-        "change to French-door or side-by-side layout",
-        "change door count or proportions",
+        "change to white or stainless-steel finish",
+        "change to French-door, side-by-side or bottom-freezer layout",
+        "change door count, divider position, handle design or cabinet proportions",
         "replace with a different refrigerator model",
-        "move to an unrelated kitchen without a context switch",
-        "alter component locations merely for visual convenience"
+        "invent hidden technical components merely for visual convenience",
+        "use CGI/showroom styling that conflicts with the smartphone-realistic reference pack"
       ],
       "anchor_asset_ids": [
+        "A0",
         "A1"
       ],
       "continuity_constraints": [
-        "All physical refrigerator scenes must derive from A1 or an approved derivative.",
-        "Technical abstractions should preserve the recognizable fridge_01 silhouette when shown together with the appliance.",
-        "Scene 5 may compare heat-rejection layouts but must keep fridge_01 as the primary example."
+        "A0 is the canonical geometry/identity source of truth and must pass Multi-View QA before scene generation.",
+        "A1 must be generated from the approved A0 rear-oriented reference views.",
+        "All later physical refrigerator scenes must use approved A0 view(s) plus A1/approved derivatives as applicable.",
+        "Technical abstractions preserve the recognizable fridge_01 silhouette."
       ]
     }
   ],
   "assets": [
     {
-      "asset_id": "A1",
+      "asset_id": "A0",
       "status": "planned",
-      "asset_kind": "real_photo",
+      "asset_kind": "reference_pack",
       "entity_ids": [
         "fridge_01"
       ],
-      "purpose": "Master visual anchor for the canonical refrigerator.",
+      "purpose": "AI-generated canonical multi-view reference board that locks product identity and exterior geometry.",
+      "source_uri": null,
+      "canonical_view": "front, front-left 45°, front-right 45°, left, right, rear-left 45°, rear-right 45°, rear",
+      "notes": "Generated from MVP1 with the smartphone PhotoCaptureSpec; no real product photo is required."
+    },
+    {
+      "asset_id": "A1",
+      "status": "planned",
+      "asset_kind": "generated_image",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Scene S1 anchor generated from approved A0 rear reference views.",
       "source_uri": null,
       "canonical_view": "rear three-quarter",
-      "notes": "Acquire or select before Milestone 3 generation."
+      "notes": "Must derive from approved A0; not a real-photo acquisition step."
     },
     {
       "asset_id": "A2",

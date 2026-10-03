@@ -46,7 +46,8 @@
           "type": "string",
           "enum": [
             "real_or_reference_first",
-            "generated_anchor_allowed"
+            "generated_anchor_allowed",
+            "prompt_first_multiview_reference"
           ]
         },
         "camera_style": {

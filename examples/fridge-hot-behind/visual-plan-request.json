@@ -224,33 +224,34 @@
     ],
     "total_duration_sec": 55,
     "continuity_notes": [
-      "Use fridge_01 and anchor asset A1 throughout all seven scenes.",
-      "All cutaways and diagrams should visually derive from the same refrigerator rather than creating unrelated appliances.",
-      "Scene 5 shows a design comparison but returns to the same primary example immediately."
+      "Use approved A0 as the visual identity source of truth and A1 as the first scene anchor throughout the seven scenes.",
+      "All cutaways and diagrams must preserve geometry from the A0/A1 chain rather than creating unrelated appliances.",
+      "Scene 5 may compare design locations but must keep the same primary refrigerator identity."
     ],
     "feasibility_notes": [
-      "The sequence can be produced with one real/reference refrigerator image plus overlays, cutaway edits, SVG arrows, and Remotion motion primitives.",
-      "No full-scene generative video is required."
+      "The sequence can be produced from one AI-generated multi-view A0 reference pack plus scene-specific generated/edited images, overlays, SVG arrows and Remotion motion primitives.",
+      "No real product-photo acquisition and no full-scene generative video are required."
     ]
   },
   "visual_preferences": {
     "realism_priority": "high",
     "continuity_priority": "high",
-    "default_anchor_strategy": "real_or_reference_first",
-    "camera_style": "Natural documentary-style framing with slow controlled camera moves; no cinematic exaggeration.",
-    "environment_notes": "Ordinary lived-in home kitchen with neutral daylight and realistic spacing around the appliance.",
+    "default_anchor_strategy": "prompt_first_multiview_reference",
+    "camera_style": "Realistic smartphone product-documentation photography based on a fixed capture profile; scene cameras must use approved A0 views as geometry references.",
+    "environment_notes": "Ordinary modern home kitchen / utility area with neutral daylight and realistic spacing around the appliance.",
     "avoid": [
       "glossy CGI look",
       "perfect showroom cleanliness",
       "dramatic neon lighting",
-      "unrelated refrigerator designs between scenes",
-      "independent regeneration of fridge_01"
+      "unrelated refrigerator designs between views or scenes",
+      "independent regeneration that ignores approved A0 geometry"
     ]
   },
   "available_assets": [],
   "production_constraints": [
-    "Acquire one canonical refrigerator reference/real image before generating derived visuals.",
-    "Invisible heat and refrigerant flow should be explained with overlays/diagrams rather than photorealistic fantasy effects.",
-    "Keep the same fridge_01 identity in every scene."
+    "Generate and approve one canonical AI-created A0 multi-view reference pack before any scene image.",
+    "No real product photo is required.",
+    "Invisible heat and refrigerant flow must use overlays/diagrams rather than photorealistic fantasy effects.",
+    "Keep fridge_01 identity locked to A0 in every physical scene."
   ]
 }

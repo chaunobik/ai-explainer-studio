@@ -17,28 +17,42 @@ Expected:
 - renderer smoke passes in CI;
 - project status stops only at intentional human/manual asset gates.
 
-## Phase 1 — Import the real product reference A0
+## Phase 1 — Generate the canonical A0 multi-view reference pack
 
-```bash
-npm run image:import -- --asset=A0 --file="<path-to-original-refrigerator-image>"
-npm run project:doctor
-npm run project:status
+No real product photo is required.
+
+The dashboard first asks for **A0 Multi-View Prompt QA**. The canonical A0 prompt includes:
+- one locked product identity;
+- eight required views;
+- smartphone capture metadata;
+- environment/lighting rules;
+- cross-view geometry constraints;
+- realism and negative constraints.
+
+After Prompt QA passes:
+1. copy the A0 generation prompt from the dashboard;
+2. generate the board in ChatGPT Image;
+3. upload the generated A0 board back to the dashboard;
+4. run Multi-View Consistency QA;
+5. A0 is approved only when Multi-View QA passes.
+
+Expected dependency state after A0 approval:
+
+```
+A0 multi-view reference pack  APPROVED
+A1                           READY FOR PROMPT QA
+A2/A5/A6                     BLOCKED UNTIL A1
 ```
 
-Review A0 as the identity reference. Then:
-
-```bash
-npm run image:status -- --asset=A0 --status=approved --qa-id=MANUAL-REF-A0
-```
-
-Re-run doctor/status. A1 should unlock; A2/A5/A6 must remain blocked.
-
-## Phase 2 — Image Prompt QA and A1
+## Phase 2 — Image Prompt QA and A1 from A0
 
 Use:
-- `image-prompt-a1.json`
-- `prompts/image-prompt-qa/IMAGE_PROMPT_QA_PROMPT.md`
-- `anchor-provider-job.json`
+- approved A0 multi-view reference pack;
+- `image-prompt-a1.json`;
+- `prompts/image-prompt-qa/IMAGE_PROMPT_QA_PROMPT.md`;
+- `anchor-provider-job.json`.
+
+A1 uses the selected rear-oriented A0 view(s) as geometry references.
 
 Do not generate A1 until Prompt QA passes.
 

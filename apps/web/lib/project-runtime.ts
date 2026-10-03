@@ -32,6 +32,11 @@ export interface DashboardData {
   promptSpecs: any[];
   promptQaById: Record<string, any>;
   promptQaTemplate: string;
+  multiviewReferencePrompt: any;
+  multiviewPromptQa: any | null;
+  multiviewQa: any | null;
+  multiviewPromptQaTemplate: string;
+  multiviewQaTemplate: string;
   motionQaTemplate: string;
   finalQaTemplate: string;
   imageManifest: any;
@@ -164,6 +169,11 @@ export function loadProjectDashboard(slug: string): DashboardData {
   const promptSpecs = p.image_prompt_specs.map((file: string) =>
     requiredJson(file, "image prompt spec"),
   );
+  const multiviewReferencePrompt = requiredJson(
+    p.multiview_reference_prompt,
+    "multi-view reference prompt",
+  );
+
   const providerJobs = p.image_provider_jobs.map((file: string) =>
     requiredJson(file, "image provider job"),
   );
@@ -176,6 +186,7 @@ export function loadProjectDashboard(slug: string): DashboardData {
     storyboard,
     visualPlan,
     imagePromptSpecs: promptSpecs,
+    referencePromptSpecs: [multiviewReferencePrompt],
     providerJobs,
     executionPlan,
   });
@@ -256,6 +267,54 @@ export function loadProjectDashboard(slug: string): DashboardData {
     if (!fs.existsSync(qaPath)) continue;
     const qa = readJson(qaPath);
     if (typeof qa?.prompt_id === "string") promptQaById.set(qa.prompt_id, qa);
+  }
+
+  const multiviewPromptQaPath = rel(p.multiview_prompt_qa_output);
+  const multiviewPromptQa = fs.existsSync(multiviewPromptQaPath)
+    ? readJson(multiviewPromptQaPath)
+    : null;
+
+  if (!multiviewPromptQa) {
+    deterministicChecks.push({
+      id: "multiview-prompt-qa:A0",
+      stage: "image_prompt",
+      status: "action_required",
+      message: "A0 Multi-View Prompt QA result is missing.",
+      action: "Review the A0 multi-view prompt before generating the reference pack.",
+    });
+  } else if (multiviewPromptQa.prompt_id !== multiviewReferencePrompt.prompt_id) {
+    contractErrors += 1;
+    deterministicChecks.push({
+      id: "multiview-prompt-qa:A0",
+      stage: "image_prompt",
+      status: "blocked",
+      message: `A0 Multi-View Prompt QA prompt_id mismatch: expected ${multiviewReferencePrompt.prompt_id}, got ${multiviewPromptQa.prompt_id ?? "missing"}.`,
+      action: null,
+    });
+  } else if (multiviewPromptQa.status === "pass") {
+    deterministicChecks.push({
+      id: "multiview-prompt-qa:A0",
+      stage: "image_prompt",
+      status: "pass",
+      message: "A0 Multi-View Prompt QA passed.",
+      action: null,
+    });
+  } else if (multiviewPromptQa.status === "needs_human_review") {
+    deterministicChecks.push({
+      id: "multiview-prompt-qa:A0",
+      stage: "image_prompt",
+      status: "needs_human_review",
+      message: "A0 Multi-View Prompt QA needs human review.",
+      action: "Review and repair the A0 multi-view prompt.",
+    });
+  } else {
+    deterministicChecks.push({
+      id: "multiview-prompt-qa:A0",
+      stage: "image_prompt",
+      status: "action_required",
+      message: "A0 Multi-View Prompt QA failed.",
+      action: "Repair only the A0 multi-view prompt and rerun Prompt QA.",
+    });
   }
 
   for (const prompt of promptSpecs) {
@@ -359,7 +418,7 @@ export function loadProjectDashboard(slug: string): DashboardData {
       stage: "visual_assets",
       status: "action_required",
       message: "Actual image-assets.json does not exist; the template is being used.",
-      action: "Import the first real image asset; the UI will create image-assets.json automatically.",
+      action: "Generate/import A0 from its approved multi-view prompt; the UI will create image-assets.json automatically.",
     });
   }
 
@@ -375,6 +434,68 @@ export function loadProjectDashboard(slug: string): DashboardData {
         action: `Re-import ${asset.asset_id}.`,
       });
     }
+  }
+
+  const multiviewQaPath = rel(p.multiview_qa_output);
+  const multiviewQa = fs.existsSync(multiviewQaPath)
+    ? readJson(multiviewQaPath)
+    : null;
+  const a0Record = imageManifest.assets.find((asset: any) => asset.asset_id === "A0");
+
+  if (a0Record?.status === "qa_pending") {
+    if (!multiviewQa) {
+      deterministicChecks.push({
+        id: "multiview-qa:A0",
+        stage: "visual_assets",
+        status: "action_required",
+        message: "A0 is waiting for Multi-View Consistency QA.",
+        action: "Review all A0 views together and save the Multi-View QA result.",
+      });
+    } else if (
+      multiviewQa.asset_id !== "A0" ||
+      multiviewQa.reference_prompt_id !== multiviewReferencePrompt.prompt_id
+    ) {
+      contractErrors += 1;
+      deterministicChecks.push({
+        id: "multiview-qa:A0",
+        stage: "visual_assets",
+        status: "blocked",
+        message: "A0 Multi-View QA does not match A0/MVP1.",
+        action: null,
+      });
+    } else if (multiviewQa.qa_result?.status === "pass") {
+      deterministicChecks.push({
+        id: "multiview-qa:A0",
+        stage: "visual_assets",
+        status: "action_required",
+        message: "A0 Multi-View QA passed but the asset has not been approved yet.",
+        action: "Approve A0 automatically from its passing Multi-View QA result.",
+      });
+    } else if (multiviewQa.qa_result?.status === "needs_human_review") {
+      deterministicChecks.push({
+        id: "multiview-qa:A0",
+        stage: "visual_assets",
+        status: "needs_human_review",
+        message: "A0 Multi-View QA needs human review.",
+        action: "Review the A0 board before continuing.",
+      });
+    } else {
+      deterministicChecks.push({
+        id: "multiview-qa:A0",
+        stage: "visual_assets",
+        status: "action_required",
+        message: "A0 failed Multi-View Consistency QA.",
+        action: "Repair and regenerate only A0 using the returned repair actions.",
+      });
+    }
+  } else if (a0Record?.status === "approved") {
+    deterministicChecks.push({
+      id: "multiview-qa:A0",
+      stage: "visual_assets",
+      status: "pass",
+      message: "A0 Multi-View reference pack is approved.",
+      action: null,
+    });
   }
 
   const visualInputsReady = imageChecks.every((check) => check.status === "pass");
@@ -471,7 +592,11 @@ export function loadProjectDashboard(slug: string): DashboardData {
     promptSpecs.map((prompt: any) => [prompt.asset_id, prompt.prompt_id]),
   );
 
-  const guided = deriveGuidedNextAction(report, {promptIdByAsset});
+  const guided = deriveGuidedNextAction(report, {
+    promptIdByAsset,
+    referencePromptIdByAsset: {A0: multiviewReferencePrompt.prompt_id},
+    referencePackAssetIds: ["A0"],
+  });
 
   return {
     slug,
@@ -481,6 +606,17 @@ export function loadProjectDashboard(slug: string): DashboardData {
     guided,
     promptSpecs,
     promptQaById: Object.fromEntries(promptQaById),
+    multiviewReferencePrompt,
+    multiviewPromptQa,
+    multiviewQa,
+    multiviewPromptQaTemplate: fs.readFileSync(
+      path.join(repoRoot(), "prompts", "multiview-prompt-qa", "MULTIVIEW_PROMPT_QA.md"),
+      "utf8",
+    ),
+    multiviewQaTemplate: fs.readFileSync(
+      path.join(repoRoot(), "prompts", "multiview-qa", "MULTIVIEW_QA_PROMPT.md"),
+      "utf8",
+    ),
     promptQaTemplate: fs.readFileSync(
       path.join(repoRoot(), "prompts", "image-prompt-qa", "IMAGE_PROMPT_QA_PROMPT.md"),
       "utf8",

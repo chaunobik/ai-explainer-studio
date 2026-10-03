@@ -14,8 +14,9 @@
     },
     "critical_failures": [],
     "warnings": [
-      "A1 is still planned; Milestone 3 must approve the actual anchor before derived asset generation.",
-      "Scene 5 comparison must use overlays on fridge_01 rather than introducing a second physical refrigerator."
+      "A0 is planned and must pass real Multi-View QA before any generated scene asset is approved.",
+      "A1 must derive from approved A0 rear-oriented views.",
+      "Scene 5 comparison must preserve one refrigerator identity rather than introducing a different product."
     ],
     "repair_actions": [],
     "retry_count": 0

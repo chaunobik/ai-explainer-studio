@@ -1,0 +1,66 @@
+{
+  "qa_result": {
+    "qa_id": "QA-MV-A0-EXAMPLE",
+    "stage": "visual",
+    "status": "pass",
+    "attempt": 0,
+    "summary": "Example only: A0 covers all required views with one consistent refrigerator identity and realistic smartphone-documentation appearance.",
+    "next_action": "approve",
+    "critical_failures": []
+  },
+  "reference_prompt_id": "MVP1",
+  "asset_id": "A0",
+  "checks": {
+    "same_object_identity": "pass",
+    "geometry_consistency": "pass",
+    "material_consistency": "pass",
+    "required_view_coverage": "pass",
+    "camera_plausibility": "pass",
+    "photographic_realism": "pass",
+    "technical_safety": "pass"
+  },
+  "view_results": [
+    {
+      "view_id": "front",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "front_left_45",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "front_right_45",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "left",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "right",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "rear_left_45",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "rear_right_45",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    },
+    {
+      "view_id": "rear",
+      "status": "pass",
+      "notes": "Example placeholder only; real A0 must be inspected."
+    }
+  ],
+  "critical_violations": [],
+  "repair_actions": []
+}

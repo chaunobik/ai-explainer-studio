@@ -35,6 +35,7 @@
     "operation": {
       "type": "string",
       "enum": [
+        "generate_reference_pack",
         "generate_anchor",
         "derive_scene"
       ]
@@ -96,6 +97,7 @@
           "enum": [
             "9:16",
             "16:9",
+            "4:3",
             "1:1"
           ]
         },
@@ -145,7 +147,7 @@
         "string",
         "null"
       ],
-      "pattern": "^IP[0-9]+$"
+      "pattern": "^(?:IP|MVP)[0-9]+$"
     }
   },
   "additionalProperties": false

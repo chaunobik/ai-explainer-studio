@@ -65,15 +65,18 @@ The guided engine intentionally works one dependency chain at a time.
 Example:
 
 ```
-Import A0
-→ Review A0
+A0 Multi-View Prompt QA
+→ Generate A0 Reference Pack with ChatGPT Image
+→ Multi-View Consistency QA
 → Prompt QA A1
-→ Generate/import A1
+→ Generate/import A1 from selected A0 view(s)
 → Visual QA A1
 → Prompt QA A2
 → Generate/import A2
 ...
 ```
+
+A0 is AI-generated. A real product photo is not required.
 
 It will not ask the operator to QA every future prompt at once.
 
@@ -88,9 +91,16 @@ For Prompt QA:
 4. paste it into the dashboard;
 5. click **Lưu Prompt QA & tiếp tục**.
 
-For image generation:
+For A0 reference generation:
+1. complete **A0 Multi-View Prompt QA**;
+2. click **Copy A0 Generation Prompt**;
+3. generate one eight-view reference board in ChatGPT Image without uploading a real product photo;
+4. upload the generated board to the dashboard;
+5. run **Multi-View Consistency QA**.
+
+For later scene image generation:
 1. click **Copy Image Prompt**;
-2. use the approved reference image(s) in ChatGPT Image;
+2. use the approved A0 view(s) and A1/approved derivatives requested by the scene prompt;
 3. generate/edit the image;
 4. return to the dashboard and upload the result.
 
@@ -114,8 +124,9 @@ They use the same core readiness concepts as the UI.
 For the canonical refrigerator project, the dashboard will guide the operator through a sequence similar to:
 
 ```
-Import A0
-→ Review / approve A0
+A0 Multi-View Prompt QA
+→ Generate/import AI-created A0 reference board
+→ Multi-View Consistency QA / approve A0
 → Prompt QA A1
 → Generate/import A1
 → Visual QA A1

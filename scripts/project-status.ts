@@ -89,6 +89,10 @@ const continuityQa = requiredJson(p.continuity_qa_output, "continuity QA");
 const executionPlan = requiredJson(p.asset_execution_plan, "asset execution plan");
 const motion = requiredJson(p.motion_spec, "motion spec");
 const voiceSpec = requiredJson(p.voice_spec, "voice spec");
+const multiviewReferencePrompt = requiredJson(
+  p.multiview_reference_prompt,
+  "multi-view reference prompt",
+);
 
 const imagePromptSpecs = p.image_prompt_specs.map((file: string) =>
   requiredJson(file, "image prompt spec"),
@@ -104,6 +108,7 @@ const cross = validateCrossStageArtifacts({
   storyboard,
   visualPlan,
   imagePromptSpecs,
+  referencePromptSpecs: [multiviewReferencePrompt],
   providerJobs,
   executionPlan,
 });

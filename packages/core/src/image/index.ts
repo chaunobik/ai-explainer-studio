@@ -2,6 +2,7 @@ export type {
   BaseImageSpec,
   DeriveSceneSpec,
   GenerateAnchorSpec,
+  GenerateReferencePackSpec,
   ImageAsset,
   ImageAssetStatus,
   ImageOperation,
@@ -25,3 +26,6 @@ export { DEFAULT_MAX_VISUAL_ATTEMPTS, applyVisualQa, withVisualRepair } from "./
 
 export type { ImagePromptSpec } from "./image-prompt-spec";
 export { compileImagePrompt, toGenerateAnchorSpec, toDeriveSceneSpec } from "./image-prompt-spec";
+
+export type {PhotoCaptureSpec, MultiViewReferencePromptSpec} from "./multiview-reference";
+export {compileMultiViewReferencePrompt, toGenerateReferencePackSpec} from "./multiview-reference";

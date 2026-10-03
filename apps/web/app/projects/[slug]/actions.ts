@@ -497,3 +497,114 @@ export async function saveFinalQaAction(formData: FormData): Promise<void> {
     actionError(error);
   }
 }
+
+
+export async function saveMultiviewPromptQaAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const raw = String(formData.get("qaJson") ?? "").trim();
+    if (!raw) throw new Error("Hãy dán Multi-View Prompt QA JSON từ ChatGPT.");
+
+    let qa: any;
+    try {
+      qa = JSON.parse(raw);
+    } catch {
+      throw new Error("Multi-View Prompt QA không phải JSON hợp lệ.");
+    }
+
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+    const prompt = readJson(
+      path.join(projectDir, project.paths.multiview_reference_prompt),
+    );
+
+    if (qa.prompt_id !== prompt.prompt_id) {
+      throw new Error(
+        `prompt_id không khớp. Mong đợi ${prompt.prompt_id}, nhận ${qa.prompt_id ?? "missing"}.`,
+      );
+    }
+    if (!["pass", "fail", "needs_human_review"].includes(qa.status)) {
+      throw new Error("QA status phải là pass, fail hoặc needs_human_review.");
+    }
+
+    writeJson(
+      path.join(projectDir, project.paths.multiview_prompt_qa_output),
+      qa,
+    );
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}
+
+export async function saveMultiviewQaAction(formData: FormData): Promise<void> {
+  const slug = String(formData.get("slug") ?? "");
+  try {
+    const raw = String(formData.get("qaJson") ?? "").trim();
+    if (!raw) throw new Error("Hãy dán Multi-View QA JSON từ ChatGPT.");
+
+    let qa: any;
+    try {
+      qa = JSON.parse(raw);
+    } catch {
+      throw new Error("Multi-View QA không phải JSON hợp lệ.");
+    }
+
+    const projectDir = projectDirForSlug(slug);
+    const project = readJson(path.join(projectDir, "project.json"));
+    const prompt = readJson(
+      path.join(projectDir, project.paths.multiview_reference_prompt),
+    );
+
+    if (qa.asset_id !== "A0") {
+      throw new Error(`asset_id phải là A0, nhận ${qa.asset_id ?? "missing"}.`);
+    }
+    if (qa.reference_prompt_id !== prompt.prompt_id) {
+      throw new Error(
+        `reference_prompt_id phải là ${prompt.prompt_id}, nhận ${qa.reference_prompt_id ?? "missing"}.`,
+      );
+    }
+    const status = qa?.qa_result?.status;
+    if (!["pass", "fail", "needs_human_review"].includes(status)) {
+      throw new Error(
+        "qa_result.status phải là pass, fail hoặc needs_human_review.",
+      );
+    }
+
+    const manifestPath = path.join(projectDir, project.paths.image_assets_manifest);
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error("Chưa có image-assets.json. Hãy generate/import A0 trước.");
+    }
+    const manifest = readJson(manifestPath);
+    const a0 = manifest.assets.find((asset: any) => asset.asset_id === "A0");
+    if (!a0) throw new Error("Không tìm thấy A0 trong image manifest.");
+    if (!a0.file?.uri || !fs.existsSync(path.resolve(projectDir, a0.file.uri))) {
+      throw new Error("A0 chưa có file ảnh hợp lệ.");
+    }
+
+    writeJson(path.join(projectDir, project.paths.multiview_qa_output), qa);
+
+    const qaId = String(qa.qa_result?.qa_id ?? "").trim();
+    if (status === "pass") {
+      if (!qaId) throw new Error("Multi-View QA PASS phải có qa_result.qa_id.");
+      a0.status = "approved";
+      a0.qa_result_ids = [...new Set([...(a0.qa_result_ids ?? []), qaId])];
+    } else if (status === "needs_human_review") {
+      a0.status = "needs_human_review";
+      if (qaId) {
+        a0.qa_result_ids = [...new Set([...(a0.qa_result_ids ?? []), qaId])];
+      }
+    } else {
+      a0.status = "rejected";
+      a0.attempt = Number(a0.attempt ?? 0) + 1;
+      if (qaId) {
+        a0.qa_result_ids = [...new Set([...(a0.qa_result_ids ?? []), qaId])];
+      }
+    }
+
+    writeJson(manifestPath, manifest);
+    refresh(slug);
+  } catch (error) {
+    actionError(error);
+  }
+}

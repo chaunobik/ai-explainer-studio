@@ -53,4 +53,52 @@ describe("deriveGuidedNextAction", () => {
     expect(next.kind).toBe("review_image");
     expect(next.asset_id).toBe("A1");
   });
+  it("starts prompt-first projects with A0 multi-view Prompt QA", () => {
+    const next = deriveGuidedNextAction(
+      report([
+        {id: "multiview-prompt-qa:A0", stage: "image_prompt", status: "action_required", message: "missing", action: "run"},
+        {id: "image:A0", stage: "visual_assets", status: "ready", message: "A0 is ready for generation.", action: "generate"},
+        {id: "image:A1", stage: "visual_assets", status: "blocked", message: "blocked by A0", action: null},
+      ]),
+      {
+        referencePackAssetIds: ["A0"],
+        referencePromptIdByAsset: {A0: "MVP1"},
+      },
+    );
+
+    expect(next.kind).toBe("multiview_prompt_qa");
+    expect(next.asset_id).toBe("A0");
+    expect(next.prompt_id).toBe("MVP1");
+  });
+
+  it("moves from A0 prompt PASS to reference-pack generation", () => {
+    const next = deriveGuidedNextAction(
+      report([
+        {id: "multiview-prompt-qa:A0", stage: "image_prompt", status: "pass", message: "pass", action: null},
+        {id: "image:A0", stage: "visual_assets", status: "ready", message: "A0 is ready for generation.", action: "generate"},
+      ]),
+      {
+        referencePackAssetIds: ["A0"],
+        referencePromptIdByAsset: {A0: "MVP1"},
+      },
+    );
+
+    expect(next.kind).toBe("generate_reference_pack");
+  });
+
+  it("moves imported A0 to Multi-View QA", () => {
+    const next = deriveGuidedNextAction(
+      report([
+        {id: "multiview-prompt-qa:A0", stage: "image_prompt", status: "pass", message: "pass", action: null},
+        {id: "image:A0", stage: "visual_assets", status: "action_required", message: "A0 is imported and waiting for Visual QA.", action: "qa"},
+        {id: "multiview-qa:A0", stage: "visual_assets", status: "action_required", message: "Multi-View QA missing", action: "qa"},
+      ]),
+      {
+        referencePackAssetIds: ["A0"],
+        referencePromptIdByAsset: {A0: "MVP1"},
+      },
+    );
+
+    expect(next.kind).toBe("multiview_qa");
+  });
 });

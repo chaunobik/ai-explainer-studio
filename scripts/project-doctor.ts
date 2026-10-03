@@ -135,6 +135,8 @@ const requiredArtifacts: Array<[string, string]> = [
   [p.asset_execution_plan, "asset-execution-plan.schema.json"],
   [p.motion_spec, "motion-spec.schema.json"],
   [p.voice_spec, "voice-spec.schema.json"],
+  [p.multiview_reference_prompt, "multiview-reference-prompt-spec.schema.json"],
+  [p.multiview_provider_job, "image-provider-job.schema.json"],
 ];
 
 for (const [file, schema] of requiredArtifacts) validateFile(file, schema);
@@ -158,6 +160,9 @@ const visualPlan = readJson(path.resolve(projectDir, p.visual_plan));
 const executionPlan = readJson(path.resolve(projectDir, p.asset_execution_plan));
 const motion = readJson(path.resolve(projectDir, p.motion_spec));
 const voiceSpec = readJson(path.resolve(projectDir, p.voice_spec));
+const multiviewReferencePrompt = readJson(
+  path.resolve(projectDir, p.multiview_reference_prompt),
+);
 
 const cross = validateCrossStageArtifacts({
   researchResult: research,
@@ -166,6 +171,7 @@ const cross = validateCrossStageArtifacts({
   storyboard,
   visualPlan,
   imagePromptSpecs: promptSpecs,
+  referencePromptSpecs: [multiviewReferencePrompt],
   providerJobs,
   executionPlan,
 });
@@ -240,6 +246,16 @@ if (voiceManifest) {
   }
 }
 
+validateFile(
+  p.multiview_prompt_qa_output,
+  "multiview-prompt-qa-output.schema.json",
+  {required: false},
+);
+validateFile(
+  p.multiview_qa_output,
+  "multiview-qa-output.schema.json",
+  {required: false},
+);
 validateFile(p.motion_qa_output, "motion-qa-output.schema.json", {required: false});
 validateFile(p.final_qa_output, "final-qa-output.schema.json", {required: false});
 
