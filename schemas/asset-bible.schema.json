@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/asset-bible.schema.json",
+  "title": "AssetBible",
+  "type": "object",
+  "required": [
+    "entities"
+  ],
+  "properties": {
+    "style_guide": {
+      "type": "object"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "name",
+          "canonical_description"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "canonical_description": {
+            "type": "string"
+          },
+          "visual_properties": {
+            "type": "object"
+          },
+          "anchor_asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "continuity_constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
