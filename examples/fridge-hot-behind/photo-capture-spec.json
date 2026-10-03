@@ -1,0 +1,23 @@
+{
+  "capture_profile_id": "CAP1",
+  "capture_mode": "smartphone",
+  "device_class": "modern flagship-class smartphone main camera, natural computational photography",
+  "lens_equivalent_mm": 26,
+  "aperture_f": 1.8,
+  "shutter_speed": "1/125s",
+  "iso": 80,
+  "white_balance_kelvin": 5000,
+  "camera_height_m": 1.35,
+  "subject_distance_m": 2.4,
+  "focus": "single-point autofocus locked on the refrigerator body; keep the complete product sharp enough for documentation",
+  "exposure": "neutral indoor exposure around -0.1 EV; preserve dark-surface detail without lifted HDR shadows",
+  "lighting": "soft natural window daylight from camera-right plus weak ambient room fill; no studio flash",
+  "stabilization": "normal handheld optical/electronic stabilization; no artificial motion blur",
+  "processing": "natural smartphone JPEG/HEIC look with restrained HDR, neutral sharpening, realistic micro-contrast and no beauty/product-ad retouching",
+  "realism_rules": [
+    "retain subtle sensor-like texture and ordinary household contrast",
+    "avoid perfectly clean CGI gradients and mirror-smooth surfaces",
+    "keep vertical edges believable and avoid ultra-wide stretching",
+    "use realistic contact shadows and small imperfect reflections"
+  ]
+}
