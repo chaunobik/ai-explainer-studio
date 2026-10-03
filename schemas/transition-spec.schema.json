@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/transition-spec.schema.json",
+  "title": "TransitionSpec",
+  "type": "object",
+  "required": [
+    "from_scene_id",
+    "to_scene_id",
+    "transition_type",
+    "reason",
+    "continuity_bridge"
+  ],
+  "properties": {
+    "from_scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "to_scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "transition_type": {
+      "type": "string",
+      "enum": [
+        "cut",
+        "match_cut",
+        "zoom_bridge",
+        "pan_bridge",
+        "overlay_reveal",
+        "cutaway_reveal",
+        "diagram_bridge",
+        "fade",
+        "morph"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "continuity_bridge": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context_switch": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false
+}
