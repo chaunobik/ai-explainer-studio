@@ -69,3 +69,21 @@ npm run check
 npm run project:doctor
 npm run project:status
 ```
+
+
+## Run the guided dashboard
+
+Normal V1 operation now uses the local browser dashboard:
+
+```bash
+git checkout main
+git pull
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+The dashboard recalculates **Next Action** after every upload, approval, QA result, preview render, and final render. CLI commands remain available for developer diagnostics, but they are no longer required for the normal production workflow.
+
+See [Guided Local Dashboard](docs/WEB_DASHBOARD.md).
