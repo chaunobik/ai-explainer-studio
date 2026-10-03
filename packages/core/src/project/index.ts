@@ -13,3 +13,6 @@ export {
 } from "./readiness";
 
 export {validateImageManifestIntegrity, validatePromptQaIntegrity} from "./integrity";
+
+export type {GuidedActionContext, GuidedActionKind, GuidedNextAction} from "./guidance";
+export {deriveGuidedNextAction} from "./guidance";

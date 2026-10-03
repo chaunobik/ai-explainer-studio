@@ -42,3 +42,22 @@ jobs:
 
       - name: Renderer smoke
         run: npm run render:smoke
+
+
+  web-build:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build guided dashboard
+        run: npm run web:build

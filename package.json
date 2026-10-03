@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "typecheck": "tsc -b packages/core packages/renderer",
+    "typecheck": "tsc -b packages/core packages/renderer && npm run web:typecheck",
     "build:core": "tsc -b packages/core",
     "test": "vitest run",
     "validate:schemas": "node scripts/validate-schemas.mjs",
@@ -23,7 +24,10 @@
     "image:status": "tsx scripts/set-image-status.ts",
     "voice:import": "tsx scripts/import-voice.ts",
     "voice:status": "tsx scripts/set-voice-status.ts",
-    "render:smoke": "tsx scripts/render-smoke.ts"
+    "render:smoke": "tsx scripts/render-smoke.ts",
+    "dev": "npm --workspace @ai-explainer-studio/web run dev",
+    "web:typecheck": "npm --workspace @ai-explainer-studio/web run typecheck",
+    "web:build": "npm --workspace @ai-explainer-studio/web run build"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
