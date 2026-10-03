@@ -52,7 +52,10 @@
     "script_id": "SC001",
     "language": "vi-VN",
     "target_duration_sec": 55,
-    "hook": "Bạn có để ý phía sau tủ lạnh thường nóng không?",
+    "hook": {
+      "spoken_text": "Bạn có để ý phía sau tủ lạnh thường nóng không?",
+      "claim_ids": []
+    },
     "segments": [
       {
         "segment_id": "SG1",
@@ -64,7 +67,12 @@
         "visualizability_notes": "Show the same refrigerator, then reveal a heat-flow path toward the rear."
       }
     ],
-    "payoff": "Vì vậy phần phía sau nóng lên chính là dấu hiệu nhiệt đang được thải ra môi trường.",
+    "payoff": {
+      "spoken_text": "Vì vậy phần phía sau nóng lên chính là dấu hiệu nhiệt đang được thải ra môi trường.",
+      "claim_ids": [
+        "C1"
+      ]
+    },
     "approved_claim_ids": [
       "C1"
     ],

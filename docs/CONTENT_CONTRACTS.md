@@ -56,7 +56,7 @@ Critical claims require stronger review than low-impact contextual claims.
 ## ScriptSpec
 Purpose: produce spoken Vietnamese, not essay prose.
 
-Every factual segment maps back to approved claim IDs.
+Every factual statement in the hook, body segments, and payoff maps back to approved claim IDs.
 
 Script QA must check:
 - factual consistency
