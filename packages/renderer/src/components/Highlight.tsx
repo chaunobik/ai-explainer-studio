@@ -1,5 +1,6 @@
 import React from "react";
-import {interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import {useCurrentFrame, useVideoConfig} from "remotion";
+import {windowOpacity} from "./fade";
 
 interface HighlightProps {
   startSec: number;
@@ -29,12 +30,7 @@ export const Highlight: React.FC<HighlightProps> = ({
 
   if (frame < start || frame > end) return null;
 
-  const fade = interpolate(
-    frame,
-    [start, start + 6, end - 6, end],
-    [0, 1, 1, 0],
-    {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
-  );
+  const fade = windowOpacity(frame, start, end, 6);
 
   return (
     <div

@@ -1,6 +1,7 @@
 import React from "react";
-import {interpolate, useCurrentFrame, useVideoConfig} from "remotion";
+import {useCurrentFrame, useVideoConfig} from "remotion";
 import type {SubtitleCue} from "@ai-explainer-studio/core";
+import {windowOpacity} from "./fade";
 
 interface SceneSubtitleProps {
   cues: SubtitleCue[];
@@ -18,12 +19,7 @@ export const SceneSubtitle: React.FC<SceneSubtitleProps> = ({cues}) => {
 
   const start = cue.start_sec * fps;
   const end = cue.end_sec * fps;
-  const opacity = interpolate(
-    frame,
-    [start, start + Math.min(4, Math.max(1, (end - start) / 4)), end - Math.min(4, Math.max(1, (end - start) / 4)), end],
-    [0, 1, 1, 0],
-    {extrapolateLeft: "clamp", extrapolateRight: "clamp"},
-  );
+  const opacity = windowOpacity(frame, start, end, 4);
 
   return (
     <div

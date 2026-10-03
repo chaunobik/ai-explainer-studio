@@ -12,12 +12,18 @@
     "validate:schemas": "node scripts/validate-schemas.mjs",
     "validate:examples": "node scripts/validate-examples.mjs",
     "dry-run": "tsx scripts/dry-run.ts",
-    "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run validate:motion && npm run validate:voice-plan && npm run dry-run && npm run project:status -- --ci",
+    "check": "npm run typecheck && npm run validate:schemas && npm run test && npm run validate:examples && npm run project:doctor && npm run validate:motion && npm run validate:voice-plan && npm run dry-run && npm run project:status -- --ci",
     "validate:motion": "tsx scripts/validate-motion.ts",
     "render:scene": "tsx scripts/render-scene.ts",
     "validate:voice-plan": "tsx scripts/validate-voice-plan.ts",
     "render:project": "tsx scripts/render-project.ts",
-    "project:status": "tsx scripts/project-status.ts"
+    "project:status": "tsx scripts/project-status.ts",
+    "project:doctor": "tsx scripts/project-doctor.ts",
+    "image:import": "tsx scripts/import-image.ts",
+    "image:status": "tsx scripts/set-image-status.ts",
+    "voice:import": "tsx scripts/import-voice.ts",
+    "voice:status": "tsx scripts/set-voice-status.ts",
+    "render:smoke": "tsx scripts/render-smoke.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

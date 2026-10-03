@@ -7,6 +7,8 @@ import {
   validateCrossStageArtifacts,
   validateMotionSpec,
   validateVoiceSpecAgainstStoryboard,
+  validateImageManifestIntegrity,
+  validatePromptQaIntegrity,
   type ReadinessCheck,
 } from "../packages/core/src/index";
 
@@ -177,21 +179,55 @@ if (voicePlanReport.ok) {
   });
 }
 
-for (let i = 0; i < p.image_prompt_qa_outputs.length; i += 1) {
-  const qaPath = rel(p.image_prompt_qa_outputs[i]);
-  const prompt = imagePromptSpecs[i];
-  if (!fs.existsSync(qaPath)) {
+const promptQaById = new Map<string, any>();
+for (const relativeQaPath of p.image_prompt_qa_outputs as string[]) {
+  const qaPath = rel(relativeQaPath);
+  if (!fs.existsSync(qaPath)) continue;
+  const qa = readJson(qaPath);
+  const promptId = qa?.prompt_id;
+  if (typeof promptId !== "string" || promptId.length === 0) {
+    contractErrors += 1;
+    deterministicChecks.push({
+      id: `prompt-qa-file:${relativeQaPath}`,
+      stage: "image_prompt",
+      status: "blocked",
+      message: `Prompt QA file ${relativeQaPath} is missing prompt_id.`,
+      action: null,
+    });
+    continue;
+  }
+  if (promptQaById.has(promptId)) {
+    contractErrors += 1;
+    deterministicChecks.push({
+      id: `prompt-qa-duplicate:${promptId}`,
+      stage: "image_prompt",
+      status: "blocked",
+      message: `Duplicate Prompt QA result for ${promptId}.`,
+      action: null,
+    });
+    continue;
+  }
+  promptQaById.set(promptId, qa);
+}
+
+for (const prompt of imagePromptSpecs) {
+  const qa = promptQaById.get(prompt.prompt_id);
+  if (!qa) {
+    const suggestedPath =
+      (p.image_prompt_qa_outputs as string[]).find((value) =>
+        value.toLowerCase().includes(String(prompt.asset_id).toLowerCase()),
+      ) ?? `image-prompt-qa-${String(prompt.asset_id).toLowerCase()}.json`;
+
     deterministicChecks.push({
       id: `prompt-qa:${prompt.asset_id}`,
       stage: "image_prompt",
       status: "action_required",
       message: `Prompt QA result is missing for ${prompt.asset_id} (${prompt.prompt_id}).`,
-      action: `Run Image Prompt QA for ${prompt.asset_id} and save ${p.image_prompt_qa_outputs[i]}.`,
+      action: `Run Image Prompt QA for ${prompt.asset_id} and save a result whose prompt_id is ${prompt.prompt_id} (suggested file: ${suggestedPath}).`,
     });
     continue;
   }
 
-  const qa = readJson(qaPath);
   if (qa.status === "pass") {
     deterministicChecks.push({
       id: `prompt-qa:${prompt.asset_id}`,
@@ -219,11 +255,54 @@ for (let i = 0; i < p.image_prompt_qa_outputs.length; i += 1) {
   }
 }
 
+for (const [promptId] of promptQaById) {
+  if (!imagePromptSpecs.some((prompt: any) => prompt.prompt_id === promptId)) {
+    deterministicChecks.push({
+      id: `prompt-qa-orphan:${promptId}`,
+      stage: "image_prompt",
+      status: "action_required",
+      message: `Prompt QA result ${promptId} does not match any configured ImagePromptSpec.`,
+      action: `Remove or relink the orphan Prompt QA result for ${promptId}.`,
+    });
+  }
+}
+
+const promptQaIntegrity = validatePromptQaIntegrity(
+  imagePromptSpecs,
+  [...promptQaById.values()],
+);
+if (!promptQaIntegrity.ok) {
+  contractErrors += promptQaIntegrity.errors.length;
+  deterministicChecks.push({
+    id: "prompt-qa-integrity",
+    stage: "image_prompt",
+    status: "blocked",
+    message: promptQaIntegrity.errors
+      .map((value) => `[${value.code}] ${value.message}`)
+      .join(" | "),
+    action: null,
+  });
+}
+
 const imageManifestPath = rel(p.image_assets_manifest);
 const usingImageTemplate = !fs.existsSync(imageManifestPath);
 const imageManifest = readJson(
   usingImageTemplate ? rel(p.image_assets_template) : imageManifestPath,
 );
+
+const imageManifestIntegrity = validateImageManifestIntegrity(imageManifest);
+if (!imageManifestIntegrity.ok) {
+  contractErrors += imageManifestIntegrity.errors.length;
+  deterministicChecks.push({
+    id: "image-manifest-integrity",
+    stage: "visual_assets",
+    status: "blocked",
+    message: imageManifestIntegrity.errors
+      .map((value) => `[${value.code}] ${value.message}`)
+      .join(" | "),
+    action: null,
+  });
+}
 
 const imageAssets = imageManifest.assets.map((asset: any) => ({
   assetId: asset.asset_id,
@@ -345,6 +424,22 @@ let finalQaStatus: "pass" | "fail" | "needs_human_review" | null = null;
 if (fs.existsSync(finalQaPath)) {
   const finalQa = readJson(finalQaPath);
   finalQaStatus = finalQa?.qa_result?.status ?? null;
+
+  if (finalQaStatus === "fail") {
+    const repairs = Array.isArray(finalQa.repair_actions)
+      ? finalQa.repair_actions.filter((value: unknown) => typeof value === "string")
+      : [];
+    deterministicChecks.push({
+      id: "final-qa-failed",
+      stage: "final",
+      status: "action_required",
+      message: "Final Video QA failed.",
+      action:
+        repairs.length > 0
+          ? `Apply Final QA repairs: ${repairs.join(" | ")}`
+          : "Review the failed Final QA checks, repair affected scenes/stages, re-render, then rerun Final Video QA.",
+    });
+  }
 }
 
 const report = buildReadinessReport({

@@ -278,6 +278,8 @@ export function buildReadinessReport(
     overall = "needs_human_review";
   } else if (input.outputExists && input.finalQaStatus === "pass") {
     overall = "complete";
+  } else if (input.outputExists && input.finalQaStatus === "fail") {
+    overall = "action_required";
   } else if (input.outputExists) {
     overall = "final_qa_required";
   } else {
@@ -317,6 +319,10 @@ export function buildReadinessReport(
 
   if (overall === "render_ready") {
     nextActions.unshift("Run the final project render.");
+  } else if (input.outputExists && input.finalQaStatus === "fail") {
+    nextActions.unshift(
+      "Final Video QA failed. Apply the recorded local repair actions, re-render only affected stages/scenes, then rerun Final Video QA.",
+    );
   } else if (overall === "final_qa_required") {
     nextActions.unshift("Run Final Video QA on the rendered MP4.");
   } else if (overall === "complete") {

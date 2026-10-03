@@ -56,3 +56,16 @@ Implemented: provider abstraction → detailed per-asset ImagePromptSpec → Pro
 Current manual integration gate: generate/import and approve A1, then A2/A5/A6 using `docs/M3_MANUAL_IMAGE_RUN.md`.
 
 Programmatic assets A3/A4/A7 are intentionally deferred to Milestone 4 (Remotion/SVG).
+
+
+## V1 operator entry points
+- [Operator workflow](docs/OPERATOR_WORKFLOW.md)
+- [V1 Full Rerun Checklist](docs/V1_FULL_RERUN.md)
+
+Before any real end-to-end run:
+
+```bash
+npm run check
+npm run project:doctor
+npm run project:status
+```
