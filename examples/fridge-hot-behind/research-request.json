@@ -1,0 +1,22 @@
+{
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "topic": "Tại sao tủ lạnh nóng phía sau?",
+  "language": "vi-VN",
+  "target_duration_sec": 55,
+  "audience": "Người xem phổ thông, không cần kiến thức nhiệt động lực học",
+  "context": "Short explainer focused on the heat-transfer mechanism and the reason exterior surfaces can feel warm.",
+  "must_cover": [
+    "Tủ lạnh chuyển nhiệt từ bên trong ra môi trường",
+    "Vai trò của dàn bay hơi, máy nén và dàn ngưng ở mức dễ hiểu",
+    "Vị trí thải nhiệt có thể khác nhau tùy thiết kế"
+  ],
+  "must_avoid": [
+    "Nói rằng tủ lạnh tạo ra lạnh như một dạng năng lượng",
+    "Khẳng định mọi tủ lạnh đều thải nhiệt đúng cùng một vị trí"
+  ],
+  "source_preferences": [
+    "manufacturer",
+    "textbook",
+    "official"
+  ]
+}
