@@ -10,7 +10,9 @@
     "hook",
     "segments",
     "payoff",
-    "approved_claim_ids"
+    "approved_claim_ids",
+    "estimated_word_count",
+    "estimated_duration_sec"
   ],
   "properties": {
     "script_id": {
@@ -27,8 +29,25 @@
       "maximum": 90
     },
     "hook": {
-      "type": "string",
-      "minLength": 1
+      "type": "object",
+      "required": [
+        "spoken_text",
+        "claim_ids"
+      ],
+      "properties": {
+        "spoken_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^C[0-9]+$"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "segments": {
       "type": "array",
@@ -39,7 +58,8 @@
           "segment_id",
           "spoken_text",
           "claim_ids",
-          "purpose"
+          "purpose",
+          "visualizability_notes"
         ],
         "properties": {
           "segment_id": {
@@ -76,12 +96,30 @@
       }
     },
     "payoff": {
-      "type": "string",
-      "minLength": 1
+      "type": "object",
+      "required": [
+        "spoken_text",
+        "claim_ids"
+      ],
+      "properties": {
+        "spoken_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^C[0-9]+$"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "approved_claim_ids": {
       "type": "array",
       "minItems": 1,
+      "uniqueItems": true,
       "items": {
         "type": "string",
         "pattern": "^C[0-9]+$"
