@@ -186,6 +186,7 @@ export function loadProjectDashboard(slug: string): DashboardData {
     storyboard,
     visualPlan,
     imagePromptSpecs: promptSpecs,
+    referencePromptSpecs: [multiviewReferencePrompt],
     providerJobs,
     executionPlan,
   });
