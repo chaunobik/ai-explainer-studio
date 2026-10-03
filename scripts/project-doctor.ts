@@ -5,6 +5,9 @@ import addFormats from "ajv-formats";
 import {
   validateImageManifestIntegrity,
   validatePromptQaIntegrity,
+  validateCrossStageArtifacts,
+  validateMotionSpec,
+  validateVoiceSpecAgainstStoryboard,
 } from "../packages/core/src/index";
 
 function arg(name: string): string | undefined {
@@ -146,6 +149,39 @@ const providerJobs = (p.image_provider_jobs as string[])
 const promptQaOutputs = (p.image_prompt_qa_outputs as string[])
   .map((file) => validateFile(file, "image-prompt-qa-output.schema.json", {required: false}))
   .filter(Boolean);
+
+const research = readJson(path.resolve(projectDir, p.research_result));
+const researchQa = readJson(path.resolve(projectDir, p.research_qa_output));
+const script = readJson(path.resolve(projectDir, p.script_spec));
+const storyboard = readJson(path.resolve(projectDir, p.storyboard_spec));
+const visualPlan = readJson(path.resolve(projectDir, p.visual_plan));
+const executionPlan = readJson(path.resolve(projectDir, p.asset_execution_plan));
+const motion = readJson(path.resolve(projectDir, p.motion_spec));
+const voiceSpec = readJson(path.resolve(projectDir, p.voice_spec));
+
+const cross = validateCrossStageArtifacts({
+  researchResult: research,
+  claims: researchQa.claims,
+  script,
+  storyboard,
+  visualPlan,
+  imagePromptSpecs: promptSpecs,
+  providerJobs,
+  executionPlan,
+});
+for (const item of cross.errors) add("error", item.code, item.path, item.message);
+for (const item of cross.warnings) add("warning", item.code, item.path, item.message);
+
+const sceneDurations = new Map<string, number>(
+  storyboard.scenes.map((scene: any) => [scene.scene_id, Number(scene.duration_sec)]),
+);
+const motionReport = validateMotionSpec(motion, sceneDurations);
+for (const item of motionReport.errors) add("error", item.code, item.path, item.message);
+for (const item of motionReport.warnings) add("warning", item.code, item.path, item.message);
+
+const voicePlanReport = validateVoiceSpecAgainstStoryboard(voiceSpec, storyboard);
+for (const item of voicePlanReport.errors) add("error", item.code, item.path, item.message);
+for (const item of voicePlanReport.warnings) add("warning", item.code, item.path, item.message);
 
 const promptIntegrity = validatePromptQaIntegrity(promptSpecs, promptQaOutputs);
 for (const item of promptIntegrity.errors) add("error", item.code, item.path, item.message);
