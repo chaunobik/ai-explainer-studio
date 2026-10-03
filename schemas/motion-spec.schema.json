@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/motion-spec.schema.json",
+  "title": "MotionSpec",
+  "type": "object",
+  "required": [
+    "motion_plan_id",
+    "project_id",
+    "fps",
+    "width",
+    "height",
+    "scenes"
+  ],
+  "properties": {
+    "motion_plan_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fps": {
+      "type": "integer",
+      "minimum": 24,
+      "maximum": 60
+    },
+    "width": {
+      "type": "integer",
+      "const": 1080
+    },
+    "height": {
+      "type": "integer",
+      "const": 1920
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "scene_id",
+          "duration_sec",
+          "source_asset_ids",
+          "operations"
+        ],
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "pattern": "^S[0-9]+$"
+          },
+          "duration_sec": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "source_asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^A[0-9]+$"
+            }
+          },
+          "background": {
+            "type": "string",
+            "enum": [
+              "image",
+              "solid"
+            ],
+            "default": "image"
+          },
+          "solid_background": {
+            "type": "string"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "start_sec",
+                    "end_sec",
+                    "from_scale",
+                    "to_scale",
+                    "from_x",
+                    "to_x",
+                    "from_y",
+                    "to_y"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "camera"
+                    },
+                    "start_sec": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end_sec": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "from_scale": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 3
+                    },
+                    "to_scale": {
+                      "type": "number",
+                      "minimum": 0.1,
+                      "maximum": 3
+                    },
+                    "from_x": {
+                      "type": "number",
+                      "minimum": -1,
+                      "maximum": 1
+                    },
+                    "to_x": {
+                      "type": "number",
+                      "minimum": -1,
+                      "maximum": 1
+                    },
+                    "from_y": {
+                      "type": "number",
+                      "minimum": -1,
+                      "maximum": 1
+                    },
+                    "to_y": {
+                      "type": "number",
+                      "minimum": -1,
+                      "maximum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "start_sec",
+                    "end_sec",
+                    "paths",
+                    "direction",
+                    "speed"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "heat_flow"
+                    },
+                    "start_sec": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end_sec": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "direction": {
+                      "type": "string",
+                      "enum": [
+                        "forward"
+                      ]
+                    },
+                    "speed": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "paths": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "x1",
+                          "y1",
+                          "x2",
+                          "y2"
+                        ],
+                        "properties": {
+                          "x1": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "y1": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "x2": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "y2": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "start_sec",
+                    "end_sec",
+                    "x",
+                    "y",
+                    "width",
+                    "height",
+                    "opacity"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "highlight"
+                    },
+                    "start_sec": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end_sec": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "x": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "y": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "width": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "height": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "start_sec",
+                    "end_sec",
+                    "text",
+                    "x",
+                    "y",
+                    "font_size"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "label"
+                    },
+                    "start_sec": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end_sec": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "x": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "y": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "font_size": {
+                      "type": "number",
+                      "minimum": 12,
+                      "maximum": 120
+                    },
+                    "align": {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "center",
+                        "right"
+                      ],
+                      "default": "center"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "start_sec",
+                    "end_sec",
+                    "from_opacity",
+                    "to_opacity"
+                  ],
+                  "properties": {
+                    "type": {
+                      "const": "opacity"
+                    },
+                    "start_sec": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "end_sec": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "from_opacity": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "to_opacity": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
