@@ -19,3 +19,6 @@ export { buildAnchorGenerationSpec, isApprovedAnchor, assertApprovedAnchor } fro
 
 export type { DerivedGenerationInput } from "./derived-workflow";
 export { assertApprovedReferences, buildDerivedGenerationSpec } from "./derived-workflow";
+
+export type { VisualQaAssessment, VisualQaDecision } from "./visual-qa-workflow";
+export { DEFAULT_MAX_VISUAL_ATTEMPTS, applyVisualQa, withVisualRepair } from "./visual-qa-workflow";
