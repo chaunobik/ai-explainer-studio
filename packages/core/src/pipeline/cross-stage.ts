@@ -9,6 +9,7 @@ export interface CrossStageArtifacts {
   storyboard?: AnyRecord;
   visualPlan?: AnyRecord;
   imagePromptSpecs?: AnyRecord[];
+  referencePromptSpecs?: AnyRecord[];
   providerJobs?: AnyRecord[];
   executionPlan?: AnyRecord;
   imageAssets?: AnyRecord[];
@@ -445,6 +446,13 @@ export function validateCrossStageArtifacts(
       promptByAsset.set(prompt.asset_id, list);
     }
 
+    const referencePromptByAsset = new Map<string, AnyRecord[]>();
+    for (const prompt of artifacts.referencePromptSpecs ?? []) {
+      const list = referencePromptByAsset.get(prompt.asset_id) ?? [];
+      list.push(prompt);
+      referencePromptByAsset.set(prompt.asset_id, list);
+    }
+
     const jobByAsset = new Map<string, AnyRecord[]>();
     for (const job of artifacts.providerJobs) {
       const list = jobByAsset.get(job.output_asset_id) ?? [];
@@ -453,13 +461,16 @@ export function validateCrossStageArtifacts(
     }
 
     for (const entry of imageEntries) {
-      const prompts = promptByAsset.get(entry.asset_id) ?? [];
+      const prompts =
+        entry.operation === "generate_reference_pack"
+          ? referencePromptByAsset.get(entry.asset_id) ?? []
+          : promptByAsset.get(entry.asset_id) ?? [];
       if (prompts.length !== 1) {
         issues.push(
           issue(
             "PROMPT_COVERAGE",
             "image_prompt_specs",
-            `Image-provider asset ${entry.asset_id} must have exactly one ImagePromptSpec.`,
+            `Image-provider asset ${entry.asset_id} must have exactly one matching prompt spec.`,
           ),
         );
         continue;
@@ -472,6 +483,19 @@ export function validateCrossStageArtifacts(
             "PROMPT_TOO_SHORT",
             `image_prompt_specs.${entry.asset_id}`,
             `ImagePromptSpec ${prompt.prompt_id} is under-specified (<200 chars).`,
+          ),
+        );
+      }
+
+      if (
+        entry.operation === "generate_reference_pack" &&
+        prompt.operation !== "generate_reference_pack"
+      ) {
+        issues.push(
+          issue(
+            "PROMPT_OPERATION_MISMATCH",
+            `reference_prompt_specs.${entry.asset_id}`,
+            "Reference-pack execution entry must use generate_reference_pack prompt operation.",
           ),
         );
       }
@@ -498,6 +522,19 @@ export function validateCrossStageArtifacts(
             "PROMPT_OPERATION_MISMATCH",
             `image_prompt_specs.${entry.asset_id}`,
             "Derived execution entry must use derive_scene prompt operation.",
+          ),
+        );
+      }
+
+      if (
+        prompt.operation === "generate_reference_pack" &&
+        (prompt.reference_asset_ids ?? []).length > 0
+      ) {
+        issues.push(
+          issue(
+            "REFERENCE_PACK_HAS_PARENT",
+            `reference_prompt_specs.${entry.asset_id}`,
+            "Generated reference pack must not depend on another image asset.",
           ),
         );
       }
