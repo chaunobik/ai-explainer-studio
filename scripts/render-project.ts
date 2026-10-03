@@ -1,9 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import {bundle} from "@remotion/bundler";
 import {getCompositions, renderMedia} from "@remotion/renderer";
 import {
   buildSubtitleCues,
+  validateImageManifestIntegrity,
   validateMotionSpec,
   validateVoiceAssets,
   validateVoiceSpecAgainstStoryboard,
@@ -12,6 +14,10 @@ import {
 function arg(name: string): string | undefined {
   const prefix = `--${name}=`;
   return process.argv.find((value) => value.startsWith(prefix))?.slice(prefix.length);
+}
+
+function readJson(filePath: string): any {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function dataUri(filePath: string): string {
@@ -29,35 +35,96 @@ function dataUri(filePath: string): string {
   return `data:${mime};base64,${fs.readFileSync(filePath).toString("base64")}`;
 }
 
-function findImage(assetsDir: string, assetId: string): string {
-  for (const ext of [".png", ".jpg", ".jpeg", ".webp"]) {
-    const candidate = path.join(assetsDir, assetId + ext);
-    if (fs.existsSync(candidate)) return candidate;
+function sha256(filePath: string): string {
+  return crypto
+    .createHash("sha256")
+    .update(fs.readFileSync(filePath))
+    .digest("hex");
+}
+
+function requireQaPass(filePath: string, label: string): any {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Missing ${label}: ${filePath}`);
   }
-  throw new Error(
-    `Missing image asset ${assetId}. Expected ${assetId}.png/.jpg/.jpeg/.webp in ${assetsDir}`,
-  );
+  const qa = readJson(filePath);
+  if (qa?.qa_result?.status !== "pass") {
+    throw new Error(
+      `${label} must PASS before final rendering. Current status: ${qa?.qa_result?.status ?? "missing"}.`,
+    );
+  }
+  return qa;
 }
 
 const root = process.cwd();
-const exampleDir = path.resolve(arg("project") ?? "examples/fridge-hot-behind");
-const motionPath = path.resolve(arg("motion") ?? path.join(exampleDir, "motion-spec.json"));
-const storyboardPath = path.resolve(arg("storyboard") ?? path.join(exampleDir, "storyboard-spec.json"));
-const voiceSpecPath = path.resolve(arg("voice-spec") ?? path.join(exampleDir, "voice-spec.json"));
-const voiceAssetsPath = path.resolve(arg("voice-assets") ?? path.join(exampleDir, "voice-assets.json"));
-const imagesDir = path.resolve(arg("images") ?? path.join(exampleDir, "assets"));
-const output = path.resolve(arg("out") ?? path.join(exampleDir, "output", "final.mp4"));
+const projectDir = path.resolve(arg("project") ?? "examples/fridge-hot-behind");
+const manifestPath = path.join(projectDir, "project.json");
+if (!fs.existsSync(manifestPath)) {
+  throw new Error(`Missing project manifest: ${manifestPath}`);
+}
 
+const project = readJson(manifestPath);
+const p = project.paths;
+const resolveProject = (relativePath: string): string =>
+  path.resolve(projectDir, relativePath);
+
+const motionPath = resolveProject(p.motion_spec);
+const storyboardPath = resolveProject(p.storyboard_spec);
+const voiceSpecPath = resolveProject(p.voice_spec);
+const voiceAssetsPath = resolveProject(p.voice_assets_manifest);
+const imageAssetsPath = resolveProject(p.image_assets_manifest);
+const output = path.resolve(arg("out") ?? resolveProject(p.output_file));
+
+for (const [relative, label] of [
+  [p.research_qa_output, "Research QA"],
+  [p.script_qa_output, "Script QA"],
+  [p.storyboard_qa_output, "Storyboard QA"],
+  [p.continuity_qa_output, "Continuity QA"],
+  [p.motion_qa_output, "Motion QA"],
+] as const) {
+  requireQaPass(resolveProject(relative), label);
+}
+
+for (const relativeQaPath of p.image_prompt_qa_outputs as string[]) {
+  const qaPath = resolveProject(relativeQaPath);
+  if (!fs.existsSync(qaPath)) {
+    throw new Error(
+      `Missing Image Prompt QA result: ${qaPath}. Final render cannot bypass Prompt QA.`,
+    );
+  }
+  const qa = readJson(qaPath);
+  if (qa.status !== "pass") {
+    throw new Error(
+      `Image Prompt QA ${qa.prompt_id ?? relativeQaPath} must PASS before final rendering.`,
+    );
+  }
+}
+
+if (!fs.existsSync(imageAssetsPath)) {
+  throw new Error(
+    `Missing actual image manifest ${imageAssetsPath}. Templates are never accepted for final rendering.`,
+  );
+}
 if (!fs.existsSync(voiceAssetsPath)) {
   throw new Error(
-    `Missing ${voiceAssetsPath}. Copy voice-assets.template.json to voice-assets.json and fill approved audio file metadata first.`,
+    `Missing actual voice manifest ${voiceAssetsPath}. Templates are never accepted for final rendering.`,
   );
 }
 
-const motion = JSON.parse(fs.readFileSync(motionPath, "utf8"));
-const storyboard = JSON.parse(fs.readFileSync(storyboardPath, "utf8"));
-const voiceSpec = JSON.parse(fs.readFileSync(voiceSpecPath, "utf8"));
-const voiceManifest = JSON.parse(fs.readFileSync(voiceAssetsPath, "utf8"));
+const motion = readJson(motionPath);
+const storyboard = readJson(storyboardPath);
+const voiceSpec = readJson(voiceSpecPath);
+const voiceManifest = readJson(voiceAssetsPath);
+const imageManifest = readJson(imageAssetsPath);
+
+const imageIntegrity = validateImageManifestIntegrity(imageManifest);
+if (!imageIntegrity.ok) {
+  throw new Error(
+    "Image manifest integrity failed:\n" +
+      imageIntegrity.errors
+        .map((value) => `[${value.code}] ${value.message}`)
+        .join("\n"),
+  );
+}
 
 const durations = new Map<string, number>(
   storyboard.scenes.map((scene: any) => [scene.scene_id, Number(scene.duration_sec)]),
@@ -66,7 +133,9 @@ const motionReport = validateMotionSpec(motion, durations);
 if (!motionReport.ok) {
   throw new Error(
     "Motion preflight failed:\n" +
-      motionReport.errors.map((value) => `[${value.code}] ${value.message}`).join("\n"),
+      motionReport.errors
+        .map((value) => `[${value.code}] ${value.message}`)
+        .join("\n"),
   );
 }
 
@@ -74,7 +143,9 @@ const voiceSpecReport = validateVoiceSpecAgainstStoryboard(voiceSpec, storyboard
 if (!voiceSpecReport.ok) {
   throw new Error(
     "VoiceSpec preflight failed:\n" +
-      voiceSpecReport.errors.map((value) => `[${value.code}] ${value.message}`).join("\n"),
+      voiceSpecReport.errors
+        .map((value) => `[${value.code}] ${value.message}`)
+        .join("\n"),
   );
 }
 
@@ -84,28 +155,79 @@ const voiceReport = validateVoiceAssets(voiceSpec, voiceManifest.assets, {
 if (!voiceReport.ok) {
   throw new Error(
     "Voice asset preflight failed:\n" +
-      voiceReport.errors.map((value) => `[${value.code}] ${value.message}`).join("\n"),
+      voiceReport.errors
+        .map((value) => `[${value.code}] ${value.message}`)
+        .join("\n"),
   );
 }
 
+const imageById = new Map(
+  imageManifest.assets.map((asset: any) => [asset.asset_id, asset]),
+);
 const assets: Record<string, string> = {};
 const requiredImages = new Set<string>(
   motion.scenes.flatMap((scene: any) => scene.source_asset_ids),
 );
+
 for (const assetId of requiredImages) {
-  assets[assetId] = dataUri(findImage(imagesDir, assetId));
+  const asset: any = imageById.get(assetId);
+  if (!asset) {
+    throw new Error(`MotionSpec requires ${assetId}, but image manifest has no such asset.`);
+  }
+  if (asset.status !== "approved") {
+    throw new Error(
+      `MotionSpec requires ${assetId}, but its status is ${asset.status}; approved is required.`,
+    );
+  }
+  if (!asset.qa_result_ids?.length) {
+    throw new Error(`Approved image ${assetId} has no QA result ID.`);
+  }
+  if (!asset.file?.uri) {
+    throw new Error(`Approved image ${assetId} has no file URI.`);
+  }
+
+  const imagePath = resolveProject(asset.file.uri);
+  if (!fs.existsSync(imagePath)) {
+    throw new Error(`Missing approved image file for ${assetId}: ${imagePath}`);
+  }
+  if (!asset.file.checksum) {
+    throw new Error(`Approved image ${assetId} has no checksum. Re-import it through image:import.`);
+  }
+  const actualChecksum = sha256(imagePath);
+  if (actualChecksum !== asset.file.checksum) {
+    throw new Error(
+      `Checksum mismatch for ${assetId}. Manifest=${asset.file.checksum}, actual=${actualChecksum}.`,
+    );
+  }
+
+  assets[assetId] = dataUri(imagePath);
 }
 
 const audioByScene: Record<string, string> = {};
 for (const voiceAsset of voiceManifest.assets) {
-  if (!voiceAsset.file.uri) {
-    throw new Error(`Voice asset ${voiceAsset.asset_id} has no file.uri.`);
+  if (voiceAsset.status !== "approved") {
+    throw new Error(
+      `Voice asset ${voiceAsset.asset_id} is ${voiceAsset.status}; approved is required.`,
+    );
   }
-  const audioPath = path.isAbsolute(voiceAsset.file.uri)
-    ? voiceAsset.file.uri
-    : path.resolve(exampleDir, voiceAsset.file.uri);
+  if (!voiceAsset.qa_result_ids?.length) {
+    throw new Error(`Approved voice asset ${voiceAsset.asset_id} has no QA result ID.`);
+  }
+  if (!voiceAsset.file.uri || !voiceAsset.file.checksum) {
+    throw new Error(
+      `Approved voice asset ${voiceAsset.asset_id} is missing URI/checksum metadata. Re-import through voice:import.`,
+    );
+  }
+
+  const audioPath = resolveProject(voiceAsset.file.uri);
   if (!fs.existsSync(audioPath)) {
     throw new Error(`Missing audio file for ${voiceAsset.asset_id}: ${audioPath}`);
+  }
+  const actualChecksum = sha256(audioPath);
+  if (actualChecksum !== voiceAsset.file.checksum) {
+    throw new Error(
+      `Checksum mismatch for ${voiceAsset.asset_id}. Manifest=${voiceAsset.file.checksum}, actual=${actualChecksum}.`,
+    );
   }
   audioByScene[voiceAsset.scene_id] = dataUri(audioPath);
 }
@@ -130,3 +252,4 @@ await renderMedia({
 });
 
 console.log(`✓ Final render complete: ${output}`);
+console.log("! Final render is NOT publication approval. Run Final Video QA next.");
