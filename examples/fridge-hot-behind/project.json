@@ -1,0 +1,37 @@
+{
+  "project_id": "EXAMPLE-FRIDGE-001",
+  "topic": "Tại sao tủ lạnh nóng phía sau?",
+  "language": "vi-VN",
+  "paths": {
+    "research_result": "research-result.json",
+    "research_qa_output": "research-qa-output.json",
+    "script_spec": "script-spec.json",
+    "script_qa_output": "script-qa-output.json",
+    "storyboard_spec": "storyboard-spec.json",
+    "storyboard_qa_output": "storyboard-qa-output.json",
+    "visual_plan": "visual-plan.json",
+    "continuity_qa_output": "continuity-qa-output.json",
+    "asset_execution_plan": "asset-execution-plan.json",
+    "motion_spec": "motion-spec.json",
+    "voice_spec": "voice-spec.json",
+    "image_prompt_specs": [
+      "image-prompt-a1.json",
+      "image-prompt-a2.json",
+      "image-prompt-a5.json",
+      "image-prompt-a6.json"
+    ],
+    "image_provider_jobs": [
+      "anchor-provider-job.json",
+      "derived-s2-provider-job.json",
+      "derived-s5-provider-job.template.json",
+      "derived-s6-provider-job.template.json"
+    ],
+    "image_assets_manifest": "image-assets.json",
+    "image_assets_template": "image-assets.template.json",
+    "voice_assets_manifest": "voice-assets.json",
+    "voice_assets_template": "voice-assets.template.json",
+    "images_dir": "assets",
+    "output_file": "output/final.mp4",
+    "final_qa_output": "final-qa-output.json"
+  }
+}
