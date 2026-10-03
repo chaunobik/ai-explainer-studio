@@ -10,6 +10,7 @@
     "scene_id",
     "operation",
     "reference_asset_ids",
+    "capture_profile",
     "subject_lock",
     "scene_intent",
     "camera",
@@ -406,6 +407,9 @@
         "type": "string",
         "minLength": 1
       }
+    },
+    "capture_profile": {
+      "$ref": "photo-capture-spec.schema.json"
     }
   },
   "additionalProperties": false
