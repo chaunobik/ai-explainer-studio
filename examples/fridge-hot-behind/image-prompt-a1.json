@@ -1,0 +1,171 @@
+{
+  "prompt_id": "IP1",
+  "asset_id": "A1",
+  "scene_id": "S1",
+  "operation": "generate_anchor",
+  "reference_asset_ids": [
+    "A0"
+  ],
+  "subject_lock": {
+    "entity_ids": [
+      "fridge_01"
+    ],
+    "canonical_description": "A dark charcoal/black freestanding two-door top-freezer refrigerator matching the supplied product reference: rectangular body, upper freezer door smaller than lower refrigerator door, thin silver horizontal divider/trim between doors, minimal recessed vertical black handles along the left edge, flat dark side panels, compact household proportions.",
+    "must_preserve": [
+      "dark charcoal/black body color",
+      "top-freezer two-door layout",
+      "upper freezer door smaller than lower refrigerator door",
+      "thin silver horizontal divider between doors",
+      "recessed vertical handle geometry on the left side",
+      "same height-to-width proportions as the product reference",
+      "same flat-sided rectangular body design"
+    ],
+    "must_not_change": [
+      "do not convert to French-door, side-by-side, single-door, or bottom-freezer layout",
+      "do not change body color to white or stainless steel",
+      "do not add external water/ice dispenser",
+      "do not add large protruding handles",
+      "do not change door proportions",
+      "do not invent a different appliance model"
+    ]
+  },
+  "environment": {
+    "location": "Ordinary modern home kitchen with enough clearance around the refrigerator to view its side/rear area.",
+    "fixed_elements": [
+      "warm light-wood cabinetry",
+      "light neutral wall",
+      "simple light-colored tile or wood-look floor",
+      "one small green plant or modest kitchen accessory",
+      "no people"
+    ],
+    "allowed_changes": [
+      "small crop adjustments",
+      "subtle camera repositioning required by each scene",
+      "minor background blur consistent with the same kitchen"
+    ],
+    "forbidden_changes": [
+      "no showroom or appliance-store setting",
+      "no industrial kitchen",
+      "no dramatic location change",
+      "no neon or sci-fi environment",
+      "no unrelated refrigerator in the background"
+    ]
+  },
+  "lighting": {
+    "style": "Natural residential daylight with soft practical kitchen fill.",
+    "direction": "Main daylight from camera-right/front-right; soft fill from room lighting.",
+    "intensity": "Moderate, realistic indoor exposure; refrigerator surfaces remain dark but readable.",
+    "color_temperature": "Neutral-warm daylight, approximately household natural-light appearance.",
+    "consistency_rules": [
+      "keep shadow direction consistent across A1/A2/A5/A6",
+      "avoid dramatic rim light or studio spotlight",
+      "do not make the refrigerator glossy or mirror-like"
+    ]
+  },
+  "appearance": {
+    "materials": [
+      "matte or satin dark-coated metal refrigerator exterior",
+      "thin brushed-metal/silver divider trim",
+      "ordinary painted kitchen walls",
+      "wood cabinetry",
+      "realistic floor material"
+    ],
+    "surface_finish": [
+      "subtle real-world texture",
+      "small natural reflections only",
+      "no perfect CGI plastic smoothness"
+    ],
+    "realism_notes": [
+      "ordinary lived-in kitchen, not a product advertisement set",
+      "physically plausible contact shadows and floor reflections",
+      "straight edges remain geometrically consistent",
+      "no melted, duplicated, or warped appliance parts"
+    ]
+  },
+  "output_spec": {
+    "aspect_ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "transparent_background": false
+  },
+  "scene_intent": {
+    "narration": "Vì sao phía sau tủ lạnh lại nóng, trong khi bên trong thì lạnh?",
+    "visual_goal": "Establish the exact refrigerator from the product reference inside a real kitchen, with a clear rear three-quarter view that makes the back/side area visually accessible for later explanation.",
+    "viewer_should_understand": [
+      "this is one specific household refrigerator that will remain the same throughout the video",
+      "the video is about the warm rear/heat-rejection area",
+      "the scene is observational, before any technical overlay appears"
+    ]
+  },
+  "camera": {
+    "view": "Rear three-quarter view of the same refrigerator, showing approximately 55–65% of the rear plane and 35–45% of one side/front edge; front doors may be only partially visible as identity cues.",
+    "angle": "Camera positioned behind and slightly to the left of the refrigerator, about 35–45 degrees off the rear normal.",
+    "distance": "Medium full-body shot with the entire refrigerator visible from feet to top.",
+    "height": "Camera center around mid-door height, approximately 1.2–1.4 m from floor.",
+    "framing": "Vertical 9:16; refrigerator occupies about 65–75% of image height, with clear margins around rear edges.",
+    "perspective": "Natural household-camera perspective with vertical lines kept straight.",
+    "lens_style": "Moderate 35–50 mm equivalent; avoid ultra-wide distortion."
+  },
+  "composition": {
+    "subject_position": "Refrigerator centered slightly left so the rear panel is unobstructed and readable.",
+    "crop_rules": [
+      "do not crop feet, top edge, rear panel, or silver door divider",
+      "keep enough floor and wall context to establish a real kitchen",
+      "rear panel must not be hidden against the wall"
+    ],
+    "background_visibility": "Kitchen background visible but secondary; no object may overlap the rear panel.",
+    "negative_space": "Leave useful clear space to the right/rear side for later arrows or labels.",
+    "layering": [
+      "foreground: none",
+      "midground: refrigerator",
+      "background: stable kitchen"
+    ]
+  },
+  "required_visual_elements": [
+    {
+      "element": "the exact dark two-door top-freezer refrigerator identity",
+      "placement": "center-left, full body",
+      "state": "closed doors, normal operation, no overlays",
+      "purpose": "canonical identity anchor"
+    },
+    {
+      "element": "rear exterior plane",
+      "placement": "clearly visible behind the refrigerator body",
+      "state": "plain realistic rear casing; no invented exposed coil network unless directly supported by reference",
+      "purpose": "establish the area discussed by the hook"
+    },
+    {
+      "element": "small realistic wall clearance",
+      "placement": "between rear of refrigerator and wall",
+      "state": "enough to visually read the rear area",
+      "purpose": "make heat-rejection area physically plausible"
+    }
+  ],
+  "technical_overlay": null,
+  "allowed_transforms": [
+    "place the product-reference refrigerator into the defined kitchen",
+    "rotate viewpoint to the specified rear three-quarter camera"
+  ],
+  "technical_constraints": [
+    "Do not expose or invent compressor, condenser coil, tubing, or internal refrigeration components in A1.",
+    "A1 is an observational anchor only; technical mechanism will be introduced in derived/diagram scenes.",
+    "Rear casing geometry should look plausible but generic if not visible in A0."
+  ],
+  "continuity_constraints": [
+    "A1 becomes the master identity reference for all later physical scenes.",
+    "Later A2/A5/A6 must inherit refrigerator geometry, kitchen, lighting, and material appearance from A1."
+  ],
+  "negative_constraints": [
+    "no white refrigerator",
+    "no stainless-steel refrigerator",
+    "no different door layout",
+    "no product showroom",
+    "no excessive blur",
+    "no people",
+    "no open doors",
+    "no glowing heat effect",
+    "no arrows or labels",
+    "no exposed invented technical internals"
+  ],
+  "final_prompt": "IMAGE TASK: CREATE CANONICAL ANCHOR\nAsset: A1 | Scene: S1\nReference assets: A0\nSUBJECT IDENTITY LOCK\nA dark charcoal/black freestanding two-door top-freezer refrigerator matching the supplied product reference: rectangular body, upper freezer door smaller than lower refrigerator door, thin silver horizontal divider/trim between doors, minimal recessed vertical black handles along the left edge, flat dark side panels, compact household proportions.\nMust preserve:\n- dark charcoal/black body color\n- top-freezer two-door layout\n- upper freezer door smaller than lower refrigerator door\n- thin silver horizontal divider between doors\n- recessed vertical handle geometry on the left side\n- same height-to-width proportions as the product reference\n- same flat-sided rectangular body design\nMust never change:\n- do not convert to French-door, side-by-side, single-door, or bottom-freezer layout\n- do not change body color to white or stainless steel\n- do not add external water/ice dispenser\n- do not add large protruding handles\n- do not change door proportions\n- do not invent a different appliance model\nSCENE INTENT\nNarration: Vì sao phía sau tủ lạnh lại nóng, trong khi bên trong thì lạnh?\nVisual goal: Establish the exact refrigerator from the product reference inside a real kitchen, with a clear rear three-quarter view that makes the back/side area visually accessible for later explanation.\nViewer should understand:\n- this is one specific household refrigerator that will remain the same throughout the video\n- the video is about the warm rear/heat-rejection area\n- the scene is observational, before any technical overlay appears\nCAMERA\nView: Rear three-quarter view of the same refrigerator, showing approximately 55–65% of the rear plane and 35–45% of one side/front edge; front doors may be only partially visible as identity cues.\nAngle: Camera positioned behind and slightly to the left of the refrigerator, about 35–45 degrees off the rear normal.\nDistance: Medium full-body shot with the entire refrigerator visible from feet to top.\nHeight: Camera center around mid-door height, approximately 1.2–1.4 m from floor.\nFraming: Vertical 9:16; refrigerator occupies about 65–75% of image height, with clear margins around rear edges.\nPerspective: Natural household-camera perspective with vertical lines kept straight.\nLens style: Moderate 35–50 mm equivalent; avoid ultra-wide distortion.\nCOMPOSITION\nSubject position: Refrigerator centered slightly left so the rear panel is unobstructed and readable.\nBackground visibility: Kitchen background visible but secondary; no object may overlap the rear panel.\nNegative space: Leave useful clear space to the right/rear side for later arrows or labels.\nCrop rules:\n- do not crop feet, top edge, rear panel, or silver door divider\n- keep enough floor and wall context to establish a real kitchen\n- rear panel must not be hidden against the wall\nLayering:\n- foreground: none\n- midground: refrigerator\n- background: stable kitchen\nENVIRONMENT\nLocation: Ordinary modern home kitchen with enough clearance around the refrigerator to view its side/rear area.\nFixed elements:\n- warm light-wood cabinetry\n- light neutral wall\n- simple light-colored tile or wood-look floor\n- one small green plant or modest kitchen accessory\n- no people\nAllowed changes:\n- small crop adjustments\n- subtle camera repositioning required by each scene\n- minor background blur consistent with the same kitchen\nForbidden changes:\n- no showroom or appliance-store setting\n- no industrial kitchen\n- no dramatic location change\n- no neon or sci-fi environment\n- no unrelated refrigerator in the background\nLIGHTING\nStyle: Natural residential daylight with soft practical kitchen fill.\nDirection: Main daylight from camera-right/front-right; soft fill from room lighting.\nIntensity: Moderate, realistic indoor exposure; refrigerator surfaces remain dark but readable.\nColor temperature: Neutral-warm daylight, approximately household natural-light appearance.\nConsistency rules:\n- keep shadow direction consistent across A1/A2/A5/A6\n- avoid dramatic rim light or studio spotlight\n- do not make the refrigerator glossy or mirror-like\nMATERIALS AND REALISM\nMaterials:\n- matte or satin dark-coated metal refrigerator exterior\n- thin brushed-metal/silver divider trim\n- ordinary painted kitchen walls\n- wood cabinetry\n- realistic floor material\nSurface finish:\n- subtle real-world texture\n- small natural reflections only\n- no perfect CGI plastic smoothness\nReality notes:\n- ordinary lived-in kitchen, not a product advertisement set\n- physically plausible contact shadows and floor reflections\n- straight edges remain geometrically consistent\n- no melted, duplicated, or warped appliance parts\nREQUIRED VISUAL ELEMENTS\n1. the exact dark two-door top-freezer refrigerator identity\n   Placement: center-left, full body\n   State: closed doors, normal operation, no overlays\n   Purpose: canonical identity anchor\n2. rear exterior plane\n   Placement: clearly visible behind the refrigerator body\n   State: plain realistic rear casing; no invented exposed coil network unless directly supported by reference\n   Purpose: establish the area discussed by the hook\n3. small realistic wall clearance\n   Placement: between rear of refrigerator and wall\n   State: enough to visually read the rear area\n   Purpose: make heat-rejection area physically plausible\nTECHNICAL OVERLAY\n- none\nALLOWED TRANSFORMS\n- place the product-reference refrigerator into the defined kitchen\n- rotate viewpoint to the specified rear three-quarter camera\nTECHNICAL CONSTRAINTS\n- Do not expose or invent compressor, condenser coil, tubing, or internal refrigeration components in A1.\n- A1 is an observational anchor only; technical mechanism will be introduced in derived/diagram scenes.\n- Rear casing geometry should look plausible but generic if not visible in A0.\nCONTINUITY CONSTRAINTS\n- A1 becomes the master identity reference for all later physical scenes.\n- Later A2/A5/A6 must inherit refrigerator geometry, kitchen, lighting, and material appearance from A1.\nNEGATIVE CONSTRAINTS\n- no white refrigerator\n- no stainless-steel refrigerator\n- no different door layout\n- no product showroom\n- no excessive blur\n- no people\n- no open doors\n- no glowing heat effect\n- no arrows or labels\n- no exposed invented technical internals\nOUTPUT\n1080x1920, aspect ratio 9:16\nOpaque background.\nFINAL RULE\nThis image becomes the authoritative identity reference for all later scenes. Favor stable, reproducible geometry over decorative variation."
+}
