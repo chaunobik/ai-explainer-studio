@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/qa-result.schema.json",
+  "title": "QAResult",
+  "type": "object",
+  "required": [
+    "qa_id",
+    "stage",
+    "status",
+    "critical_failures"
+  ],
+  "properties": {
+    "qa_id": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "research",
+        "script",
+        "storyboard",
+        "visual",
+        "continuity",
+        "motion",
+        "voice",
+        "final"
+      ]
+    },
+    "artifact_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "needs_human_review"
+      ]
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "critical_failures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "retry_count": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    }
+  },
+  "additionalProperties": true
+}

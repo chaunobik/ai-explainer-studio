@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/video-spec.schema.json",
+  "title": "VideoSpec",
+  "type": "object",
+  "required": [
+    "project_id",
+    "topic",
+    "platform",
+    "video",
+    "status",
+    "scenes",
+    "qa"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "default": "vi-VN"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "tiktok",
+        "youtube_shorts"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "in_progress",
+        "needs_human_review",
+        "approved",
+        "rendered"
+      ]
+    },
+    "video": {
+      "type": "object",
+      "required": [
+        "aspect_ratio",
+        "width",
+        "height",
+        "target_duration_sec"
+      ],
+      "properties": {
+        "aspect_ratio": {
+          "const": "9:16"
+        },
+        "width": {
+          "type": "integer",
+          "const": 1080
+        },
+        "height": {
+          "type": "integer",
+          "const": 1920
+        },
+        "target_duration_sec": {
+          "type": "number",
+          "minimum": 30,
+          "maximum": 90
+        }
+      },
+      "additionalProperties": false
+    },
+    "research": {
+      "type": "object"
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "script": {
+      "type": "object"
+    },
+    "asset_bible": {
+      "type": "object"
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "scene-spec.schema.json"
+      }
+    },
+    "voice": {
+      "type": "object"
+    },
+    "qa": {
+      "type": "array",
+      "items": {
+        "$ref": "qa-result.schema.json"
+      }
+    },
+    "render": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

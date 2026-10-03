@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/scene-spec.schema.json",
+  "title": "SceneSpec",
+  "type": "object",
+  "required": [
+    "scene_id",
+    "duration_sec",
+    "narration",
+    "visual_goal",
+    "visual_type",
+    "relationship"
+  ],
+  "properties": {
+    "scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "duration_sec": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "narration": {
+      "type": "string"
+    },
+    "on_screen_text": {
+      "type": "string"
+    },
+    "visual_goal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "visual_type": {
+      "type": "string",
+      "enum": [
+        "real_asset",
+        "reference_edit",
+        "generated_image",
+        "technical_diagram",
+        "programmatic_animation"
+      ]
+    },
+    "primary_entity_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "anchor_asset_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent_scene_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "relationship": {
+      "type": "string",
+      "enum": [
+        "anchor",
+        "continuation",
+        "derived",
+        "context_switch"
+      ]
+    },
+    "camera_action": {
+      "type": "string"
+    },
+    "visual_transforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transition_out": {
+      "type": "string"
+    },
+    "transition_reason": {
+      "type": "string"
+    },
+    "required_objects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "motion": {
+      "type": "object"
+    },
+    "qa_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "pass",
+        "fail",
+        "needs_human_review"
+      ],
+      "default": "pending"
+    }
+  },
+  "additionalProperties": true
+}
