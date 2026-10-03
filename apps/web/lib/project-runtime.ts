@@ -8,6 +8,8 @@ import {
   evaluateVoiceReadiness,
   validateCrossStageArtifacts,
   validateImageManifestIntegrity,
+  manualOperatorReviewId,
+  shouldMigrateManualImageToApproved,
   validateMotionSpec,
   validatePromptQaIntegrity,
   validateVoiceSpecAgainstStoryboard,
@@ -76,6 +78,10 @@ export function projectDirForSlug(slug: string): string {
 
 function readJson(filePath: string): any {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function writeJson(filePath: string, value: unknown): void {
+  fs.writeFileSync(filePath, JSON.stringify(value, null, 2) + "\n");
 }
 
 function qaCheck(
@@ -375,6 +381,43 @@ export function loadProjectDashboard(slug: string): DashboardData {
   const imageManifest = readJson(
     usingImageTemplate ? rel(p.image_assets_template) : imageManifestPath,
   );
+
+  // Manual ChatGPT image generation is already human-in-the-loop.
+  // Uploading the image means the operator has visually accepted it.
+  // Migrate older local projects that were left in qa_pending / needs_human_review
+  // by the previous workflow so they do not get stuck behind a redundant review.
+  if (!usingImageTemplate) {
+    let manualReviewMigrated = false;
+    for (const asset of imageManifest.assets) {
+      const uri = asset.file?.uri;
+      const fileExists =
+        typeof uri === "string" &&
+        uri.length > 0 &&
+        fs.existsSync(rel(uri));
+
+      if (
+        shouldMigrateManualImageToApproved({
+          providerMode: asset.provenance.provider_mode,
+          status: asset.status,
+          fileExists,
+        })
+      ) {
+        asset.status = "approved";
+        asset.qa_result_ids = [
+          ...new Set([
+            ...(asset.qa_result_ids ?? []),
+            manualOperatorReviewId(asset.asset_id),
+          ]),
+        ];
+        manualReviewMigrated = true;
+      }
+    }
+
+    if (manualReviewMigrated) {
+      writeJson(imageManifestPath, imageManifest);
+    }
+  }
+
   const imageIntegrity = validateImageManifestIntegrity(imageManifest);
   contractErrors += imageIntegrity.errors.length;
   warnings += imageIntegrity.warnings.length;
