@@ -4,38 +4,110 @@
   "title": "AssetBible",
   "type": "object",
   "required": [
-    "entities"
+    "style_guide",
+    "entities",
+    "assets"
   ],
   "properties": {
     "style_guide": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "realism_target",
+        "lighting",
+        "camera_style"
+      ],
+      "properties": {
+        "realism_target": {
+          "type": "string",
+          "enum": [
+            "realistic",
+            "technical_realistic",
+            "diagrammatic"
+          ]
+        },
+        "lighting": {
+          "type": "string"
+        },
+        "camera_style": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "color_notes": {
+          "type": "string"
+        },
+        "forbidden_style_traits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
     },
     "entities": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": [
           "entity_id",
           "name",
-          "canonical_description"
+          "role",
+          "canonical_description",
+          "invariant_features",
+          "allowed_variations",
+          "forbidden_variations"
         ],
         "properties": {
           "entity_id": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "supporting",
+              "conceptual"
+            ]
           },
           "canonical_description": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "visual_properties": {
             "type": "object"
           },
-          "anchor_asset_ids": {
+          "invariant_features": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_variations": {
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "forbidden_variations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "anchor_asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^A[0-9]+$"
             }
           },
           "continuity_constraints": {
@@ -45,9 +117,70 @@
             }
           }
         },
-        "additionalProperties": true
+        "additionalProperties": false
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "asset_id",
+          "status",
+          "asset_kind",
+          "entity_ids",
+          "purpose"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^A[0-9]+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "available",
+              "approved",
+              "rejected"
+            ]
+          },
+          "asset_kind": {
+            "type": "string",
+            "enum": [
+              "real_photo",
+              "real_footage",
+              "reference_image",
+              "generated_image",
+              "diagram",
+              "programmatic_asset"
+            ]
+          },
+          "entity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "source_uri": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "canonical_view": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }
