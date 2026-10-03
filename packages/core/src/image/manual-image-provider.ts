@@ -34,6 +34,7 @@ export class ManualImageProvider implements ImageProvider {
     referenceAssetIds: string[],
   ): ImageProviderJob {
     return {
+      promptSpecId: spec.promptSpecId,
       jobId: [
         this.id,
         spec.projectId,
