@@ -1,6 +1,7 @@
 import type { DeriveSceneSpec, GenerateAnchorSpec } from "./types";
 
 export interface ImagePromptSpec {
+  projectId: string;
   promptId: string;
   assetId: string;
   sceneId: string;
@@ -208,7 +209,7 @@ export function toGenerateAnchorSpec(
 
   return {
     promptSpecId: spec.promptId,
-    projectId: "",
+    projectId: spec.projectId,
     sceneId: spec.sceneId,
     outputAssetId: spec.assetId,
     entityIds: spec.subjectLock.entityIds,
@@ -240,7 +241,7 @@ export function toDeriveSceneSpec(
 
   return {
     promptSpecId: spec.promptId,
-    projectId: "",
+    projectId: spec.projectId,
     sceneId: spec.sceneId,
     outputAssetId: spec.assetId,
     entityIds: spec.subjectLock.entityIds,
