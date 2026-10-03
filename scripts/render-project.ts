@@ -46,7 +46,7 @@ const storyboardPath = path.resolve(arg("storyboard") ?? path.join(exampleDir, "
 const voiceSpecPath = path.resolve(arg("voice-spec") ?? path.join(exampleDir, "voice-spec.json"));
 const voiceAssetsPath = path.resolve(arg("voice-assets") ?? path.join(exampleDir, "voice-assets.json"));
 const imagesDir = path.resolve(arg("images") ?? path.join(exampleDir, "assets"));
-const output = path.resolve(arg("out") ?? path.join("out", "final.mp4"));
+const output = path.resolve(arg("out") ?? path.join(exampleDir, "output", "final.mp4"));
 
 if (!fs.existsSync(voiceAssetsPath)) {
   throw new Error(
