@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/visual-route-decision.schema.json",
+  "title": "VisualRouteDecision",
+  "type": "object",
+  "required": [
+    "scene_id",
+    "route",
+    "source_strategy",
+    "rationale",
+    "input_asset_ids",
+    "planned_output_asset_ids",
+    "regeneration_policy"
+  ],
+  "properties": {
+    "scene_id": {
+      "type": "string",
+      "pattern": "^S[0-9]+$"
+    },
+    "route": {
+      "type": "string",
+      "enum": [
+        "real_asset",
+        "reference_edit",
+        "generated_image",
+        "technical_diagram",
+        "programmatic_animation"
+      ]
+    },
+    "source_strategy": {
+      "type": "string",
+      "enum": [
+        "new_real_anchor",
+        "existing_anchor",
+        "derived_edit",
+        "new_generated_anchor",
+        "diagram_from_anchor",
+        "code_only",
+        "hybrid"
+      ]
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^A[0-9]+$"
+      }
+    },
+    "planned_output_asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^A[0-9]+$"
+      }
+    },
+    "required_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "regeneration_policy": {
+      "type": "string",
+      "enum": [
+        "do_not_regenerate_entity",
+        "derive_from_anchor",
+        "new_anchor_allowed",
+        "code_only"
+      ]
+    },
+    "reality_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

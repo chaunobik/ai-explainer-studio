@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/continuity-qa-output.schema.json",
+  "title": "ContinuityQAOutput",
+  "type": "object",
+  "required": [
+    "qa_result",
+    "entity_checks",
+    "scene_checks",
+    "transition_checks",
+    "repair_actions"
+  ],
+  "properties": {
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "entity_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "status",
+          "issues"
+        ],
+        "properties": {
+          "entity_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "needs_review"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "scene_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "scene_id",
+          "status",
+          "issues"
+        ],
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "pattern": "^S[0-9]+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "needs_review"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "transition_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from_scene_id",
+          "to_scene_id",
+          "status",
+          "issues"
+        ],
+        "properties": {
+          "from_scene_id": {
+            "type": "string",
+            "pattern": "^S[0-9]+$"
+          },
+          "to_scene_id": {
+            "type": "string",
+            "pattern": "^S[0-9]+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "needs_review"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

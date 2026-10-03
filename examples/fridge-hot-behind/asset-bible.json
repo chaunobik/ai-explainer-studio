@@ -1,0 +1,149 @@
+{
+  "style_guide": {
+    "realism_target": "technical_realistic",
+    "lighting": "Soft natural indoor daylight with believable room shadows; no studio glow.",
+    "camera_style": "Grounded real-camera perspective, mostly rear three-quarter and controlled cutaway views.",
+    "environment": "Ordinary compact home kitchen; realistic wall clearance and everyday surfaces.",
+    "color_notes": "Neutral household colors; refrigerator remains matte white.",
+    "forbidden_style_traits": [
+      "hyper-polished CGI",
+      "neon rim lighting",
+      "excessive depth of field",
+      "perfectly symmetrical showroom staging",
+      "unmotivated environment changes"
+    ]
+  },
+  "entities": [
+    {
+      "entity_id": "fridge_01",
+      "name": "Canonical refrigerator",
+      "role": "primary",
+      "canonical_description": "Matte white freestanding two-door top-freezer refrigerator in an ordinary home kitchen, viewed initially from a rear three-quarter angle.",
+      "visual_properties": {
+        "body_color": "matte white",
+        "door_layout": "top-freezer two-door",
+        "finish": "slightly used household appliance",
+        "environment": "ordinary home kitchen",
+        "baseline_view": "rear three-quarter"
+      },
+      "invariant_features": [
+        "matte white body",
+        "same top-freezer/two-door geometry",
+        "same door proportions",
+        "same handle/recess geometry",
+        "same overall width-height proportions",
+        "same kitchen environment when the physical object is visible"
+      ],
+      "allowed_variations": [
+        "crop and zoom",
+        "rear/side camera rotation consistent with the same object",
+        "transparent cutaway overlays",
+        "technical labels and arrows",
+        "warm-surface highlight",
+        "diagram overlay while preserving silhouette"
+      ],
+      "forbidden_variations": [
+        "change to stainless-steel finish",
+        "change to French-door or side-by-side layout",
+        "change door count or proportions",
+        "replace with a different refrigerator model",
+        "move to an unrelated kitchen without a context switch",
+        "alter component locations merely for visual convenience"
+      ],
+      "anchor_asset_ids": [
+        "A1"
+      ],
+      "continuity_constraints": [
+        "All physical refrigerator scenes must derive from A1 or an approved derivative.",
+        "Technical abstractions should preserve the recognizable fridge_01 silhouette when shown together with the appliance.",
+        "Scene 5 may compare heat-rejection layouts but must keep fridge_01 as the primary example."
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "A1",
+      "status": "planned",
+      "asset_kind": "real_photo",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Master visual anchor for the canonical refrigerator.",
+      "source_uri": null,
+      "canonical_view": "rear three-quarter",
+      "notes": "Acquire or select before Milestone 3 generation."
+    },
+    {
+      "asset_id": "A2",
+      "status": "planned",
+      "asset_kind": "reference_image",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Cutaway derivative showing interior-to-exterior heat movement.",
+      "source_uri": null,
+      "canonical_view": "same angle as A1 with transparent cutaway",
+      "notes": "Must derive from A1."
+    },
+    {
+      "asset_id": "A3",
+      "status": "planned",
+      "asset_kind": "diagram",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Simplified refrigeration loop over the same refrigerator silhouette.",
+      "source_uri": null,
+      "canonical_view": "locked cutaway",
+      "notes": "Evaporator, compressor, condenser path."
+    },
+    {
+      "asset_id": "A4",
+      "status": "planned",
+      "asset_kind": "programmatic_asset",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Animated condenser heat-rejection overlay.",
+      "source_uri": null,
+      "canonical_view": "close heat-rejection area",
+      "notes": "SVG/Remotion arrows over A3/A1 context."
+    },
+    {
+      "asset_id": "A5",
+      "status": "planned",
+      "asset_kind": "diagram",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Rear-versus-side heat-rejection comparison using the same canonical refrigerator.",
+      "source_uri": null,
+      "canonical_view": "controlled split/rotation comparison",
+      "notes": "Do not introduce a second unrelated refrigerator."
+    },
+    {
+      "asset_id": "A6",
+      "status": "planned",
+      "asset_kind": "reference_image",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Return to the canonical exterior with subtle warm-surface highlight.",
+      "source_uri": null,
+      "canonical_view": "rear three-quarter",
+      "notes": "Derived directly from A1."
+    },
+    {
+      "asset_id": "A7",
+      "status": "planned",
+      "asset_kind": "programmatic_asset",
+      "entity_ids": [
+        "fridge_01"
+      ],
+      "purpose": "Final summary heat path from interior to exterior.",
+      "source_uri": null,
+      "canonical_view": "wide summary view",
+      "notes": "Overlay on A6/A1."
+    }
+  ]
+}

@@ -18,7 +18,7 @@ Exit condition: ✅ Met
 
 A topic can produce structured, reviewable JSON through the full content pipeline, with the canonical refrigerator example stored in `examples/fridge-hot-behind/`.
 
-## Milestone 2 — Visual Intelligence
+## Milestone 2 — Visual Intelligence ✅ COMPLETE
 Goal: turn storyboard scenes into a coherent visual plan.
 
 Deliverables:
@@ -30,8 +30,9 @@ Deliverables:
 - TransitionSpec
 - continuity QA rules
 
-Exit condition:
-Each storyboard scene has a deliberate visual source and relationship to adjacent scenes.
+Exit condition: ✅ Met
+
+Each storyboard scene now has a deliberate route, anchor/derivation lineage, and transition relationship to adjacent scenes. The canonical refrigerator example includes a passing Continuity QA artifact.
 
 ## Milestone 3 — Visual Generation
 Goal: generate/edit scene assets and validate them.

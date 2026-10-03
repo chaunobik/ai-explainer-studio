@@ -113,6 +113,9 @@
     },
     "render": {
       "type": "object"
+    },
+    "visual_plan": {
+      "$ref": "visual-plan.schema.json"
     }
   },
   "additionalProperties": false

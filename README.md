@@ -23,25 +23,32 @@ AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually c
 - [VideoSpec](schemas/video-spec.schema.json)
 - [SceneSpec](schemas/scene-spec.schema.json)
 - [AssetBible](schemas/asset-bible.schema.json)
+- [VisualPlan](schemas/visual-plan.schema.json)
+- [SceneLineage](schemas/scene-lineage.schema.json)
+- [TransitionSpec](schemas/transition-spec.schema.json)
 - [QAResult](schemas/qa-result.schema.json)
 
 ## Current development phase
 **Milestone 1 — Content Intelligence: COMPLETE**
 
-The structured pipeline is now defined for:
+**Milestone 2 — Visual Intelligence: COMPLETE**
+
+The current V1 pipeline is defined through:
 
 ```
 Topic
-→ Research
-→ Research QA
-→ Script
-→ Script QA
-→ Storyboard
-→ Storyboard QA
+→ Research + QA
+→ Script + QA
+→ Storyboard + QA
+→ AssetBible
+→ Visual Router
+→ Scene Lineage
+→ Transition Plan
+→ Continuity QA
 ```
 
-A canonical end-to-end example is available under `examples/fridge-hot-behind/`.
+The canonical end-to-end example is under `examples/fridge-hot-behind/`.
 
-**Next: Milestone 2 — Visual Intelligence**
+**Next: Milestone 3 — Visual Generation**
 
-AssetBible → entity continuity → scene lineage → visual routing → continuity QA
+Anchor asset → derived scene assets → Visual QA → repair/retry
