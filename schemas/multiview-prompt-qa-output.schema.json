@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/multiview-prompt-qa-output.schema.json",
+  "title": "MultiViewPromptQAOutput",
+  "type": "object",
+  "required": ["prompt_id", "status", "checks", "critical_issues", "repair_actions"],
+  "properties": {
+    "prompt_id": {"type": "string", "pattern": "^MVP[0-9]+$"},
+    "status": {"type": "string", "enum": ["pass", "fail", "needs_human_review"]},
+    "checks": {
+      "type": "object",
+      "required": [
+        "subject_lock",
+        "view_coverage",
+        "camera_specificity",
+        "cross_view_consistency",
+        "photographic_realism",
+        "technical_safety",
+        "ambiguity"
+      ],
+      "properties": {
+        "subject_lock": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
+        "view_coverage": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
+        "camera_specificity": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
+        "cross_view_consistency": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
+        "photographic_realism": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
+        "technical_safety": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
+        "ambiguity": {"type": "string", "enum": ["pass", "fail", "needs_review"]}
+      },
+      "additionalProperties": false
+    },
+    "critical_issues": {"type": "array", "items": {"type": "string"}},
+    "repair_actions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}
