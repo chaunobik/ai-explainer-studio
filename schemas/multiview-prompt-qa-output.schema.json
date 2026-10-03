@@ -3,10 +3,28 @@
   "$id": "https://ai-explainer-studio.local/schemas/multiview-prompt-qa-output.schema.json",
   "title": "MultiViewPromptQAOutput",
   "type": "object",
-  "required": ["prompt_id", "status", "checks", "critical_issues", "repair_actions"],
+  "required": [
+    "prompt_id",
+    "status",
+    "checks",
+    "check_notes",
+    "summary",
+    "critical_issues",
+    "repair_actions"
+  ],
   "properties": {
-    "prompt_id": {"type": "string", "pattern": "^MVP[0-9]+$"},
-    "status": {"type": "string", "enum": ["pass", "fail", "needs_human_review"]},
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^MVP[0-9]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "needs_human_review"
+      ]
+    },
     "checks": {
       "type": "object",
       "required": [
@@ -19,18 +37,124 @@
         "ambiguity"
       ],
       "properties": {
-        "subject_lock": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "view_coverage": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "camera_specificity": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "cross_view_consistency": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "photographic_realism": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "technical_safety": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "ambiguity": {"type": "string", "enum": ["pass", "fail", "needs_review"]}
+        "subject_lock": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "view_coverage": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "camera_specificity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "cross_view_consistency": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "photographic_realism": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "technical_safety": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "ambiguity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        }
       },
       "additionalProperties": false
     },
-    "critical_issues": {"type": "array", "items": {"type": "string"}},
-    "repair_actions": {"type": "array", "items": {"type": "string"}}
+    "critical_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "check_notes": {
+      "type": "object",
+      "required": [
+        "subject_lock",
+        "view_coverage",
+        "camera_specificity",
+        "cross_view_consistency",
+        "photographic_realism",
+        "technical_safety",
+        "ambiguity"
+      ],
+      "properties": {
+        "subject_lock": {
+          "type": "string",
+          "minLength": 1
+        },
+        "view_coverage": {
+          "type": "string",
+          "minLength": 1
+        },
+        "camera_specificity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cross_view_consistency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "photographic_realism": {
+          "type": "string",
+          "minLength": 1
+        },
+        "technical_safety": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ambiguity": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
   },
   "additionalProperties": false
 }

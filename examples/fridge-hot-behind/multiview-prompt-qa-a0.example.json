@@ -10,6 +10,16 @@
     "technical_safety": "pass",
     "ambiguity": "pass"
   },
+  "check_notes": {
+    "subject_lock": "The prompt locks one dark-charcoal top-freezer refrigerator with fixed door layout, recessed handles, trim, proportions and forbidden redesigns.",
+    "view_coverage": "All required front, 45-degree, side and rear views are explicitly listed and must keep the full appliance visible.",
+    "camera_specificity": "The smartphone capture profile specifies focal length equivalent, aperture, shutter, ISO, white balance, camera height, subject distance and lighting.",
+    "cross_view_consistency": "The prompt states that every panel is the exact same physical refrigerator and names geometry that must remain unchanged.",
+    "photographic_realism": "Natural indoor daylight, restrained HDR, realistic coated-metal reflections and anti-CGI constraints support a believable phone-photo look.",
+    "technical_safety": "The prompt forbids invented hidden refrigeration internals and limits A0 to visible product geometry.",
+    "ambiguity": "Product identity, required views, capture profile, environment, board layout and forbidden changes are sufficiently constrained."
+  },
+  "summary": "The A0 prompt is sufficiently specific to generate a realistic multi-view reference board while preserving one refrigerator identity across all required angles.",
   "critical_issues": [],
   "repair_actions": []
 }

@@ -8,14 +8,24 @@
     "reference_prompt_id",
     "asset_id",
     "checks",
+    "check_notes",
+    "summary",
     "view_results",
     "critical_violations",
     "repair_actions"
   ],
   "properties": {
-    "qa_result": {"$ref": "qa-result.schema.json"},
-    "reference_prompt_id": {"type": "string", "pattern": "^MVP[0-9]+$"},
-    "asset_id": {"type": "string", "pattern": "^A[0-9]+$"},
+    "qa_result": {
+      "$ref": "qa-result.schema.json"
+    },
+    "reference_prompt_id": {
+      "type": "string",
+      "pattern": "^MVP[0-9]+$"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^A[0-9]+$"
+    },
     "checks": {
       "type": "object",
       "required": [
@@ -28,13 +38,62 @@
         "technical_safety"
       ],
       "properties": {
-        "same_object_identity": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "geometry_consistency": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "material_consistency": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "required_view_coverage": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "camera_plausibility": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "photographic_realism": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-        "technical_safety": {"type": "string", "enum": ["pass", "fail", "needs_review"]}
+        "same_object_identity": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "geometry_consistency": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "material_consistency": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "required_view_coverage": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "camera_plausibility": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "photographic_realism": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        },
+        "technical_safety": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
+          ]
+        }
       },
       "additionalProperties": false
     },
@@ -43,17 +102,89 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["view_id", "status", "notes"],
+        "required": [
+          "view_id",
+          "status",
+          "notes"
+        ],
         "properties": {
-          "view_id": {"type": "string"},
-          "status": {"type": "string", "enum": ["pass", "fail", "needs_review"]},
-          "notes": {"type": "string"}
+          "view_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "needs_review"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
         },
         "additionalProperties": false
       }
     },
-    "critical_violations": {"type": "array", "items": {"type": "string"}},
-    "repair_actions": {"type": "array", "items": {"type": "string"}}
+    "critical_violations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "repair_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "check_notes": {
+      "type": "object",
+      "required": [
+        "same_object_identity",
+        "geometry_consistency",
+        "material_consistency",
+        "required_view_coverage",
+        "camera_plausibility",
+        "photographic_realism",
+        "technical_safety"
+      ],
+      "properties": {
+        "same_object_identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "geometry_consistency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "material_consistency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required_view_coverage": {
+          "type": "string",
+          "minLength": 1
+        },
+        "camera_plausibility": {
+          "type": "string",
+          "minLength": 1
+        },
+        "photographic_realism": {
+          "type": "string",
+          "minLength": 1
+        },
+        "technical_safety": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
   },
   "additionalProperties": false
 }
