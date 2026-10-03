@@ -31,6 +31,7 @@ export interface DashboardData {
   guided: GuidedNextAction;
   promptSpecs: any[];
   promptQaById: Record<string, any>;
+  promptQaTemplate: string;
   imageManifest: any;
   voiceManifest: any;
   usingImageTemplate: boolean;
@@ -466,6 +467,10 @@ export function loadProjectDashboard(slug: string): DashboardData {
     guided,
     promptSpecs,
     promptQaById: Object.fromEntries(promptQaById),
+    promptQaTemplate: fs.readFileSync(
+      path.join(repoRoot(), "prompts", "image-prompt-qa", "IMAGE_PROMPT_QA_PROMPT.md"),
+      "utf8",
+    ),
     imageManifest,
     voiceManifest,
     usingImageTemplate,
