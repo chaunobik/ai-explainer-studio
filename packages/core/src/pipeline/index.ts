@@ -32,3 +32,25 @@ export { planManualImageActions } from "./manual-handoff";
 
 export type { CrossStageArtifacts } from "./cross-stage";
 export { validateCrossStageArtifacts } from "./cross-stage";
+
+export type {
+  AutonomousCheckpoint,
+  AutonomousDirective,
+  AutonomousDirectiveKind,
+  AutonomousRevision,
+  AutonomousRunState,
+  AutonomousStage,
+  AutonomousStageState,
+  AutonomousStageStatus,
+} from "./autonomous";
+export {
+  AUTONOMOUS_CHECKPOINTS,
+  AUTONOMOUS_STAGE_ORDER,
+  approveAutonomousCheckpoint,
+  beginAutonomousStage,
+  createAutonomousRunState,
+  getAutonomousDirective,
+  recordAutonomousStageResult,
+  resumeAutonomousStageAfterHumanReview,
+  reviseAutonomousCheckpoint,
+} from "./autonomous";

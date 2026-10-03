@@ -27,6 +27,7 @@ AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually c
 - [SceneLineage](schemas/scene-lineage.schema.json)
 - [TransitionSpec](schemas/transition-spec.schema.json)
 - [QAResult](schemas/qa-result.schema.json)
+- [AutonomousRunState](schemas/autonomous-run-state.schema.json)
 
 ## Current development phase
 **Milestone 1 — Content Intelligence: COMPLETE**
@@ -35,17 +36,15 @@ AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually c
 
 The current V1 pipeline is defined through:
 
-```
-Topic
-→ Research + QA
-→ Script + QA
-→ Storyboard + QA
-→ AssetBible
-→ Visual Router
-→ Scene Lineage
-→ Transition Plan
-→ Continuity QA
-```
+    Topic
+    → Research + QA
+    → Script + QA
+    → Storyboard + QA
+    → AssetBible
+    → Visual Router
+    → Scene Lineage
+    → Transition Plan
+    → Continuity QA
 
 The canonical end-to-end example is under `examples/fridge-hot-behind/`.
 
@@ -57,24 +56,35 @@ The canonical workflow no longer requires a real product photograph. A0 is gener
 
 Programmatic assets A3/A4/A7 are intentionally deferred to Milestone 4 (Remotion/SVG).
 
+## Codex autopilot
+
+The repository now supports a one-topic autonomous orchestration mode for Codex in VS Code or the Codex/ChatGPT app.
+
+Give Codex a topic. Root `AGENTS.md` instructs it to:
+- generate and validate stages automatically;
+- auto-repair failures up to 3 times;
+- preserve approved artifacts;
+- pause only at canonical asset, storyboard/keyframe, and final-output checkpoints;
+- resume from persistent local state instead of restarting.
+
+CLI state helper:
+
+    npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
+
+See [Codex / ChatGPT Autonomous Workflow](docs/CODEX_AUTONOMOUS_WORKFLOW.md).
 
 ## V1 operator entry points
 - [Operator workflow](docs/OPERATOR_WORKFLOW.md)
 - [V1 Full Rerun Checklist](docs/V1_FULL_RERUN.md)
 
-For normal operation, start the guided dashboard. CLI checks remain developer diagnostics.
-
+For normal manual operation, start the guided dashboard. CLI checks remain developer diagnostics.
 
 ## Run the guided dashboard
 
-Normal V1 operation now uses the local browser dashboard:
-
-```bash
-git checkout main
-git pull
-npm install
-npm run dev
-```
+    git checkout main
+    git pull
+    npm install
+    npm run dev
 
 Open `http://localhost:3000`.
 
