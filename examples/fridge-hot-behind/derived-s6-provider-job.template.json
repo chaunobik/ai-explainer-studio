@@ -9,26 +9,31 @@
   "reference_asset_ids": [
     "A1"
   ],
-  "prompt": "Create a derived scene image from the supplied approved reference asset(s).\nDo not redesign or independently regenerate the primary entity.\n\nScene objective:\nReturn to the exterior and show warmth as a normal consequence at the designed heat-rejection surface.\n\nApply only these visual transforms:\n- return to rear view\n- subtle warmth highlight\n\nPreserve these identity features exactly:\n- A1 appearance\n- rear three-quarter view\n\nTreat all unmentioned visual details as inherited from the approved reference.\nKeep camera geometry and physical proportions plausible unless a specified transform requires a controlled change.",
+  "prompt": "IMAGE TASK: EDIT/DERIVE FROM APPROVED REFERENCE\nAsset: A6 | Scene: S6\nReference assets: A1\nSUBJECT IDENTITY LOCK\nA dark charcoal/black freestanding two-door top-freezer refrigerator matching the supplied product reference: rectangular body, upper freezer door smaller than lower refrigerator door, thin silver horizontal divider/trim between doors, minimal recessed vertical black handles along the left edge, flat dark side panels, compact household proportions.\nMust preserve:\n- dark charcoal/black body color\n- top-freezer two-door layout\n- upper freezer door smaller than lower refrigerator door\n- thin silver horizontal divider between doors\n- recessed vertical handle geometry on the left side\n- same height-to-width proportions as the product reference\n- same flat-sided rectangular body design\nMust never change:\n- do not convert to French-door, side-by-side, single-door, or bottom-freezer layout\n- do not change body color to white or stainless steel\n- do not add external water/ice dispenser\n- do not add large protruding handles\n- do not change door proportions\n- do not invent a different appliance model\nSCENE INTENT\nNarration: Do đó, mặt ngoài ấm lên có thể là một phần bình thường của quá trình làm lạnh.\nVisual goal: Return to the clean A1 exterior and subtly emphasize the designed heat-rejection area, keeping the scene realistic and non-alarming.\nViewer should understand:\n- some exterior warmth can be a normal consequence of heat rejection\n- the object is still the exact same refrigerator\n- the warm area should look normal, not dangerously overheated\nCAMERA\nView: Return to the exact A1 rear three-quarter view.\nAngle: Exact A1 camera angle.\nDistance: Exact A1 distance.\nHeight: Exact A1 height.\nFraming: Exact A1 framing.\nPerspective: Exact A1 perspective.\nLens style: Exact A1 lens character.\nCOMPOSITION\nSubject position: Exact A1 placement.\nBackground visibility: Exact A1 kitchen background.\nNegative space: Preserve A1 negative space.\nCrop rules:\n- full refrigerator visible\n- same margins as A1\n- no zoom that hides identity cues\nLayering:\n- base: A1\n- overlay: restrained warm-zone emphasis only\nENVIRONMENT\nLocation: Ordinary modern home kitchen with enough clearance around the refrigerator to view its side/rear area.\nFixed elements:\n- warm light-wood cabinetry\n- light neutral wall\n- simple light-colored tile or wood-look floor\n- one small green plant or modest kitchen accessory\n- no people\nAllowed changes:\n- small crop adjustments\n- subtle camera repositioning required by each scene\n- minor background blur consistent with the same kitchen\nForbidden changes:\n- no showroom or appliance-store setting\n- no industrial kitchen\n- no dramatic location change\n- no neon or sci-fi environment\n- no unrelated refrigerator in the background\nLIGHTING\nStyle: Natural residential daylight with soft practical kitchen fill.\nDirection: Main daylight from camera-right/front-right; soft fill from room lighting.\nIntensity: Moderate, realistic indoor exposure; refrigerator surfaces remain dark but readable.\nColor temperature: Neutral-warm daylight, approximately household natural-light appearance.\nConsistency rules:\n- keep shadow direction consistent across A1/A2/A5/A6\n- avoid dramatic rim light or studio spotlight\n- do not make the refrigerator glossy or mirror-like\nMATERIALS AND REALISM\nMaterials:\n- matte or satin dark-coated metal refrigerator exterior\n- thin brushed-metal/silver divider trim\n- ordinary painted kitchen walls\n- wood cabinetry\n- realistic floor material\nSurface finish:\n- subtle real-world texture\n- small natural reflections only\n- no perfect CGI plastic smoothness\nReality notes:\n- ordinary lived-in kitchen, not a product advertisement set\n- physically plausible contact shadows and floor reflections\n- straight edges remain geometrically consistent\n- no melted, duplicated, or warped appliance parts\nREQUIRED VISUAL ELEMENTS\n1. same refrigerator A1\n   Placement: unchanged\n   State: normal closed-door operation\n   Purpose: continuity\n2. subtle warm-zone emphasis\n   Placement: rear heat-rejection exterior area\n   State: soft translucent warm highlight, low intensity\n   Purpose: illustrate normal exterior warmth\nTECHNICAL OVERLAY\nType: subtle thermal emphasis\nElements:\n- soft warm highlight\nDirections:\n- none\nLabels:\n- none\nMust not imply:\n- do not imply fire, fault, dangerous overheating, glowing metal, or smoke\nALLOWED TRANSFORMS\n- add only a subtle warm-area highlight\nTECHNICAL CONSTRAINTS\n- Highlight must be visibly weaker than a warning/error visualization.\n- No component geometry changes.\n- No arrows required in this scene.\nCONTINUITY CONSTRAINTS\n- A1 is the authoritative identity and environment reference.\n- Do not replace or redesign fridge_01.\n- Preserve refrigerator geometry, proportions, materials, kitchen, shadow direction, and camera-family continuity.\nNEGATIVE CONSTRAINTS\n- do not convert to French-door, side-by-side, single-door, or bottom-freezer layout\n- do not change body color to white or stainless steel\n- do not add external water/ice dispenser\n- do not add large protruding handles\n- do not change door proportions\n- do not invent a different appliance model\n- no flames\n- no smoke\n- no red-hot metal\n- no warning symbols\n- no camera change\n- no different kitchen\n- no additional technical parts\nOUTPUT\n1080x1920, aspect ratio 9:16\nOpaque background.\nFINAL RULE\nDo not create a new version of the primary subject. Treat the supplied reference asset as the authoritative identity and edit only what is explicitly requested above.",
   "negative_constraints": [
-    "change to stainless-steel finish",
-    "change to French-door or side-by-side layout",
-    "change door count or proportions",
-    "replace with a different refrigerator model",
-    "move to an unrelated kitchen without a context switch",
-    "alter component locations merely for visual convenience"
+    "do not convert to French-door, side-by-side, single-door, or bottom-freezer layout",
+    "do not change body color to white or stainless steel",
+    "do not add external water/ice dispenser",
+    "do not add large protruding handles",
+    "do not change door proportions",
+    "do not invent a different appliance model",
+    "no flames",
+    "no smoke",
+    "no red-hot metal",
+    "no warning symbols",
+    "no camera change",
+    "no different kitchen",
+    "no additional technical parts"
   ],
   "continuity_constraints": [
-    "Preserve: A1 appearance",
-    "Preserve: rear three-quarter view",
-    "All physical refrigerator scenes must derive from A1 or an approved derivative.",
-    "Technical abstractions should preserve the recognizable fridge_01 silhouette when shown together with the appliance.",
-    "Scene 5 may compare heat-rejection layouts but must keep fridge_01 as the primary example."
+    "A1 is the authoritative identity and environment reference.",
+    "Do not replace or redesign fridge_01.",
+    "Preserve refrigerator geometry, proportions, materials, kitchen, shadow direction, and camera-family continuity."
   ],
   "technical_constraints": [
-    "Return to the canonical rear three-quarter view.",
-    "Use only a subtle warm-surface highlight; do not use flames, glowing metal, or exaggerated heat effects.",
-    "Keep the environment and refrigerator geometry identical to A1."
+    "Highlight must be visibly weaker than a warning/error visualization.",
+    "No component geometry changes.",
+    "No arrows required in this scene."
   ],
   "output_spec": {
     "aspect_ratio": "9:16",
@@ -38,6 +43,7 @@
   },
   "status": "requires_user_action",
   "attempt": 0,
-  "user_instructions": "Upload the approved reference asset(s) to ChatGPT Image, apply this edit prompt, then import the derived result.",
-  "error": null
+  "user_instructions": "Upload the approved A1 reference, then use this exact detailed edit prompt. Treat A1 as authoritative identity; modify only the requested transforms.",
+  "error": null,
+  "prompt_spec_id": "IP6"
 }
