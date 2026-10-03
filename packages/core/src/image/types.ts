@@ -15,7 +15,7 @@ export type ImageAssetStatus =
   | "needs_human_review";
 
 export interface ImageOutputSpec {
-  aspectRatio: "9:16" | "16:9" | "1:1";
+  aspectRatio: "9:16" | "16:9" | "4:3" | "1:1";
   width: number;
   height: number;
   transparentBackground?: boolean;
