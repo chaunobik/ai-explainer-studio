@@ -18,7 +18,15 @@ const schemaFileByKind: Record<QaContractKind, string> = {
 };
 
 function repositoryRoot(): string {
-  return path.resolve(process.cwd(), "../..");
+  const cwd = process.cwd();
+  const candidates = [cwd, path.resolve(cwd, "../..")];
+  const found = candidates.find((candidate) =>
+    fs.existsSync(path.join(candidate, "schemas", "qa-result.schema.json")),
+  );
+  if (!found) {
+    throw new Error("Repository schemas directory was not found.");
+  }
+  return found;
 }
 
 function readSchema(fileName: string): any {
