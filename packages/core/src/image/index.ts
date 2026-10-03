@@ -24,4 +24,4 @@ export type { VisualQaAssessment, VisualQaDecision } from "./visual-qa-workflow"
 export { DEFAULT_MAX_VISUAL_ATTEMPTS, applyVisualQa, withVisualRepair } from "./visual-qa-workflow";
 
 export type { ImagePromptSpec } from "./image-prompt-spec";
-export { compileImagePrompt } from "./image-prompt-spec";
+export { compileImagePrompt, toGenerateAnchorSpec, toDeriveSceneSpec } from "./image-prompt-spec";
