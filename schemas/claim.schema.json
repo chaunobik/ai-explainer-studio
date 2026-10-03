@@ -106,6 +106,12 @@
           "rejection_reason"
         ],
         "properties": {
+          "rejection_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "allowed_for_script": {
             "const": false
           }
