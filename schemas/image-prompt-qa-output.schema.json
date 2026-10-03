@@ -7,6 +7,8 @@
     "prompt_id",
     "status",
     "checks",
+    "check_notes",
+    "summary",
     "critical_issues",
     "repair_actions"
   ],
@@ -105,6 +107,53 @@
       "items": {
         "type": "string"
       }
+    },
+    "check_notes": {
+      "type": "object",
+      "required": [
+        "identity_lock",
+        "camera_clarity",
+        "scene_alignment",
+        "technical_correctness",
+        "continuity",
+        "ambiguity",
+        "completeness"
+      ],
+      "properties": {
+        "identity_lock": {
+          "type": "string",
+          "minLength": 1
+        },
+        "camera_clarity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scene_alignment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "technical_correctness": {
+          "type": "string",
+          "minLength": 1
+        },
+        "continuity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ambiguity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "completeness": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "additionalProperties": false
