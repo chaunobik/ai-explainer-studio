@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/project-manifest.schema.json",
+  "title": "ProjectManifest",
+  "type": "object",
+  "required": [
+    "project_id",
+    "topic",
+    "language",
+    "paths"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "const": "vi-VN"
+    },
+    "paths": {
+      "type": "object",
+      "required": [
+        "research_result",
+        "research_qa_output",
+        "script_spec",
+        "script_qa_output",
+        "storyboard_spec",
+        "storyboard_qa_output",
+        "visual_plan",
+        "continuity_qa_output",
+        "motion_spec",
+        "voice_spec",
+        "image_prompt_specs",
+        "image_provider_jobs",
+        "image_assets_manifest",
+        "image_assets_template",
+        "voice_assets_manifest",
+        "voice_assets_template",
+        "images_dir",
+        "output_file",
+        "final_qa_output"
+      ],
+      "properties": {
+        "research_result": {
+          "type": "string",
+          "minLength": 1
+        },
+        "research_qa_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "script_spec": {
+          "type": "string",
+          "minLength": 1
+        },
+        "script_qa_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "storyboard_spec": {
+          "type": "string",
+          "minLength": 1
+        },
+        "storyboard_qa_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "visual_plan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "continuity_qa_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "motion_spec": {
+          "type": "string",
+          "minLength": 1
+        },
+        "voice_spec": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image_prompt_specs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "image_provider_jobs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "image_assets_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "image_assets_template": {
+          "type": "string",
+          "minLength": 1
+        },
+        "voice_assets_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "voice_assets_template": {
+          "type": "string",
+          "minLength": 1
+        },
+        "images_dir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "output_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "final_qa_output": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
