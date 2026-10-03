@@ -1,4 +1,4 @@
-# Multi-View Consistency QA V2
+# Multi-View Consistency QA V3
 
 Inspect the actual generated A0 reference board against the provided MultiViewReferencePromptSpec. A0 is the canonical geometry/identity source for later scene generation.
 
@@ -48,6 +48,16 @@ Required shape:
     "photographic_realism": "pass",
     "technical_safety": "pass"
   },
+  "check_notes": {
+    "same_object_identity": "Explain whether all views depict the same exact physical product.",
+    "geometry_consistency": "Explain whether dimensions, doors, handles, edges and rear outline remain coherent.",
+    "material_consistency": "Explain whether color, finish, trim and reflection behavior remain stable.",
+    "required_view_coverage": "Explain whether every requested view is present exactly once and correctly oriented.",
+    "camera_plausibility": "Explain whether perspective matches the declared capture profile without impossible distortion.",
+    "photographic_realism": "Explain what visual evidence supports or contradicts real-camera realism.",
+    "technical_safety": "Explain whether unsupported hidden technical structures were avoided."
+  },
+  "summary": "Concise human-readable conclusion stating whether A0 is reliable enough to become the canonical reference pack.",
   "view_results": [
     {
       "view_id": "front",
@@ -63,7 +73,9 @@ Rules:
 - The view_results example above is NOT enough by itself. Output one item for every required input view_id.
 - qa_result.status: "pass" | "fail" | "needs_human_review".
 - each checks value and view_results[].status: "pass" | "fail" | "needs_review".
+- Every check_notes field is REQUIRED and must provide concrete visual evidence/reasoning.
+- summary is REQUIRED and should be 1–3 concise sentences.
 - qa_result.critical_failures, critical_violations and repair_actions must always be arrays, using [] when empty.
 - If any critical failure exists, qa_result.status must be "fail".
-- Do not add extra top-level/check/view_result fields.
+- Do not add extra top-level/check/check_notes/view_result fields.
 - Before answering, verify JSON.parse(response) succeeds.
