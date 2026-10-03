@@ -31,7 +31,10 @@
             "pattern": "^A[0-9]+$"
           },
           "scene_id": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^S[0-9]+$"
           },
           "executor": {
@@ -44,6 +47,7 @@
           "operation": {
             "type": "string",
             "enum": [
+              "generate_reference_pack",
               "generate_anchor",
               "derive_scene",
               "technical_diagram",
