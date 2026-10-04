@@ -51,9 +51,33 @@ In `hands_off` mode they are automatic QA gates. When the preceding QA has passe
 
 Use `--mode guided` to restore interactive checkpoint behavior.
 
-## CLI
+## One-command CLI
 
-Start a default hands-off run:
+For normal production, the user should run only:
+
+```bash
+npm run create-video -- "Tại sao tủ lạnh nóng phía sau?"
+```
+
+The runner performs Codex preflight/auth checks, initializes or resumes the hands-off state, then invokes `codex exec --full-auto` non-interactively. The production prompt is passed through stdin so long topics/instructions do not depend on Windows command-line length.
+
+Codex is required to return a structured `CreateVideoResult`. The wrapper independently verifies that the returned final video file exists before declaring success.
+
+Optional explicit topic syntax:
+
+```bash
+npm run create-video -- --topic "Tại sao tủ lạnh nóng phía sau?"
+```
+
+Optional model override:
+
+```bash
+npm run create-video -- --topic "Tại sao tủ lạnh nóng phía sau?" --model <codex-model>
+```
+
+## Low-level state CLI
+
+Start only the autonomous state machine without launching Codex:
 
 ```bash
 npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
