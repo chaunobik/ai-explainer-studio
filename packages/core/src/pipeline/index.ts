@@ -38,6 +38,7 @@ export type {
   AutonomousDirective,
   AutonomousDirectiveKind,
   AutonomousRevision,
+  AutonomousRunMode,
   AutonomousRunState,
   AutonomousStage,
   AutonomousStageState,
