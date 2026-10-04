@@ -32,13 +32,13 @@ Build VoiceSpec from the draft storyboard scene IDs, generate real WAV files thr
 Build the visual plan, AssetBible, lineage, transition plan and execution plan. Prefer reuse of existing approved assets over redefinition.
 
 ### canonical_prompt
-Create the complete A0 multi-view reference prompt and PhotoCaptureSpec. Run Multi-View Prompt QA.
+Create A0 as the simplest reliable canonical identity reference that the configured image model can reproduce. Default to ONE clean hero reference image for recurring physical products. Use a multi-view reference pack only when the configured provider has demonstrated that capability. Run canonical prompt QA before generation.
 
 ### canonical_generation
-Generate A0 through `image:generate` using ComfyUI. Use a fixed 1536×1024 4×2 canonical board for recurring physical products. Register it as `qa_pending`, inspect it with `view_image`, then approve through `image:status` only after identity/multi-view QA passes.
+Generate A0 through `image:generate` using ComfyUI. Default A0 to one full-product hero image (prefer a front three-quarter view that exposes the most identity-defining geometry) at a normal single-image aspect ratio. Do NOT require a 4×2 board from a general SDXL checkpoint. Register A0 as `qa_pending`, inspect it with `view_image`, then approve through `image:status` when identity, geometry, materials and realism are reliable enough to seed later scenes.
 
 ### canonical_qa
-Run Multi-View Consistency QA. Repair/regenerate automatically for repairable failures.
+For a single-view A0, QA identity stability, readable geometry, materials, camera plausibility, realism and technical safety. Cross-view coverage is not a requirement. For an explicitly chosen multi-view A0, run the full Multi-View Consistency QA. Repair/regenerate automatically for repairable failures.
 
 ### checkpoint_canonical
 In hands_off mode this is an automatic gate: if canonical QA passed, approve and continue. In guided mode retain manual Approve/Edit/Regenerate behavior.
@@ -53,7 +53,7 @@ Prepare keyframes/previews for machine QA and optional supervision UI.
 Automatic gate in hands_off mode; interactive checkpoint only in guided mode.
 
 ### scene_generation
-Declare planned image assets first. Generate scene assets through `image:generate`; for recurring products use an approved A0 panel crop as the reference rather than conditioning on the whole board. Generated assets remain `qa_pending` until semantic QA passes.
+Declare planned image assets first. Generate scene assets through `image:generate`. For recurring products, use the approved A0 image itself as the authoritative reference. Prefer modest camera/composition changes that preserve identity. If a scene needs a substantially different view (for example rear view), generate it as a separate derived asset using the exact same subject-lock description and A0 as reference, then QA that scene independently. Generated assets remain `qa_pending` until semantic QA passes.
 
 ### scene_qa
 Check factual correctness, continuity, identity, camera and required content. Repair only failed scenes.
