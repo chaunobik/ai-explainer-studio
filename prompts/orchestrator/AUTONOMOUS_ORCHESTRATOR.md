@@ -2,86 +2,98 @@
 
 ## Goal
 
-Turn one topic into a finished short-form explainer while minimizing human interaction.
+Turn one topic into a finished Vietnamese short-form explainer with no routine human review.
 
-Default V1 constraints remain:
+Defaults:
 - Vietnamese
-- 9:16
+- 9:16, 1080×1920
 - 45–60 seconds
 - 6–10 scenes
 - science/engineering accuracy first
 - visual continuity first
-- A0 is the canonical visual source of truth
+- A0 remains the canonical visual identity source
+- run mode: hands_off
 
 ## Stage responsibilities
 
 ### research
-Research the topic and produce the existing ResearchResult contract. Verify factual claims before passing.
+Research the topic, produce the existing ResearchResult contract and verify factual claims before passing.
 
 ### script
-Create the script from approved claims only. Run Script QA and repair automatically if required.
+Create narration from approved claims only. Run Script QA and repair automatically.
+
+### master_voice
+Generate the master narration before final scene timing. Capture actual audio duration and alignment/timestamp data. Use the configured Vietnamese VoiceProvider; prefer an API-compatible local provider such as VieNeu when available.
 
 ### storyboard
-Convert the approved script into the StoryboardSpec without narration drift. Run Storyboard QA.
+Convert the approved script into a timed StoryboardSpec using real narration timing. Preserve narration text exactly and fit visual beats around measured speech.
 
 ### asset_plan
-Build the visual plan, asset bible, lineage, transition plan and execution plan. Prefer reuse of approved canonical assets over redefinition.
+Build the visual plan, AssetBible, lineage, transition plan and execution plan. Prefer reuse of existing approved assets over redefinition.
 
 ### canonical_prompt
 Create the complete A0 multi-view reference prompt and PhotoCaptureSpec. Run Multi-View Prompt QA.
 
 ### canonical_generation
-Generate A0 as one canonical multi-view board when an image tool/provider is available.
+Generate A0 through the configured ImageProvider / ComfyUI workflow when available.
 
 ### canonical_qa
-Run Multi-View Consistency QA. Repair/regenerate A0 automatically for repairable failures.
+Run Multi-View Consistency QA. Repair/regenerate automatically for repairable failures.
 
 ### checkpoint_canonical
-Human checkpoint A. Show only the preview, concise QA result and actions: Approve, Edit, Regenerate.
+In hands_off mode this is an automatic gate: if canonical QA passed, approve and continue. In guided mode retain manual Approve/Edit/Regenerate behavior.
 
 ### scene_prompts
-Generate complete per-scene ImagePromptSpec/provider jobs from the approved A0 identity. Do not independently redefine the product.
+Generate complete per-scene image jobs from A0 identity. Never independently redefine the canonical subject.
 
 ### storyboard_preview
-Prepare representative keyframes/previews so the user can judge the creative plan.
+Prepare keyframes/previews for machine QA and optional supervision UI.
 
 ### checkpoint_storyboard
-Human checkpoint B. Present scene number, purpose, preview, narration summary and duration. Do not expose unnecessary JSON.
+Automatic gate in hands_off mode; interactive checkpoint only in guided mode.
 
 ### scene_generation
-Generate all approved scenes. Run independent work in parallel when dependencies allow.
+Generate independent scene assets in parallel where dependencies allow.
 
 ### scene_qa
-Check technical correctness, continuity, identity, camera and required content. Auto-repair only failed scenes.
-
-### voice
-Generate narration/audio from the approved script. Validate timing against scenes.
+Check factual correctness, continuity, identity, camera and required content. Repair only failed scenes.
 
 ### motion
-Build motion/composition and render scene previews. Validate motion continuity.
+Use the media router:
+- realistic natural motion → Wan2.2 I2V;
+- complex/keyframe generative motion → LTX;
+- technical diagrams/infographics → Remotion/SVG;
+- static visuals → deterministic pan/zoom.
+
+Each provider gets bounded retries. On repeated failure, follow its fallback chain.
 
 ### final_render
-Assemble the final video from approved scene, voice and motion artifacts.
+Compose approved assets, master voice, aligned subtitles, music when configured, and motion into the final video.
 
 ### final_qa
-Run final QA. Repair only affected downstream stages.
+Check factual integrity, narration/visual synchronization, subtitle timing, audio levels, continuity and render integrity. Repair only affected downstream artifacts.
 
 ### checkpoint_final
-Human checkpoint C. Show final preview and concise issues. Approval moves directly to completion.
+Automatic gate in hands_off mode. PASS moves directly to complete.
 
-## Repair rules
+## Repair and fallback rules
 
-- Maximum automatic attempts: 3 per stage.
+- Maximum automatic attempts: 3 per stage/provider unless configured otherwise.
 - Repair the smallest affected scope.
-- Keep approved parents and unrelated artifacts unchanged.
+- Keep passing parents and unrelated assets unchanged.
 - Preserve immutable IDs during prompt repair.
-- When an edit affects narration only, do not regenerate A0 or unrelated scenes.
-- When an edit affects one scene only, do not regenerate other passing scenes.
+- Do not regenerate A0 for narration-only changes unless timing changes require visual plan changes.
+- Do not regenerate passing scenes because one scene failed.
+- When generative video fails, degrade to deterministic motion if the visual goal can still be met.
+- Never claim PASS until contract validation and relevant QA pass.
 
-## Codex state protocol
+## State protocol
 
 Start:
   npm run autopilot -- --topic "<topic>"
+
+Guided compatibility:
+  npm run autopilot -- --topic "<topic>" --mode guided
 
 Before machine work:
   npm run autopilot -- --slug <slug> --begin
@@ -92,13 +104,5 @@ After validation passes:
 After validation fails:
   npm run autopilot -- --slug <slug> --result fail --note "<failure summary>"
 
-If the stage explicitly needs a human because a provider is unavailable or three repairs failed:
-  npm run autopilot -- --slug <slug> --result needs_human_review --note "<exact reason>"
-
-At a checkpoint after the user approves:
-  npm run autopilot -- --slug <slug> --approve
-
-At a checkpoint after the user requests an edit:
-  npm run autopilot -- --slug <slug> --revise <target-stage> --note "<user request>"
-
-Do not mark PASS until contract validation and the relevant QA have passed.
+If no provider or fallback can satisfy the stage:
+  npm run autopilot -- --slug <slug> --result needs_human_review --note "<exact missing capability>"
