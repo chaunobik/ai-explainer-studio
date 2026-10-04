@@ -1,6 +1,7 @@
 export const AUTONOMOUS_STAGE_ORDER = [
   "research",
   "script",
+  "master_voice",
   "storyboard",
   "asset_plan",
   "canonical_prompt",
@@ -12,7 +13,6 @@ export const AUTONOMOUS_STAGE_ORDER = [
   "checkpoint_storyboard",
   "scene_generation",
   "scene_qa",
-  "voice",
   "motion",
   "final_render",
   "final_qa",
@@ -21,6 +21,7 @@ export const AUTONOMOUS_STAGE_ORDER = [
 ] as const;
 
 export type AutonomousStage = (typeof AUTONOMOUS_STAGE_ORDER)[number];
+export type AutonomousRunMode = "hands_off" | "guided";
 export type AutonomousCheckpoint =
   | "checkpoint_canonical"
   | "checkpoint_storyboard"
@@ -54,6 +55,7 @@ export interface AutonomousRunState {
   runId: string;
   projectId: string;
   topic: string;
+  runMode: AutonomousRunMode;
   currentStage: AutonomousStage;
   stages: Record<AutonomousStage, AutonomousStageState>;
   revisionHistory: AutonomousRevision[];
@@ -102,11 +104,41 @@ const checkpointSet = new Set<AutonomousStage>(
 
 const revisionTargets: Record<AutonomousCheckpoint, AutonomousStage[]> = {
   checkpoint_canonical: ["canonical_prompt", "canonical_generation"],
-  checkpoint_storyboard: ["storyboard", "asset_plan", "scene_prompts", "storyboard_preview"],
-  checkpoint_final: ["scene_generation", "scene_qa", "voice", "motion", "final_render"],
+  checkpoint_storyboard: [
+    "master_voice",
+    "storyboard",
+    "asset_plan",
+    "scene_prompts",
+    "storyboard_preview",
+  ],
+  checkpoint_final: [
+    "master_voice",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+  ],
 };
 
 const invalidationByTarget: Partial<Record<AutonomousStage, AutonomousStage[]>> = {
+  master_voice: [
+    "master_voice",
+    "storyboard",
+    "asset_plan",
+    "canonical_prompt",
+    "canonical_generation",
+    "canonical_qa",
+    "checkpoint_canonical",
+    "scene_prompts",
+    "storyboard_preview",
+    "checkpoint_storyboard",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+    "final_qa",
+    "checkpoint_final",
+  ],
   canonical_prompt: [
     "canonical_prompt",
     "canonical_generation",
@@ -124,15 +156,46 @@ const invalidationByTarget: Partial<Record<AutonomousStage, AutonomousStage[]>> 
     "scene_prompts",
     "storyboard_preview",
     "checkpoint_storyboard",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+    "final_qa",
+    "checkpoint_final",
   ],
   asset_plan: [
     "asset_plan",
     "scene_prompts",
     "storyboard_preview",
     "checkpoint_storyboard",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+    "final_qa",
+    "checkpoint_final",
   ],
-  scene_prompts: ["scene_prompts", "storyboard_preview", "checkpoint_storyboard"],
-  storyboard_preview: ["storyboard_preview", "checkpoint_storyboard"],
+  scene_prompts: [
+    "scene_prompts",
+    "storyboard_preview",
+    "checkpoint_storyboard",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+    "final_qa",
+    "checkpoint_final",
+  ],
+  storyboard_preview: [
+    "storyboard_preview",
+    "checkpoint_storyboard",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+    "final_qa",
+    "checkpoint_final",
+  ],
   scene_generation: [
     "scene_generation",
     "scene_qa",
@@ -142,7 +205,6 @@ const invalidationByTarget: Partial<Record<AutonomousStage, AutonomousStage[]>> 
     "checkpoint_final",
   ],
   scene_qa: ["scene_qa", "motion", "final_render", "final_qa", "checkpoint_final"],
-  voice: ["voice", "final_render", "final_qa", "checkpoint_final"],
   motion: ["motion", "final_render", "final_qa", "checkpoint_final"],
   final_render: ["final_render", "final_qa", "checkpoint_final"],
 };
@@ -153,17 +215,6 @@ function nowIso(): string {
 
 function stageIndex(stage: AutonomousStage): number {
   return AUTONOMOUS_STAGE_ORDER.indexOf(stage);
-}
-
-function assertCurrent(
-  state: AutonomousRunState,
-  stage: AutonomousStage,
-): void {
-  if (state.currentStage !== stage) {
-    throw new Error(
-      `Expected current stage ${state.currentStage}, received ${stage}.`,
-    );
-  }
 }
 
 function nextStage(stage: AutonomousStage): AutonomousStage {
@@ -179,13 +230,36 @@ function moveTo(
   stage: AutonomousStage,
 ): AutonomousRunState {
   const stages = structuredClone(state.stages);
+
   if (stage === "complete") {
     stages.complete.status = "complete";
-  } else if (checkpointSet.has(stage)) {
+    return {
+      ...state,
+      currentStage: "complete",
+      stages,
+      updatedAt: nowIso(),
+    };
+  }
+
+  if (checkpointSet.has(stage)) {
+    if (state.runMode === "hands_off") {
+      stages[stage].status = "approved";
+      return moveTo(
+        {
+          ...state,
+          currentStage: stage,
+          stages,
+          updatedAt: nowIso(),
+        },
+        nextStage(stage),
+      );
+    }
+
     stages[stage].status = "needs_human_review";
   } else {
     stages[stage].status = "ready";
   }
+
   return {
     ...state,
     currentStage: stage,
@@ -198,6 +272,7 @@ export function createAutonomousRunState(input: {
   runId: string;
   projectId: string;
   topic: string;
+  runMode?: AutonomousRunMode;
   maxAttempts?: number;
   createdAt?: string;
 }): AutonomousRunState {
@@ -222,6 +297,7 @@ export function createAutonomousRunState(input: {
     runId: input.runId,
     projectId: input.projectId,
     topic: input.topic,
+    runMode: input.runMode ?? "hands_off",
     currentStage: "research",
     stages,
     revisionHistory: [],
@@ -312,6 +388,10 @@ export function resumeAutonomousStageAfterHumanReview(
 export function approveAutonomousCheckpoint(
   state: AutonomousRunState,
 ): AutonomousRunState {
+  if (state.runMode !== "guided") {
+    throw new Error("Hands-off runs auto-approve checkpoints after QA passes.");
+  }
+
   const checkpoint = state.currentStage;
   if (!checkpointSet.has(checkpoint)) {
     throw new Error(`Current stage ${checkpoint} is not a checkpoint.`);
@@ -338,6 +418,10 @@ export function reviseAutonomousCheckpoint(
   targetStage: AutonomousStage,
   note: string,
 ): AutonomousRunState {
+  if (state.runMode !== "guided") {
+    throw new Error("Checkpoint revisions are only available in guided mode.");
+  }
+
   const checkpoint = state.currentStage;
   if (!checkpointSet.has(checkpoint)) {
     throw new Error(`Current stage ${checkpoint} is not a checkpoint.`);
@@ -354,10 +438,10 @@ export function reviseAutonomousCheckpoint(
 
   const invalidated = invalidationByTarget[targetStage] ?? [targetStage];
   const stages = structuredClone(state.stages);
-  for (const stage of invalidated) {
-    stages[stage].status = "waiting";
-    stages[stage].attempt = 0;
-    stages[stage].lastMessage = null;
+  for (const invalidatedStage of invalidated) {
+    stages[invalidatedStage].status = "waiting";
+    stages[invalidatedStage].attempt = 0;
+    stages[invalidatedStage].lastMessage = null;
   }
   stages[targetStage].status = "ready";
 
