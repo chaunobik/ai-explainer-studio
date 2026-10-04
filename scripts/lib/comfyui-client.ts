@@ -57,11 +57,13 @@ export class ComfyUiClient {
     }
 
     const checkpointInfo = info.CheckpointLoaderSimple;
-    const values =
-      checkpointInfo?.input?.required?.ckpt_name?.[0] ??
-      checkpointInfo?.input?.required?.ckpt_name?.[0]?.[0] ??
-      [];
-    const names = Array.isArray(values) ? values : [];
+    const checkpointSpec =
+      checkpointInfo?.input?.required?.ckpt_name ??
+      checkpointInfo?.input?.required?.ckpt_name;
+    const names =
+      Array.isArray(checkpointSpec) && Array.isArray(checkpointSpec[0])
+        ? checkpointSpec[0]
+        : [];
     if (names.length > 0 && !names.includes(checkpoint)) {
       throw new Error(
         `COMFYUI_CHECKPOINT "${checkpoint}" is not available. Found: ${names
