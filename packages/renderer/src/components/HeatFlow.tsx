@@ -40,16 +40,23 @@ export const HeatFlow: React.FC<HeatFlowProps> = ({
       style={{position: "absolute", inset: 0, opacity, pointerEvents: "none"}}
     >
       <defs>
+        <filter id="heat-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
         <marker
           id="heat-arrow"
-          markerWidth="10"
-          markerHeight="10"
-          refX="8"
+          markerWidth="7"
+          markerHeight="7"
+          refX="6"
           refY="3"
           orient="auto"
           markerUnits="strokeWidth"
         >
-          <path d="M0,0 L0,6 L9,3 z" fill="currentColor" />
+          <path d="M0,0 L0,6 L7,3 z" fill="#ff9d00" />
         </marker>
       </defs>
       {paths.map((path, index) => (
@@ -59,13 +66,13 @@ export const HeatFlow: React.FC<HeatFlowProps> = ({
           y1={path.y1 * height}
           x2={path.x2 * width}
           y2={path.y2 * height}
-          stroke="currentColor"
-          color="orange"
-          strokeWidth={10}
+          stroke="#ff9d00"
+          strokeWidth={8}
           strokeLinecap="round"
-          strokeDasharray="24 20"
+          strokeDasharray="18 16"
           strokeDashoffset={dashOffset}
           markerEnd="url(#heat-arrow)"
+          filter="url(#heat-glow)"
         />
       ))}
     </svg>
