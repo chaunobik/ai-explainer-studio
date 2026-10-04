@@ -22,8 +22,8 @@ AI Explainer Studio is an autonomous pipeline for creating accurate, visually co
 Topic
 → Research + QA
 → Script + QA
-→ Master Voice + timestamps
-→ Timed Storyboard + QA
+→ Draft Storyboard + QA
+→ VieNeu Voice + measured timing sync
 → AssetBible / Visual Plan
 → Canonical A0 + QA
 → Scene assets + QA
@@ -33,7 +33,7 @@ Topic
 → final.mp4
 ```
 
-Master voice is produced before the timed storyboard so scene durations follow real narration timing.
+The draft storyboard establishes stable scene IDs and verbatim narration. VieNeu then generates the real WAV files, and measured audio duration is synchronized back into Storyboard + VoiceSpec before visual planning.
 
 ## Media routing
 
