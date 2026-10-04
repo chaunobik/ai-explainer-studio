@@ -181,14 +181,67 @@ async function main(): Promise<void> {
     "Autopilot initialization",
   );
 
-  // Recover legacy runs that exhausted retries on the old mandatory 4x2 A0
-  // strategy. Preserve all passing upstream work and restart only canonical A0.
+  // Quality-migrate old runs instead of silently reusing a technically valid
+  // but visually poor final.mp4.
   const stateFile = path.join(runDir, "state.json");
   if (fs.existsSync(stateFile)) {
-    const state = JSON.parse(fs.readFileSync(stateFile, "utf8")) as {
+    let state = JSON.parse(fs.readFileSync(stateFile, "utf8")) as {
       currentStage?: string;
       stages?: Record<string, {status?: string; lastMessage?: string | null}>;
     };
+
+    if (state.currentStage === "complete") {
+      const probe = spawnSync(
+        npmCommand(),
+        ["run", "final:preflight", "--", `--project=${projectDir}`],
+        {
+          cwd: process.cwd(),
+          encoding: "utf8",
+          shell: false,
+        },
+      );
+
+      if (probe.status !== 0) {
+        const reportPath = path.join(projectDir, "final-preflight.json");
+        let failures: string[] = [];
+        if (fs.existsSync(reportPath)) {
+          try {
+            const report = JSON.parse(fs.readFileSync(reportPath, "utf8")) as {
+              failures?: string[];
+            };
+            failures = report.failures ?? [];
+          } catch {
+            failures = [];
+          }
+        }
+
+        const durationFailure = failures.some((value) =>
+          value.toLowerCase().includes("duration"),
+        );
+        const recoveryTarget = durationFailure ? "script" : "asset_plan";
+
+        runOrThrow(
+          npmCommand(),
+          [
+            "run",
+            "autopilot",
+            "--",
+            "--slug",
+            slug,
+            "--recover",
+            recoveryTarget,
+            "--note",
+            durationFailure
+              ? "Existing final output fails current duration/quality gates; expand script and rebuild downstream stages."
+              : "Existing final output fails current visual-quality gates; rebuild visual plan and downstream stages.",
+          ],
+          "Existing-output quality recovery",
+        );
+
+        state = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+      }
+    }
+
     const current = state.currentStage;
     const currentStatus = current ? state.stages?.[current]?.status : undefined;
     const canonicalDeadEnd =
@@ -258,7 +311,8 @@ async function main(): Promise<void> {
     "- then run video:frames on the FINAL mp4 with at least 12 samples (or at least one frame per scene) and inspect the complete sequence with view_image before final QA;",
     "- final QA MUST fail a repeated-background slideshow, a rear/inside component labelled on a front exterior, decorative arrows that do not map to a truthful mechanism, or captions with obvious orphan fragments;",
     "- for 6-10 scene explainers, create at least 3 meaningfully different visual states and never let one static hero image dominate most scenes;",
-    "- if final QA fails visual variety/spatial correctness, repair asset_plan/scene_generation/motion as appropriate; do not simply re-render the same assets;",
+    "- if final QA fails visual variety/spatial correctness, use autopilot --recover asset_plan (or a more specific downstream stage) and rebuild; do not simply re-render the same assets;",
+    "- if final duration is materially below the storyboard target, use autopilot --recover script, expand the narration without adding unsupported claims, regenerate voice, and rebuild downstream timing;",
     "- preserve the intended storyboard target duration; if real voice timing makes the result materially shorter, revise/expand the script/storyboard instead of silently shipping a much shorter video;",
     "- never fabricate an image, audio file, video, provider result, or successful QA result;",
     "- if a required provider is unavailable and no valid fallback can satisfy the scene, mark the run blocked with the exact missing capability;",
