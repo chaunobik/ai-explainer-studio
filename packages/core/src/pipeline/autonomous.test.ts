@@ -1,11 +1,9 @@
 import {describe, expect, it} from "vitest";
 import {
-  approveAutonomousCheckpoint,
   beginAutonomousStage,
   createAutonomousRunState,
   getAutonomousDirective,
   recordAutonomousStageResult,
-  reviseAutonomousCheckpoint,
 } from "./autonomous";
 
 function passCurrent(state: ReturnType<typeof createAutonomousRunState>) {
@@ -50,45 +48,36 @@ describe("autonomous pipeline", () => {
     expect(getAutonomousDirective(state).kind).toBe("human_intervention");
   });
 
-  it("pauses at canonical checkpoint and resumes after approval", () => {
+  it("skips canonical, storyboard and final checkpoints automatically", () => {
     let state = createAutonomousRunState({
       runId: "RUN-1",
       projectId: "P-1",
       topic: "Topic",
     });
 
-    while (state.currentStage !== "checkpoint_canonical") {
+    while (state.currentStage !== "canonical_qa") {
       state = passCurrent(state);
     }
+    state = passCurrent(state);
 
-    expect(getAutonomousDirective(state).kind).toBe("human_checkpoint");
-    expect(state.stages.checkpoint_canonical.status).toBe("needs_human_review");
-
-    state = approveAutonomousCheckpoint(state);
     expect(state.currentStage).toBe("scene_prompts");
-    expect(state.stages.scene_prompts.status).toBe("ready");
-  });
+    expect(state.stages.checkpoint_canonical.status).toBe("approved");
 
-  it("revises only the affected branch at a checkpoint", () => {
-    let state = createAutonomousRunState({
-      runId: "RUN-1",
-      projectId: "P-1",
-      topic: "Topic",
-    });
-
-    while (state.currentStage !== "checkpoint_canonical") {
+    while (state.currentStage !== "storyboard_preview") {
       state = passCurrent(state);
     }
+    state = passCurrent(state);
 
-    state = reviseAutonomousCheckpoint(
-      state,
-      "canonical_prompt",
-      "Make the handle smaller.",
-    );
+    expect(state.currentStage).toBe("scene_generation");
+    expect(state.stages.checkpoint_storyboard.status).toBe("approved");
 
-    expect(state.currentStage).toBe("canonical_prompt");
-    expect(state.stages.canonical_prompt.status).toBe("ready");
-    expect(state.stages.research.status).toBe("passed");
-    expect(state.revisionHistory).toHaveLength(1);
+    while (state.currentStage !== "final_qa") {
+      state = passCurrent(state);
+    }
+    state = passCurrent(state);
+
+    expect(state.currentStage).toBe("complete");
+    expect(state.stages.checkpoint_final.status).toBe("approved");
+    expect(getAutonomousDirective(state).kind).toBe("complete");
   });
 });
