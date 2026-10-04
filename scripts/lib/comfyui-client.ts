@@ -1,3 +1,4 @@
+import {randomUUID} from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -21,6 +22,52 @@ export class ComfyUiClient {
     const response = await fetch(this.url("/queue"));
     if (!response.ok) {
       throw new Error(`ComfyUI health check failed: HTTP ${response.status}`);
+    }
+  }
+
+  async objectInfo(node?: string): Promise<any> {
+    const suffix = node ? `/${encodeURIComponent(node)}` : "";
+    const response = await fetch(this.url(`/object_info${suffix}`));
+    if (!response.ok) {
+      throw new Error(`ComfyUI object info failed: HTTP ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async validateCoreImageRuntime(checkpoint: string): Promise<void> {
+    const requiredNodes = [
+      "CheckpointLoaderSimple",
+      "CLIPTextEncode",
+      "EmptyLatentImage",
+      "LoadImage",
+      "ImageCrop",
+      "ImageScale",
+      "VAEEncode",
+      "VAEDecode",
+      "KSampler",
+      "SaveImage",
+    ];
+
+    const info = await this.objectInfo();
+    const missing = requiredNodes.filter((node) => !info?.[node]);
+    if (missing.length > 0) {
+      throw new Error(
+        `ComfyUI is missing required core nodes: ${missing.join(", ")}`,
+      );
+    }
+
+    const checkpointInfo = info.CheckpointLoaderSimple;
+    const values =
+      checkpointInfo?.input?.required?.ckpt_name?.[0] ??
+      checkpointInfo?.input?.required?.ckpt_name?.[0]?.[0] ??
+      [];
+    const names = Array.isArray(values) ? values : [];
+    if (names.length > 0 && !names.includes(checkpoint)) {
+      throw new Error(
+        `COMFYUI_CHECKPOINT "${checkpoint}" is not available. Found: ${names
+          .slice(0, 12)
+          .join(", ")}`,
+      );
     }
   }
 
@@ -58,7 +105,7 @@ export class ComfyUiClient {
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         prompt,
-        client_id: crypto.randomUUID(),
+        client_id: randomUUID(),
       }),
     });
 
