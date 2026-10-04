@@ -32,12 +32,12 @@ describe("media router", () => {
     const plan = buildMediaAttemptPlan(route, 2);
 
     expect(plan).toEqual([
-      {provider: "ltx", attempt: 1},
-      {provider: "ltx", attempt: 2},
       {provider: "wan2.2", attempt: 1},
       {provider: "wan2.2", attempt: 2},
       {provider: "static_motion", attempt: 1},
       {provider: "static_motion", attempt: 2},
+      {provider: "remotion", attempt: 1},
+      {provider: "remotion", attempt: 2},
     ]);
   });
 });
