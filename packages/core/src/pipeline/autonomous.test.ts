@@ -27,7 +27,7 @@ describe("autonomous pipeline", () => {
     expect(getAutonomousDirective(state).kind).toBe("run_stage");
   });
 
-  it("places master voice before the timed storyboard", () => {
+  it("creates scene IDs before voice and then finalizes timing from audio", () => {
     let state = createAutonomousRunState({
       runId: "RUN-1",
       projectId: "P-1",
@@ -38,10 +38,10 @@ describe("autonomous pipeline", () => {
     expect(state.currentStage).toBe("script");
 
     state = passCurrent(state);
-    expect(state.currentStage).toBe("master_voice");
+    expect(state.currentStage).toBe("storyboard");
 
     state = passCurrent(state);
-    expect(state.currentStage).toBe("storyboard");
+    expect(state.currentStage).toBe("master_voice");
   });
 
   it("auto-repairs failures and escalates only after max attempts", () => {
