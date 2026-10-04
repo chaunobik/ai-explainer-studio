@@ -2,6 +2,8 @@
 
 The application code is wired to real providers. Large external model weights are intentionally not committed to this repository.
 
+External model repositories and weights are intentionally machine dependencies, not source files in AI Explainer Studio.
+
 After this one-time setup, normal production is:
 
 ```powershell
@@ -58,7 +60,7 @@ COMFYUI_START_COMMAND=python D:\AI\ComfyUI\main.py --listen 127.0.0.1 --port 818
 
 ## 3. VieNeu-TTS v3 Turbo — required for Vietnamese narration
 
-Source: https://github.com/suriken/vieneu-tts
+Source: https://github.com/pnnbao97/VieNeu-TTS
 
 VieNeu exposes an OpenAI-compatible endpoint:
 
