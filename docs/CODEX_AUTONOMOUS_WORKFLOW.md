@@ -1,80 +1,107 @@
 # Codex / ChatGPT Autonomous Workflow
 
-AI Explainer Studio now has a Codex-native execution mode in addition to the guided browser dashboard.
+AI Explainer Studio supports a one-topic, hands-off execution mode in addition to the guided browser workflow.
 
-## User experience
+## Target experience
 
-For normal operation, the user should only need to provide a topic, for example:
+Normal input:
 
 > Tạo video giải thích: Tại sao tủ lạnh nóng phía sau?
 
-Codex starts the autonomous run, generates and validates artifacts, repairs machine-detectable failures automatically, and only interrupts at meaningful review points.
+Normal output:
 
-## Checkpoints
+- `final.mp4`
+- thumbnail/cover asset when configured
+- script and metadata
+- QA summary
 
-There are three planned checkpoints:
+The system should not stop for canonical, storyboard, or final approval when the run mode is `hands_off`.
 
-1. **Canonical asset (A0)** — approve/edit/regenerate the visual source of truth.
-2. **Storyboard + keyframes** — approve the creative plan before full scene generation.
-3. **Final output** — approve/export or request a targeted revision.
+## Default stage order
 
-A QA failure is not automatically a checkpoint. The orchestrator retries up to three times before escalating.
+```
+Topic
+→ Research + QA
+→ Script + QA
+→ Master Voice + timing
+→ Timed Storyboard + QA
+→ AssetBible / visual plan
+→ A0 canonical generation + QA
+→ scene prompts / keyframes
+→ scene generation + QA
+→ Motion Router
+→ scene motion/video generation
+→ subtitles / composition
+→ final render
+→ final QA
+→ complete
+```
 
-## VS Code with Codex
+Generating master narration before the storyboard lets the visual timeline use measured speech duration instead of estimated scene timing.
 
-Open this repository and give Codex the topic directly. Root `AGENTS.md` instructs Codex to initialize and maintain the run state.
+## Auto-gates
 
-The underlying state helper is:
+The legacy checkpoint stage names remain in the state machine for compatibility:
 
-    npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
+1. `checkpoint_canonical`
+2. `checkpoint_storyboard`
+3. `checkpoint_final`
 
-Resume later with:
+In `hands_off` mode they are automatic QA gates. When the preceding QA has passed, the state machine marks the gate approved and continues immediately.
 
-    npm run autopilot -- --slug tai-sao-tu-lanh-nong-phia-sau
+Use `--mode guided` to restore interactive checkpoint behavior.
 
-The command prints the current stage and next directive. Codex should continue until it reaches a checkpoint.
+## CLI
 
-## ChatGPT / Codex app
+Start a default hands-off run:
 
-Use the same repository and give the same topic. When the environment exposes image/audio/video generation tools, the agent should invoke them directly. The state file keeps the run resumable across interruptions.
+```bash
+npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
+```
 
-## State storage
+Start a guided run:
 
-Runtime state is saved to:
+```bash
+npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?" --mode guided
+```
 
-    .ai-explainer/runs/<slug>/state.json
+Resume:
 
-This directory is gitignored because it is execution state, not source code.
+```bash
+npm run autopilot -- --slug tai-sao-tu-lanh-nong-phia-sau
+```
 
-## Automatic repair
+Existing state files without `runMode` are treated as `guided` for backward compatibility.
 
-The state engine supports:
+## Media routing and fallback
 
-    FAIL
-      -> auto_repair
-      -> retry
-      -> PASS
+The orchestrator should not send every scene to a generative video model.
 
-After the configured maximum attempts (default 3), the stage becomes `needs_human_review`.
+Preferred routing:
+- realistic motion → Wan2.2 I2V;
+- multi-keyframe / complex generative scene → LTX;
+- technical diagram / engineering overlay → Remotion + SVG;
+- static explanatory visual → deterministic pan/zoom;
+- repeated provider failure → bounded retry then fallback route.
 
-## Editing at checkpoints
+The routing contract lives in `packages/core/src/providers/media-router.ts`.
 
-User edits do not restart the project. The checkpoint revision command reopens only an affected branch.
+## Repair policy
 
-Examples:
+Default maximum attempts per machine stage: 3.
 
-    npm run autopilot -- --slug demo --revise canonical_prompt --note "Make the handle smaller"
+```
+FAIL
+→ diagnose smallest defect
+→ repair prompt/spec
+→ regenerate affected artifact
+→ QA
+```
 
-    npm run autopilot -- --slug demo --revise voice --note "Shorten narration in scene 5"
+A scene failure should repair that scene, not rebuild unrelated passing scenes. Provider failure should degrade gracefully to a deterministic render when that still satisfies the scene goal.
 
-The core state engine preserves earlier passing stages and invalidates only the configured affected work.
+## Tool/provider boundary
 
-## Relationship to the existing dashboard
+Full hands-off media generation requires configured provider access. AI Explainer Studio remains the orchestrator; ComfyUI/Wan/LTX/TTS servers are execution backends.
 
-The browser dashboard remains available for manual/guided operation. Autopilot is an additional execution surface, not a destructive migration.
-
-Over time the dashboard can consume the same autonomous state so it becomes a supervision UI instead of a sequence of copy/paste forms.
-
-## Tool limitations
-
-Full hands-off media generation requires the current Codex/ChatGPT environment to expose the relevant media tools or a configured provider API. If a required provider is unavailable, the agent must surface that exact boundary instead of pretending an asset was generated.
+When no valid provider or fallback can satisfy a required stage, record the exact missing capability and escalate instead of fabricating success.
