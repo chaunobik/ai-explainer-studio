@@ -90,8 +90,6 @@ async function generateSpec(client: VieNeuClient, specPath: string): Promise<voi
     JSON.stringify(
       {
         project_id: spec.project_id,
-        provider_id: "vieneu-v3-turbo",
-        generated_at: new Date().toISOString(),
         assets,
       },
       null,
