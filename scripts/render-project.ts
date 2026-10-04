@@ -28,7 +28,8 @@ function dataUri(filePath: string): string {
     ext === ".webp" ? "image/webp" :
     ext === ".mp3" ? "audio/mpeg" :
     ext === ".wav" ? "audio/wav" :
-    ext === ".m4a" || ext === ".mp4" ? "audio/mp4" :
+    ext === ".m4a" ? "audio/mp4" :
+    ext === ".mp4" ? "video/mp4" :
     null;
 
   if (!mime) throw new Error(`Unsupported media extension: ${ext}`);
@@ -73,6 +74,9 @@ async function main(): Promise<void> {
   const voiceSpecPath = resolveProject(p.voice_spec);
   const voiceAssetsPath = resolveProject(p.voice_assets_manifest);
   const imageAssetsPath = resolveProject(p.image_assets_manifest);
+  const videoAssetsPath = p.video_assets_manifest
+    ? resolveProject(p.video_assets_manifest)
+    : null;
   const output = path.resolve(arg("out") ?? resolveProject(p.output_file));
 
   for (const [relative, label] of [
@@ -233,8 +237,40 @@ async function main(): Promise<void> {
     audioByScene[voiceAsset.scene_id] = dataUri(audioPath);
   }
 
+  const videoByScene: Record<string, string> = {};
+  if (videoAssetsPath && fs.existsSync(videoAssetsPath)) {
+    const videoManifest = readJson(videoAssetsPath);
+    for (const videoAsset of videoManifest.assets ?? []) {
+      if (videoAsset.status !== "approved") continue;
+      if (!videoAsset.qa_result_ids?.length) {
+        throw new Error(
+          `Approved video ${videoAsset.asset_id} has no QA result ID.`,
+        );
+      }
+      const videoPath = resolveProject(videoAsset.file.uri);
+      if (!fs.existsSync(videoPath)) {
+        throw new Error(
+          `Missing approved video file for ${videoAsset.asset_id}: ${videoPath}`,
+        );
+      }
+      const actualChecksum = sha256(videoPath);
+      if (actualChecksum !== videoAsset.file.checksum) {
+        throw new Error(
+          `Checksum mismatch for video ${videoAsset.asset_id}. Manifest=${videoAsset.file.checksum}, actual=${actualChecksum}.`,
+        );
+      }
+      videoByScene[videoAsset.scene_id] = dataUri(videoPath);
+    }
+  }
+
   const subtitleCues = buildSubtitleCues(voiceSpec, voiceManifest.assets, 6);
-  const inputProps = {motionSpec: motion, assets, audioByScene, subtitleCues};
+  const inputProps = {
+    motionSpec: motion,
+    assets,
+    audioByScene,
+    videoByScene,
+    subtitleCues,
+  };
 
   const serveUrl = await bundle({
     entryPoint: path.join(root, "packages", "renderer", "src", "entry.tsx"),
