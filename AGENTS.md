@@ -1,22 +1,27 @@
 # AI Explainer Studio — Codex Autopilot
 
-This repository supports a one-topic autonomous workflow. Treat the topic as the only required input unless the user explicitly overrides defaults.
+This repository is a one-topic autonomous production system. Treat the topic as the only normal user input.
+
+## Normal entry point
+
+Users run:
+
+```
+npm run create-video -- "<topic>"
+```
+
+Do not ask them to manually run individual provider commands during normal production.
 
 ## Default behavior
 
 The default run mode is **hands_off**.
 
-1. Start or resume the autonomous state:
-   - New topic: `npm run autopilot -- --topic "<topic>"`
-   - Guided compatibility mode: `npm run autopilot -- --topic "<topic>" --mode guided`
-   - Resume: `npm run autopilot -- --slug <slug>`
-2. Follow the returned directive until `complete`.
-3. Do not ask for confirmation for machine-verifiable work.
-4. Validate every artifact with schemas, QA contracts and cross-stage checks.
-5. On failure, repair the smallest scope and retry up to 3 times.
-6. If a media provider fails repeatedly, use the configured fallback route instead of blocking the whole video when a safe fallback exists.
-7. Human intervention is reserved for an unavailable required capability or an unrecoverable validation failure.
-8. Preserve passing upstream artifacts and invalidate only affected downstream work.
+1. Continue the persistent autonomous state until `complete`.
+2. Do not ask for confirmation for machine-verifiable work.
+3. Validate every artifact with schemas, QA contracts and cross-stage checks.
+4. On failure, repair the smallest scope and retry up to 3 times.
+5. Preserve passing upstream artifacts.
+6. Never fabricate generated media, provider results or QA passes.
 
 ## Canonical stage order
 
@@ -29,31 +34,77 @@ research
 → canonical_prompt
 → canonical_generation
 → canonical_qa
-→ checkpoint_canonical (auto-gate in hands_off)
+→ checkpoint_canonical (auto-gate)
 → scene_prompts
 → storyboard_preview
-→ checkpoint_storyboard (auto-gate in hands_off)
+→ checkpoint_storyboard (auto-gate)
 → scene_generation
 → scene_qa
 → motion
 → final_render
 → final_qa
-→ checkpoint_final (auto-gate in hands_off)
+→ checkpoint_final (auto-gate)
 → complete
 ```
 
-The master voice is generated before the timed storyboard so scene durations are derived from real narration timing rather than guessed first.
+## Runtime provider commands
+
+Provider startup and health checks have already run before Codex is invoked by `create-video`.
+
+Use the repository commands below. Do not invent a parallel provider integration.
+
+### Images — ComfyUI
+
+```
+npm run image:generate -- --prompt "<complete prompt>" --out <output.png>
+npm run image:generate -- --prompt "<complete prompt>" --reference <approved-reference.png> --out <output.png>
+```
+
+Use A0 as the source-of-truth reference for derived product scenes.
+
+### Vietnamese narration — VieNeu-TTS
+
+Single file:
+
+```
+npm run voice:generate -- --text "<narration>" --out <output.wav>
+```
+
+VoiceSpec batch:
+
+```
+npm run voice:generate -- --spec <voice-spec.json> --project <project-dir>
+```
+
+### Realistic motion — Wan2.2
+
+```
+npm run video:generate -- --image <approved-keyframe.png> --prompt "<motion-only prompt>" --out <scene.mp4> --project <project-dir> --scene-id <scene-id> --asset-id <video-asset-id>
+```
+
+Generated videos enter `qa_pending`. After semantic video QA passes:
+
+```
+npm run video:status -- --project=<project-dir> --asset=<video-asset-id> --status=approved --qa-id=<qa-id>
+```
+
+If Wan is unavailable or fails after bounded retries, use the image keyframe plus deterministic Remotion motion. Wan failure alone must not block the project.
+
+### Final composition — Remotion
+
+Use the existing `render:project` workflow. It automatically prefers an approved scene video from `video-assets.json`; otherwise it renders the approved image source with deterministic motion.
 
 ## Media routing
 
-Route scenes by intent, not by one universal video model:
-- realistic natural motion → Wan image-to-video first;
-- multi-keyframe / complex generative motion → LTX first;
-- technical diagrams and deterministic overlays → Remotion/SVG;
-- simple stills → deterministic pan/zoom;
-- on provider failure → bounded retry, then fallback provider.
+V1 deliberately uses a small stack:
 
-Use `packages/core/src/providers/media-router.ts` as the routing contract.
+- realistic product motion → Wan2.2 when available;
+- technical diagram / engineering overlay → Remotion/SVG;
+- static or Wan-fallback scene → Remotion pan/zoom;
+- images/keyframes → ComfyUI;
+- Vietnamese speech → VieNeu-TTS.
+
+LTX and other experimental providers are not part of the V1 production stack.
 
 ## Automatic repair
 
@@ -66,38 +117,14 @@ FAIL
 → PASS
 ```
 
-Do not restart the project from the topic after a localized failure.
-
-## Existing contracts are authoritative
-
-Reuse:
-- `schemas/`
-- `prompts/`
-- `packages/core/src/`
-- `docs/CONTENT_CONTRACTS.md`
-- canonical example under `examples/fridge-hot-behind/`
-
-Keep IDs stable across repair revisions unless a schema requires a new ID.
-
-## Provider boundary
-
-AI Explainer Studio is the orchestrator, not the model server. External/local providers should sit behind provider interfaces. Preferred production direction:
-- image workflows: ComfyUI;
-- realistic I2V: Wan2.2;
-- advanced/keyframe video: LTX optional;
-- Vietnamese voice: VieNeu-compatible API;
-- deterministic motion/composition: Remotion/SVG/FFmpeg.
-
-If a provider is unavailable, never pretend generation succeeded. Fall back when the route allows it; otherwise mark the stage `needs_human_review` with the exact missing capability.
+Do not restart the whole topic for a localized failure.
 
 ## State
 
-Runtime state is stored under:
+Runtime state:
 
 ```
 .ai-explainer/runs/<slug>/state.json
 ```
 
-This is execution state and remains gitignored.
-
-Detailed stage responsibilities are in `prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md`.
+Detailed provider setup is in `docs/PROVIDER_SETUP.md`. Detailed stage responsibilities are in `prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md`.
