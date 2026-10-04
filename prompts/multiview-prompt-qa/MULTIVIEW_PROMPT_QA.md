@@ -1,17 +1,21 @@
-# Multi-View Reference Prompt QA V3
+# Canonical Reference Prompt QA V4
 
-Review the A0 MultiViewReferencePromptSpec before image generation. A0 will become the canonical visual source of truth, so ambiguity is a critical defect.
+Review the A0 MultiViewReferencePromptSpec before image generation. The contract may describe either ONE canonical reference image or an optional multi-view reference pack.
+
+A0 will become the canonical visual source of truth, so ambiguity is a critical defect.
 
 ## Review criteria
 1. Subject lock: one concrete product identity; invariants and forbidden changes are explicit.
-2. Required-view coverage: every requested view has camera relation, framing and purpose.
+2. Required-view coverage: every explicitly requested view has camera relation, framing and purpose.
 3. Camera specificity: capture mode, focal length, aperture, shutter, ISO, WB, camera height, subject distance, focus, exposure and lighting are concrete and plausible.
-4. Cross-view consistency: the prompt clearly requires one exact physical object across all panels and names geometry that must match.
+4. Identity consistency: for a single-view A0, the prompt must define a stable reproducible identity; for multi-view A0, it must additionally lock cross-view geometry.
 5. Photographic realism: believable smartphone/camera photography, not generic CGI-like "photorealism".
 6. Technical safety: hidden mechanisms are not fabricated.
-7. Ambiguity: product geometry, view direction and board layout are not left to the model.
+7. Ambiguity: product geometry and requested camera view are not left to the model.
 
-Critical failures include missing/ambiguous required views, allowing different product variants, conflicting camera/perspective requirements, fabricated hidden internals, or board composition that can crop required geometry.
+A single requested view is valid and should not be failed for lacking a board/contact-sheet layout.
+
+Critical failures include an ambiguous requested view, allowing different product variants, conflicting camera/perspective requirements, fabricated hidden internals, or composition that crops identity-defining geometry.
 
 ## STRICT JSON OUTPUT
 
@@ -39,7 +43,7 @@ The object MUST have exactly this top-level shape:
     "subject_lock": "Explain specifically what identity details are locked and why this check passes/fails.",
     "view_coverage": "Explain whether every required view is explicitly covered and readable.",
     "camera_specificity": "Explain whether the camera/capture parameters are concrete and mutually plausible.",
-    "cross_view_consistency": "Explain how the prompt prevents product geometry from drifting across views.",
+    "cross_view_consistency": "For a single-view A0, explain how the prompt locks a reproducible identity. For multi-view A0, explain how it prevents geometry from drifting across views.",
     "photographic_realism": "Explain what makes the requested result look like a real photograph rather than CGI.",
     "technical_safety": "Explain whether hidden mechanisms or unsupported technical details are avoided.",
     "ambiguity": "Explain whether any important visual decision is still left open to the image model."
