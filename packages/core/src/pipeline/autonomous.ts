@@ -64,7 +64,6 @@ export interface AutonomousRunState {
 export type AutonomousDirectiveKind =
   | "run_stage"
   | "repair_and_retry"
-  | "human_checkpoint"
   | "human_intervention"
   | "complete";
 
@@ -80,19 +79,19 @@ export const AUTONOMOUS_CHECKPOINTS: Record<
   {label: string; summary: string}
 > = {
   checkpoint_canonical: {
-    label: "Checkpoint A — Canonical asset",
+    label: "Automatic Gate A — Canonical asset",
     summary:
-      "Review the approved A0 canonical multi-view reference before any downstream scene generation.",
+      "A0 is accepted automatically when canonical QA passes; no operator approval is required.",
   },
   checkpoint_storyboard: {
-    label: "Checkpoint B — Storyboard and keyframes",
+    label: "Automatic Gate B — Storyboard and keyframes",
     summary:
-      "Review the storyboard, scene intent and representative keyframes before full scene generation.",
+      "Storyboard/keyframes advance automatically after QA; no operator approval is required.",
   },
   checkpoint_final: {
-    label: "Checkpoint C — Final output",
+    label: "Automatic Gate C — Final output",
     summary:
-      "Review the assembled final output after final QA before export/completion.",
+      "A passing final QA completes the run automatically.",
   },
 };
 
@@ -155,17 +154,6 @@ function stageIndex(stage: AutonomousStage): number {
   return AUTONOMOUS_STAGE_ORDER.indexOf(stage);
 }
 
-function assertCurrent(
-  state: AutonomousRunState,
-  stage: AutonomousStage,
-): void {
-  if (state.currentStage !== stage) {
-    throw new Error(
-      `Expected current stage ${state.currentStage}, received ${stage}.`,
-    );
-  }
-}
-
 function nextStage(stage: AutonomousStage): AutonomousStage {
   const index = stageIndex(stage);
   if (index < 0 || index >= AUTONOMOUS_STAGE_ORDER.length - 1) {
@@ -174,18 +162,27 @@ function nextStage(stage: AutonomousStage): AutonomousStage {
   return AUTONOMOUS_STAGE_ORDER[index + 1];
 }
 
-function moveTo(
+function advanceAcrossAutomaticGates(
   state: AutonomousRunState,
-  stage: AutonomousStage,
+  requestedStage: AutonomousStage,
 ): AutonomousRunState {
   const stages = structuredClone(state.stages);
+  let stage = requestedStage;
+
+  while (checkpointSet.has(stage)) {
+    const checkpoint = stage as AutonomousCheckpoint;
+    stages[checkpoint].status = "approved";
+    stages[checkpoint].lastMessage =
+      "Automatically approved because the upstream QA gate passed.";
+    stage = nextStage(checkpoint);
+  }
+
   if (stage === "complete") {
     stages.complete.status = "complete";
-  } else if (checkpointSet.has(stage)) {
-    stages[stage].status = "needs_human_review";
   } else {
     stages[stage].status = "ready";
   }
+
   return {
     ...state,
     currentStage: stage,
@@ -258,7 +255,7 @@ export function recordAutonomousStageResult(
 ): AutonomousRunState {
   const stage = state.currentStage;
   if (checkpointSet.has(stage) || stage === "complete") {
-    throw new Error(`Use checkpoint actions for ${stage}.`);
+    throw new Error(`Use automatic-gate or completion actions for ${stage}.`);
   }
 
   const current = state.stages[stage];
@@ -273,7 +270,10 @@ export function recordAutonomousStageResult(
 
   if (result === "pass") {
     stages[stage].status = "passed";
-    return moveTo({...state, stages, updatedAt: nowIso()}, nextStage(stage));
+    return advanceAcrossAutomaticGates(
+      {...state, stages, updatedAt: nowIso()},
+      nextStage(stage),
+    );
   }
 
   if (result === "needs_human_review") {
@@ -296,7 +296,7 @@ export function resumeAutonomousStageAfterHumanReview(
 ): AutonomousRunState {
   const stage = state.currentStage;
   if (checkpointSet.has(stage) || stage === "complete") {
-    throw new Error("Checkpoint stages must use approve or revise.");
+    throw new Error("Automatic gate stages do not require human review.");
   }
   if (state.stages[stage].status !== "needs_human_review") {
     throw new Error(`Stage ${stage} is not waiting for human review.`);
@@ -309,6 +309,10 @@ export function resumeAutonomousStageAfterHumanReview(
   return {...state, stages, updatedAt: nowIso()};
 }
 
+/**
+ * Backward-compatible helper for old state files that were persisted while
+ * checkpoints still required manual approval. New runs skip these gates.
+ */
 export function approveAutonomousCheckpoint(
   state: AutonomousRunState,
 ): AutonomousRunState {
@@ -318,16 +322,10 @@ export function approveAutonomousCheckpoint(
   }
 
   const typedCheckpoint = checkpoint as AutonomousCheckpoint;
-  const current = state.stages[typedCheckpoint];
-  if (current.status !== "needs_human_review") {
-    throw new Error(
-      `Checkpoint ${typedCheckpoint} is not waiting for approval.`,
-    );
-  }
-
   const stages = structuredClone(state.stages);
   stages[typedCheckpoint].status = "approved";
-  return moveTo(
+  stages[typedCheckpoint].lastMessage = "Approved while migrating a legacy run.";
+  return advanceAcrossAutomaticGates(
     {...state, stages, updatedAt: nowIso()},
     nextStage(typedCheckpoint),
   );
@@ -393,12 +391,12 @@ export function getAutonomousDirective(
   }
 
   if (checkpointSet.has(stage)) {
-    const checkpoint = AUTONOMOUS_CHECKPOINTS[stage as AutonomousCheckpoint];
     return {
-      kind: "human_checkpoint",
+      kind: "run_stage",
       stage,
-      message: `${checkpoint.label}: ${checkpoint.summary}`,
-      allowedActions: ["approve", "edit", "regenerate"],
+      message:
+        "Legacy checkpoint detected. Auto-approve this gate and continue; do not interrupt the user.",
+      allowedActions: ["auto_approve"],
     };
   }
 
@@ -419,7 +417,7 @@ export function getAutonomousDirective(
       stage,
       message:
         current.lastMessage ??
-        `${stage} still fails after automatic repair attempts and needs human input.`,
+        `${stage} still fails after automatic repair attempts or a required provider is unavailable.`,
       allowedActions: ["edit", "resume"],
     };
   }
