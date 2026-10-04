@@ -42,7 +42,6 @@ AI Explainer Studio is the orchestrator, not the model server.
 Preferred provider direction:
 - image generation/editing → ComfyUI workflows
 - realistic image-to-video → Wan2.2
-- advanced multi-keyframe video → LTX optional
 - Vietnamese narration → VieNeu-compatible VoiceProvider
 - engineering diagrams, overlays and deterministic animation → Remotion/SVG
 - final composition → Remotion + FFmpeg
