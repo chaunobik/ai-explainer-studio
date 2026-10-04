@@ -125,6 +125,18 @@ async function main(): Promise<void> {
   fs.writeFileSync(requestFile, topic.trim() + "\n", "utf8");
   if (fs.existsSync(resultFile)) fs.rmSync(resultFile);
 
+  // Ensure required media services are running before handing the workflow to Codex.
+  runOrThrow(
+    npmCommand(),
+    ["run", "provider:ensure"],
+    "Provider startup",
+  );
+  runOrThrow(
+    npmCommand(),
+    ["run", "provider:doctor"],
+    "Provider preflight",
+  );
+
   // Initialize or resume the persistent hands-off state before delegating to Codex.
   runOrThrow(
     npmCommand(),
@@ -154,8 +166,13 @@ async function main(): Promise<void> {
     "- run the relevant schema/QA checks before marking any stage PASS;",
     "- automatically diagnose and repair failures, with bounded retries;",
     "- preserve passing upstream artifacts and repair only the smallest failing scope;",
+    "- use the project provider commands instead of inventing ad-hoc integrations:",
+    "  npm run image:generate -- --prompt \"...\" --out <png> [--reference <png>];",
+    "  npm run voice:generate -- --spec <voice-spec.json> --project <project-dir>;",
+    "  npm run video:generate -- --image <png> --prompt \"...\" --out <mp4> --project <project-dir> --scene-id <id> --asset-id <id>;",
+    "  npm run video:status -- --project=<project-dir> --asset=<id> --status=approved --qa-id=<qa-id>;",
     "- route realistic motion to Wan, deterministic technical scenes to Remotion/SVG, and use configured fallbacks;",
-    "- inspect the repository and environment for configured providers instead of assuming they exist;",
+    "- provider:doctor already passed before this agent started; if Wan itself is unavailable use deterministic motion fallback rather than blocking;",
     "- never fabricate an image, audio file, video, provider result, or successful QA result;",
     "- if a required provider is unavailable and no valid fallback can satisfy the scene, mark the run blocked with the exact missing capability;",
     "- if the final video is produced, verify the actual file exists before returning status=complete.",
