@@ -13,7 +13,7 @@ function passCurrent(state: ReturnType<typeof createAutonomousRunState>) {
 }
 
 describe("autonomous pipeline", () => {
-  it("starts from research with a single topic", () => {
+  it("defaults to hands-off mode from a single topic", () => {
     const state = createAutonomousRunState({
       runId: "RUN-1",
       projectId: "P-1",
@@ -21,9 +21,27 @@ describe("autonomous pipeline", () => {
       createdAt: "2026-10-03T00:00:00.000Z",
     });
 
+    expect(state.runMode).toBe("hands_off");
     expect(state.currentStage).toBe("research");
     expect(state.stages.research.status).toBe("ready");
     expect(getAutonomousDirective(state).kind).toBe("run_stage");
+  });
+
+  it("places master voice before the timed storyboard", () => {
+    let state = createAutonomousRunState({
+      runId: "RUN-1",
+      projectId: "P-1",
+      topic: "Topic",
+    });
+
+    state = passCurrent(state);
+    expect(state.currentStage).toBe("script");
+
+    state = passCurrent(state);
+    expect(state.currentStage).toBe("master_voice");
+
+    state = passCurrent(state);
+    expect(state.currentStage).toBe("storyboard");
   });
 
   it("auto-repairs failures and escalates only after max attempts", () => {
@@ -50,11 +68,27 @@ describe("autonomous pipeline", () => {
     expect(getAutonomousDirective(state).kind).toBe("human_intervention");
   });
 
-  it("pauses at canonical checkpoint and resumes after approval", () => {
+  it("auto-approves canonical checkpoint in hands-off mode", () => {
     let state = createAutonomousRunState({
       runId: "RUN-1",
       projectId: "P-1",
       topic: "Topic",
+    });
+
+    while (state.currentStage !== "scene_prompts") {
+      state = passCurrent(state);
+    }
+
+    expect(state.stages.checkpoint_canonical.status).toBe("approved");
+    expect(state.currentStage).toBe("scene_prompts");
+  });
+
+  it("preserves explicit checkpoints in guided mode", () => {
+    let state = createAutonomousRunState({
+      runId: "RUN-1",
+      projectId: "P-1",
+      topic: "Topic",
+      runMode: "guided",
     });
 
     while (state.currentStage !== "checkpoint_canonical") {
@@ -69,11 +103,12 @@ describe("autonomous pipeline", () => {
     expect(state.stages.scene_prompts.status).toBe("ready");
   });
 
-  it("revises only the affected branch at a checkpoint", () => {
+  it("revises only the affected branch at a guided checkpoint", () => {
     let state = createAutonomousRunState({
       runId: "RUN-1",
       projectId: "P-1",
       topic: "Topic",
+      runMode: "guided",
     });
 
     while (state.currentStage !== "checkpoint_canonical") {
