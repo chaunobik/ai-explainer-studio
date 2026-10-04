@@ -93,8 +93,8 @@
       "enum": [
         "research",
         "script",
-        "master_voice",
         "storyboard",
+        "master_voice",
         "asset_plan",
         "canonical_prompt",
         "canonical_generation",
