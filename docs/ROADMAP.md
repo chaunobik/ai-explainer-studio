@@ -27,7 +27,6 @@ Goal: route each scene to the correct motion engine instead of generative video 
 Implemented foundation:
 - media kind classification
 - Wan-first realistic motion route
-- LTX optional complex/keyframe route
 - deterministic Remotion/SVG route
 - static pan/zoom route
 - bounded provider retry + fallback chain
@@ -35,7 +34,6 @@ Implemented foundation:
 Next:
 - ComfyUI job adapter
 - Wan2.2 workflow template
-- optional LTX workflow template
 - generated-video semantic QA
 - scene-level cache
 
