@@ -181,6 +181,39 @@ async function main(): Promise<void> {
     "Autopilot initialization",
   );
 
+  // Recover legacy runs that exhausted retries on the old mandatory 4x2 A0
+  // strategy. Preserve all passing upstream work and restart only canonical A0.
+  const stateFile = path.join(runDir, "state.json");
+  if (fs.existsSync(stateFile)) {
+    const state = JSON.parse(fs.readFileSync(stateFile, "utf8")) as {
+      currentStage?: string;
+      stages?: Record<string, {status?: string; lastMessage?: string | null}>;
+    };
+    const current = state.currentStage;
+    const currentStatus = current ? state.stages?.[current]?.status : undefined;
+    const canonicalDeadEnd =
+      (current === "canonical_generation" || current === "canonical_qa") &&
+      currentStatus === "needs_human_review";
+
+    if (canonicalDeadEnd) {
+      runOrThrow(
+        npmCommand(),
+        [
+          "run",
+          "autopilot",
+          "--",
+          "--slug",
+          slug,
+          "--recover",
+          "canonical_prompt",
+          "--note",
+          "Recover from legacy mandatory multi-view A0 strategy; use one canonical hero reference.",
+        ],
+        "Canonical strategy recovery",
+      );
+    }
+  }
+
   const schemaPath = path.join(
     process.cwd(),
     "schemas",
