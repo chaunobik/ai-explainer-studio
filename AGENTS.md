@@ -62,24 +62,28 @@ npm run image:generate -- --prompt "<complete prompt>" --reference <approved-A0-
 
 Before generation, declare A0/A1/... in both image asset manifests using the ImageAsset schema. Generated ComfyUI assets are registered as `qa_pending`.
 
-Use A0 as the source-of-truth reference for derived product scenes. Generate recurring-product A0 at 1536×1024 as an exact 4×2 board with this fixed panel order:
+Use A0 as the source-of-truth reference for derived product scenes.
+
+**Default V1 canonical strategy: one image, not an 8-view board.**
+
+Generate A0 as one clean, full-product hero reference. Prefer a front three-quarter camera angle that makes the product's proportions, door layout, trim, handles, material and silhouette easy to judge. A normal portrait or 4:3 image is preferred over a collage.
+
+Do NOT make a 4×2 / 8-view board a blocking requirement for a generic SDXL checkpoint. Multi-view boards are optional capability upgrades only when the configured provider can reliably generate them.
+
+Inspect A0 with Codex `view_image`. Approve it when:
+- exactly one intended product is present;
+- identity-defining geometry is clear and physically plausible;
+- materials/color/trim/handles are readable;
+- there is no severe AI warping or duplicate geometry;
+- it is strong enough to condition later scene generation.
+
+For derived scenes:
 
 ```
-row 1: front | front-left-45 | front-right-45 | left
-row 2: right | rear-left-45 | rear-right-45 | rear
+npm run image:generate -- --prompt "<complete scene prompt>" --reference <approved-A0.png> --out <output.png> --project <project-dir> --asset <asset-id>
 ```
 
-Nominal crop rectangles are:
-- front `0,0,384,512`
-- front-left-45 `384,0,384,512`
-- front-right-45 `768,0,384,512`
-- left `1152,0,384,512`
-- right `0,512,384,512`
-- rear-left-45 `384,512,384,512`
-- rear-right-45 `768,512,384,512`
-- rear `1152,512,384,512`
-
-Inspect A0 with Codex `view_image`; if the generated grid does not follow the intended layout, repair/regenerate it rather than applying incorrect crop coordinates.
+Do not use `--crop` unless the actual approved reference is intentionally a contact sheet. For large viewpoint changes such as a rear view, keep A0 as the identity reference, repeat the exact subject-lock geometry in the prompt, and QA the derived image independently. If a rear/hidden surface is not established by A0 or approved research, do not invent unsupported fine detail.
 
 After semantic image QA passes:
 
