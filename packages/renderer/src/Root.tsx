@@ -23,6 +23,7 @@ const defaultProps: ExplainerVideoProps = {
   },
   assets: {},
   audioByScene: {},
+  videoByScene: {},
   subtitleCues: [],
 };
 
