@@ -49,9 +49,29 @@ Preferred provider direction:
 
 The core router lives in `packages/core/src/providers/media-router.ts`.
 
-## Hands-off autopilot
+## One-command production
 
-Start with only a topic:
+The normal user-facing command is now:
+
+```bash
+npm run create-video -- "Tại sao tủ lạnh nóng phía sau?"
+```
+
+This command:
+- verifies Codex CLI is installed and authenticated;
+- initializes/resumes the persistent hands-off run;
+- invokes `codex exec` non-interactively;
+- tells Codex to execute the complete pipeline rather than merely describe it;
+- writes the structured agent result under `.ai-explainer/runs/<slug>/codex-result.json`;
+- only reports `complete` when the returned final video path actually exists.
+
+Equivalent explicit form:
+
+```bash
+npm run create-video -- --topic "Tại sao tủ lạnh nóng phía sau?"
+```
+
+The lower-level `autopilot` command remains available for development/state debugging:
 
 ```bash
 npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
@@ -78,6 +98,7 @@ See [Codex / ChatGPT Autonomous Workflow](docs/CODEX_AUTONOMOUS_WORKFLOW.md).
 - [TransitionSpec](schemas/transition-spec.schema.json)
 - [QAResult](schemas/qa-result.schema.json)
 - [AutonomousRunState](schemas/autonomous-run-state.schema.json)
+- [CreateVideoResult](schemas/create-video-result.schema.json)
 
 ## Current state
 - Milestone 1 — Content Intelligence: COMPLETE
