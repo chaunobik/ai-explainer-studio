@@ -40,9 +40,10 @@ export const Highlight: React.FC<HighlightProps> = ({
         top: y * height,
         width: widthNorm * width,
         height: heightNorm * height,
-        borderRadius: 28,
-        background: `rgba(255, 140, 0, ${opacity * fade})`,
-        boxShadow: `0 0 45px rgba(255, 140, 0, ${Math.min(0.6, opacity * fade)})`,
+        borderRadius: 24,
+        border: `3px solid rgba(255, 157, 0, ${Math.min(0.95, fade)})`,
+        background: `rgba(255, 157, 0, ${Math.min(0.16, opacity * fade * 0.4)})`,
+        boxShadow: `0 0 28px rgba(255, 157, 0, ${Math.min(0.28, opacity * fade * 0.6)})`,
         pointerEvents: "none",
       }}
     >
@@ -51,12 +52,16 @@ export const Highlight: React.FC<HighlightProps> = ({
           style={{
             position: "absolute",
             left: "50%",
-            top: -56,
+            top: -62,
             transform: "translateX(-50%)",
-            fontSize: 38,
+            padding: "8px 14px",
+            borderRadius: 12,
+            background: "rgba(10,12,16,0.76)",
+            fontFamily: "Arial, Helvetica, sans-serif",
+            fontSize: 34,
             fontWeight: 700,
             color: "white",
-            textShadow: "0 2px 8px rgba(0,0,0,0.65)",
+            textShadow: "0 2px 6px rgba(0,0,0,0.55)",
             whiteSpace: "nowrap",
           }}
         >
