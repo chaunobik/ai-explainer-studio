@@ -103,7 +103,7 @@ The orchestrator should not send every scene to a generative video model.
 
 Preferred routing:
 - realistic motion → Wan2.2 I2V;
-- multi-keyframe / complex generative scene → LTX;
+- complex generative scene → Wan2.2 when feasible;
 - technical diagram / engineering overlay → Remotion + SVG;
 - static explanatory visual → deterministic pan/zoom;
 - repeated provider failure → bounded retry then fallback route.
@@ -126,6 +126,6 @@ A scene failure should repair that scene, not rebuild unrelated passing scenes. 
 
 ## Tool/provider boundary
 
-Full hands-off media generation requires configured provider access. AI Explainer Studio remains the orchestrator; ComfyUI/Wan/LTX/TTS servers are execution backends.
+Full hands-off media generation requires configured provider access. AI Explainer Studio remains the orchestrator; ComfyUI/Wan/VieNeu/Remotion servers are execution backends.
 
 When no valid provider or fallback can satisfy a required stage, record the exact missing capability and escalate instead of fabricating success.
