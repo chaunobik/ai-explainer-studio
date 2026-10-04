@@ -1,86 +1,69 @@
 # Roadmap
 
 ## Milestone 1 — Content Intelligence ✅ COMPLETE
-Goal: research and produce a fact-checked script/story structure from one topic.
+Research, claim verification, script contracts and storyboard contracts are implemented.
 
 ## Milestone 2 — Visual Intelligence ✅ COMPLETE
-Goal: create AssetBible, lineage, routing and continuity contracts.
+AssetBible, lineage, visual routing, continuity rules and selective repair contracts are implemented.
 
-## Milestone 3 — Visual Generation 🚧 IN PROGRESS
-Goal: generate canonical and scene assets with selective QA/repair.
-
-Deliverables:
-- ImageProvider abstraction
-- ComfyUI adapter/workflow contract
-- A0 canonical generation
-- derived-scene generation
-- VLM visual QA
-- asset cache/reuse
-- bounded retry
-
-Exit condition:
-A project can automatically create a coherent set of scene assets without manual approval.
-
-## Milestone 4 — Media Engine 🚧 FOUNDATION IMPLEMENTED
-Goal: route each scene to the correct motion engine instead of generative video everywhere.
-
-Implemented foundation:
-- media kind classification
-- Wan-first realistic motion route
-- deterministic Remotion/SVG route
-- static pan/zoom route
-- bounded provider retry + fallback chain
-
-Next:
-- ComfyUI job adapter
-- Wan2.2 workflow template
-- generated-video semantic QA
-- scene-level cache
-
-Exit condition:
-Every scene can produce motion through a primary provider or safe fallback.
-
-## Milestone 5 — Voice-First Timing 🚧 FOUNDATION IMPLEMENTED
-Goal: make narration timing authoritative.
-
-Implemented foundation:
-- autonomous stage order now places `master_voice` before storyboard
-- hands-off state supports voice-first timing
-
-Next:
-- VieNeu-compatible API provider
-- master audio generation
-- sentence/word alignment
-- storyboard duration derivation from measured audio
-- subtitle timestamps generated from alignment
-
-Exit condition:
-Storyboard and captions are timed from actual narration audio.
-
-## Milestone 6 — Hands-off Production 🚧 FOUNDATION IMPLEMENTED
-Goal: topic-in → final-video-out.
-
+## Milestone 3 — Visual Generation ✅ RUNTIME WIRED
 Implemented:
-- `hands_off` default run mode
-- guided compatibility mode
-- canonical/storyboard/final checkpoints become auto-gates in hands-off mode
-- three-attempt repair model retained
-- provider fallback contract
+- ComfyUI HTTP client: upload, queue, history polling and output download
+- built-in text-to-image and img2img workflows using core ComfyUI nodes
+- canonical board panel crop before derived-scene conditioning
+- generated image manifest registration with checksum and `qa_pending`
+- explicit semantic QA approval through `image:status`
 
-Next:
-- executable provider runner
-- asset cache
-- final semantic video QA
-- thumbnail/metadata outputs
-- end-to-end integration tests with configured media providers
+Remaining hardening:
+- provider-specific high-fidelity identity conditioning beyond img2img
+- asset cache/deduplication
+- automated visual VLM score calibration across many topics
 
-Exit condition:
-10–20 different topics complete without routine human interaction and without critical factual/continuity failures.
+## Milestone 4 — Media Engine ✅ RUNTIME WIRED
+Implemented:
+- media router
+- Wan2.2 official CLI adapter
+- TI2V-5B consumer-GPU configuration path
+- generated video manifest + checksum + QA gate
+- Remotion scene-video playback
+- deterministic Remotion fallback when Wan is unavailable
+- final composition supports mixed still/diagram/generated-video scenes
+
+Remaining hardening:
+- real-GPU performance qualification
+- automated semantic video QA thresholds
+- scene cache
+
+## Milestone 5 — Voice Timing ✅ RUNTIME WIRED
+Implemented:
+- VieNeu-TTS v3 Turbo OpenAI-compatible HTTP client
+- preset-voice health validation
+- real WAV generation
+- WAV duration/checksum extraction
+- draft storyboard → scene voice → measured timing sync
+- deterministic Voice QA and approved voice manifest
+- subtitle timing from actual audio duration
+
+Remaining hardening:
+- optional word-level forced alignment instead of proportional subtitle chunks
+- pronunciation auto-repair loop
+
+## Milestone 6 — Hands-off Production 🚧 INTEGRATION QUALIFICATION
+Implemented:
+- one-command `create-video`
+- Codex non-interactive orchestration
+- per-topic isolated project workspace
+- provider auto-start hooks
+- provider doctor
+- hands-off auto-gates
+- bounded repair/fallback rules
+- final output existence verification
+
+Exit condition still to qualify:
+Run 10–20 materially different topics on a configured production machine and confirm no critical factual, visual-continuity, provider or render failures.
 
 ## Later candidates
-- additional TTS providers
-- advanced voice direction
-- additional image/video models
+- additional TTS/image/video providers
 - long-form YouTube
 - auto publishing
 - analytics feedback loop
