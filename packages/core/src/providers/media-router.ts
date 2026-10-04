@@ -7,7 +7,6 @@ export type SceneMediaKind =
 
 export type MediaProviderId =
   | "wan2.2"
-  | "ltx"
   | "remotion"
   | "static_motion";
 
@@ -66,10 +65,10 @@ export function routeSceneMedia(input: MediaRouteInput): MediaRoute {
       return {
         scene_id: input.scene_id,
         kind,
-        primary: "ltx",
-        fallbacks: ["wan2.2", "static_motion"],
+        primary: "wan2.2",
+        fallbacks: ["static_motion", "remotion"],
         reason:
-          "Use a multi-keyframe-capable provider first, then degrade to simpler image-to-video or deterministic motion.",
+          "V1 keeps one generative video engine. Attempt Wan image-to-video, then degrade to deterministic motion.",
       };
 
     case "technical_diagram":
