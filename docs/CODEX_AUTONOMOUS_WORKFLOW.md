@@ -23,8 +23,8 @@ The system should not stop for canonical, storyboard, or final approval when the
 Topic
 → Research + QA
 → Script + QA
-→ Master Voice + timing
-→ Timed Storyboard + QA
+→ Draft Storyboard + QA
+→ VieNeu Voice + measured timing sync
 → AssetBible / visual plan
 → A0 canonical generation + QA
 → scene prompts / keyframes
@@ -37,7 +37,7 @@ Topic
 → complete
 ```
 
-Generating master narration before the storyboard lets the visual timeline use measured speech duration instead of estimated scene timing.
+The draft storyboard creates stable scene IDs required by VoiceSpec. VieNeu then generates real scene WAV files and `voice:sync-timing` writes measured durations back into both Storyboard and VoiceSpec before downstream visual/motion planning.
 
 ## Auto-gates
 
@@ -59,7 +59,7 @@ For normal production, the user should run only:
 npm run create-video -- "Tại sao tủ lạnh nóng phía sau?"
 ```
 
-The runner performs Codex preflight/auth checks, initializes or resumes the hands-off state, then invokes `codex exec --full-auto` non-interactively. The production prompt is passed through stdin so long topics/instructions do not depend on Windows command-line length.
+The runner performs Codex preflight/auth checks, initializes an isolated topic workspace, starts/checks required providers, initializes or resumes the hands-off state, then invokes `codex exec --full-auto` non-interactively. The production prompt is passed through stdin so long topics/instructions do not depend on Windows command-line length.
 
 Codex is required to return a structured `CreateVideoResult`. The wrapper independently verifies that the returned final video file exists before declaring success.
 
@@ -129,3 +129,30 @@ A scene failure should repair that scene, not rebuild unrelated passing scenes. 
 Full hands-off media generation requires configured provider access. AI Explainer Studio remains the orchestrator; ComfyUI/Wan/VieNeu/Remotion servers are execution backends.
 
 When no valid provider or fallback can satisfy a required stage, record the exact missing capability and escalate instead of fabricating success.
+
+
+## Concrete runtime commands
+
+Normal users do not run these manually; Codex uses them during `create-video`.
+
+```bash
+npm run project:init -- --topic "<topic>"
+npm run provider:ensure
+npm run provider:doctor
+
+npm run image:generate -- --prompt "..." --out <png> --project <project-dir> --asset A0
+npm run image:status -- --project=<project-dir> --asset=A0 --status=approved --qa-id=<qa>
+
+npm run voice:generate -- --spec <voice-spec.json> --project <project-dir>
+npm run voice:sync-timing -- --project=<project-dir>
+
+npm run video:generate -- --image <png> --prompt "..." --out <mp4> --project <project-dir> --scene-id S1 --asset-id VID-S1
+npm run video:frames -- --video <mp4>
+npm run video:status -- --project=<project-dir> --asset=VID-S1 --status=approved --qa-id=<qa>
+
+npm run render:project -- --project=<project-dir>
+npm run final:preflight -- --project=<project-dir>
+npm run project:doctor -- --project=<project-dir>
+```
+
+Codex must use its local `view_image` capability to inspect A0, scene images and sampled Wan frames before semantic approval. If Wan is absent, use deterministic Remotion motion instead.
