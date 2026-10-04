@@ -39,7 +39,8 @@
     "project:init": "tsx scripts/init-project.ts",
     "voice:sync-timing": "tsx scripts/sync-voice-timing.ts",
     "typecheck:scripts": "tsc -p tsconfig.scripts.json",
-    "final:preflight": "tsx scripts/final-preflight.ts"
+    "final:preflight": "tsx scripts/final-preflight.ts",
+    "video:frames": "tsx scripts/extract-video-frames.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
