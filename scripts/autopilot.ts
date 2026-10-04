@@ -6,6 +6,7 @@ import {
   createAutonomousRunState,
   getAutonomousDirective,
   recordAutonomousStageResult,
+  recoverAutonomousStage,
   resumeAutonomousStageAfterHumanReview,
   reviseAutonomousCheckpoint,
   type AutonomousRunMode,
@@ -125,6 +126,15 @@ if (revise) {
     state,
     revise as AutonomousStage,
     valueArg("note") ?? "User requested a revision.",
+  );
+}
+
+const recover = valueArg("recover");
+if (recover) {
+  state = recoverAutonomousStage(
+    state,
+    recover as AutonomousStage,
+    valueArg("note") ?? "Automatic strategy recovery.",
   );
 }
 
