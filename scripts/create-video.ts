@@ -34,9 +34,33 @@ function slugify(value: string): string {
   return slug || "untitled";
 }
 
-function command(name: "codex" | "npm"): string {
-  if (process.platform !== "win32") return name;
-  return name === "codex" ? "codex.cmd" : "npm.cmd";
+function npmCommand(): string {
+  return process.platform === "win32" ? "npm.cmd" : "npm";
+}
+
+function resolveCodexCommand(): string {
+  const candidates =
+    process.platform === "win32"
+      ? ["codex.exe", "codex.cmd", "codex"]
+      : ["codex"];
+
+  for (const candidate of candidates) {
+    const probe = spawnSync(candidate, ["--version"], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      shell: false,
+    });
+    if (!probe.error && probe.status === 0) return candidate;
+  }
+
+  throw new Error(
+    [
+      "Codex CLI is not installed or is not on PATH.",
+      "Install it on Windows with:",
+      '  powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"',
+      "Then run: codex login",
+    ].join("\n"),
+  );
 }
 
 function runOrThrow(executable: string, args: string[], label: string): void {
@@ -53,32 +77,16 @@ function runOrThrow(executable: string, args: string[], label: string): void {
   }
 }
 
-function preflightCodex(): void {
-  const executable = command("codex");
-  const version = spawnSync(executable, ["--version"], {
-    cwd: process.cwd(),
-    encoding: "utf8",
-    shell: false,
-  });
-
-  if (version.error || version.status !== 0) {
-    throw new Error(
-      [
-        "Codex CLI is not installed or is not on PATH.",
-        "Install it on Windows with:",
-        '  powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1 | iex"',
-        "Then run: codex login",
-      ].join("\n"),
-    );
-  }
-
+function preflightCodex(): string {
+  const executable = resolveCodexCommand();
   const login = spawnSync(executable, ["login", "status"], {
     cwd: process.cwd(),
     encoding: "utf8",
     shell: false,
   });
 
-  if (login.error || login.status !== 0 || !/Logged in/i.test(login.stdout ?? "")) {
+  const authOutput = `${login.stdout ?? ""}\n${login.stderr ?? ""}`;
+  if (login.error || login.status !== 0 || !/Logged in/i.test(authOutput)) {
     throw new Error(
       [
         "Codex CLI is installed but is not authenticated.",
@@ -88,6 +96,8 @@ function preflightCodex(): void {
       ].join("\n"),
     );
   }
+
+  return executable;
 }
 
 async function main(): Promise<void> {
@@ -104,7 +114,7 @@ async function main(): Promise<void> {
     );
   }
 
-  preflightCodex();
+  const codexCommand = preflightCodex();
 
   const slug = slugify(topic);
   const runDir = path.join(process.cwd(), ".ai-explainer", "runs", slug);
@@ -117,7 +127,7 @@ async function main(): Promise<void> {
 
   // Initialize or resume the persistent hands-off state before delegating to Codex.
   runOrThrow(
-    command("npm"),
+    npmCommand(),
     ["run", "autopilot", "--", "--topic", topic.trim()],
     "Autopilot initialization",
   );
@@ -175,7 +185,7 @@ async function main(): Promise<void> {
   console.log(`Run:   ${slug}`);
   console.log("Codex is now executing the complete workflow.\n");
 
-  const child = spawn(command("codex"), args, {
+  const child = spawn(codexCommand, args, {
     cwd: process.cwd(),
     stdio: ["pipe", "inherit", "inherit"],
     shell: false,
