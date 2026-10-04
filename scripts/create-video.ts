@@ -118,12 +118,25 @@ async function main(): Promise<void> {
 
   const slug = slugify(topic);
   const runDir = path.join(process.cwd(), ".ai-explainer", "runs", slug);
+  const projectDir = path.join(
+    process.cwd(),
+    ".ai-explainer",
+    "projects",
+    slug,
+  );
   fs.mkdirSync(runDir, {recursive: true});
 
   const requestFile = path.join(runDir, "request.txt");
   const resultFile = path.join(runDir, "codex-result.json");
   fs.writeFileSync(requestFile, topic.trim() + "\n", "utf8");
   if (fs.existsSync(resultFile)) fs.rmSync(resultFile);
+
+  // Create an isolated artifact workspace for this topic.
+  runOrThrow(
+    npmCommand(),
+    ["run", "project:init", "--", "--topic", topic.trim(), "--slug", slug],
+    "Project initialization",
+  );
 
   // Ensure required media services are running before handing the workflow to Codex.
   runOrThrow(
@@ -155,6 +168,7 @@ async function main(): Promise<void> {
     "",
     `TOPIC: ${topic.trim()}`,
     `RUN SLUG: ${slug}`,
+    `PROJECT DIR: ${path.relative(process.cwd(), projectDir).replace(/\\/g, "/")}`,
     "",
     "Execute the project from topic to final output. Do not merely explain what should be done.",
     "Read and obey AGENTS.md and prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md before doing work.",
@@ -162,17 +176,24 @@ async function main(): Promise<void> {
     "",
     "Required behavior:",
     "- hands_off mode: do not stop for canonical, storyboard, or final review checkpoints;",
-    "- Research -> Script -> Master Voice -> Timed Storyboard -> Asset Plan -> A0 -> Scenes -> Motion -> Final Render -> Final QA;",
+    "- Research -> Script -> Draft Storyboard -> VieNeu Voice + timing sync -> Asset Plan -> A0 -> Scenes -> Motion -> Final Render -> Final QA;",
     "- run the relevant schema/QA checks before marking any stage PASS;",
     "- automatically diagnose and repair failures, with bounded retries;",
     "- preserve passing upstream artifacts and repair only the smallest failing scope;",
     "- use the project provider commands instead of inventing ad-hoc integrations:",
-    "  npm run image:generate -- --prompt \"...\" --out <png> [--reference <png>];",
+    "  npm run image:generate -- --prompt \"...\" --out <png> --project <project-dir> --asset <asset-id> [--reference <png> --crop x,y,w,h];",
+    "  npm run image:status -- --project=<project-dir> --asset=<asset-id> --status=approved --qa-id=<qa-id>;",
     "  npm run voice:generate -- --spec <voice-spec.json> --project <project-dir>;",
+    "  npm run voice:sync-timing -- --project=<project-dir>;",
     "  npm run video:generate -- --image <png> --prompt \"...\" --out <mp4> --project <project-dir> --scene-id <id> --asset-id <id>;",
     "  npm run video:status -- --project=<project-dir> --asset=<id> --status=approved --qa-id=<qa-id>;",
     "- route realistic motion to Wan, deterministic technical scenes to Remotion/SVG, and use configured fallbacks;",
     "- provider:doctor already passed before this agent started; if Wan itself is unavailable use deterministic motion fallback rather than blocking;",
+    "- keep every artifact for this run inside PROJECT DIR; never modify examples/fridge-hot-behind;",
+    "- before image generation, declare planned A0/A1/... assets in both image-assets.template.json and image-assets.json using the existing ImageAsset schema;",
+    "- generated ComfyUI images are qa_pending; inspect them against the visual goal/identity constraints before image:status approval;",
+    "- generate scene voice only after draft storyboard has stable scene IDs, then run voice:sync-timing so measured WAV duration becomes storyboard timing;",
+    "- after voice timing sync, refresh any timing-sensitive storyboard QA/motion planning before passing downstream stages;",
     "- never fabricate an image, audio file, video, provider result, or successful QA result;",
     "- if a required provider is unavailable and no valid fallback can satisfy the scene, mark the run blocked with the exact missing capability;",
     "- if the final video is produced, verify the actual file exists before returning status=complete.",
