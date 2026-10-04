@@ -61,7 +61,7 @@ Check factual correctness, continuity, identity, camera and required content. Re
 ### motion
 Use the media router:
 - realistic natural motion → Wan2.2 I2V;
-- complex/keyframe generative motion → LTX;
+- complex generative motion → Wan2.2 when feasible;
 - technical diagrams/infographics → Remotion/SVG;
 - static visuals → deterministic pan/zoom.
 
