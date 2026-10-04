@@ -54,21 +54,12 @@ async function generateSpec(client: VieNeuClient, specPath: string): Promise<voi
     });
 
     const duration = wavDurationSeconds(filePath);
-    const target = Number(segment.target_duration_sec);
-    const tolerance = Math.max(1.25, target * 0.35);
-    if (Math.abs(duration - target) > tolerance) {
-      throw new Error(
-        `Voice timing QA failed for ${segment.scene_id}: generated ${duration.toFixed(
-          2,
-        )}s vs target ${target.toFixed(2)}s.`,
-      );
-    }
 
     assets.push({
       asset_id: segment.output_asset_id,
       project_id: spec.project_id,
       scene_id: segment.scene_id,
-      status: "approved",
+      status: "qa_pending",
       text: segment.text,
       attempt: 1,
       provider_id: "vieneu-v3-turbo",
@@ -78,7 +69,7 @@ async function generateSpec(client: VieNeuClient, specPath: string): Promise<voi
         duration_sec: Number(duration.toFixed(3)),
         checksum: sha256(filePath),
       },
-      qa_result_ids: [`AUTO-VIENEU-${segment.scene_id}`],
+      qa_result_ids: [],
     });
     console.log(
       `✓ ${segment.scene_id}: ${duration.toFixed(2)}s -> ${filePath}`,
@@ -97,6 +88,7 @@ async function generateSpec(client: VieNeuClient, specPath: string): Promise<voi
     ) + "\n",
   );
   console.log(`✓ Voice manifest: ${manifestPath}`);
+  console.log("! Voice assets are qa_pending. Run voice:sync-timing to update storyboard durations and approve deterministic timing QA.");
 }
 
 async function main(): Promise<void> {
