@@ -62,7 +62,24 @@ npm run image:generate -- --prompt "<complete prompt>" --reference <approved-A0-
 
 Before generation, declare A0/A1/... in both image asset manifests using the ImageAsset schema. Generated ComfyUI assets are registered as `qa_pending`.
 
-Use A0 as the source-of-truth reference for derived product scenes. For the canonical 4×2 reference board, crop the relevant panel before img2img so the derived scene does not condition on the entire collage.
+Use A0 as the source-of-truth reference for derived product scenes. Generate recurring-product A0 at 1536×1024 as an exact 4×2 board with this fixed panel order:
+
+```
+row 1: front | front-left-45 | front-right-45 | left
+row 2: right | rear-left-45 | rear-right-45 | rear
+```
+
+Nominal crop rectangles are:
+- front `0,0,384,512`
+- front-left-45 `384,0,384,512`
+- front-right-45 `768,0,384,512`
+- left `1152,0,384,512`
+- right `0,512,384,512`
+- rear-left-45 `384,512,384,512`
+- rear-right-45 `768,512,384,512`
+- rear `1152,512,384,512`
+
+Inspect A0 with Codex `view_image`; if the generated grid does not follow the intended layout, repair/regenerate it rather than applying incorrect crop coordinates.
 
 After semantic image QA passes:
 
@@ -93,7 +110,13 @@ Create the draft storyboard first so stable `scene_id` values exist. Then build 
 npm run video:generate -- --image <approved-keyframe.png> --prompt "<motion-only prompt>" --out <scene.mp4> --project <project-dir> --scene-id <scene-id> --asset-id <video-asset-id>
 ```
 
-Generated videos enter `qa_pending`. After semantic video QA passes:
+Generated videos enter `qa_pending`. Sample frames first:
+
+```
+npm run video:frames -- --video <scene.mp4> --count 5
+```
+
+Inspect every sampled frame with Codex `view_image` for subject identity, physical correctness, temporal drift and forbidden objects. After semantic video QA passes:
 
 ```
 npm run video:status -- --project=<project-dir> --asset=<video-asset-id> --status=approved --qa-id=<qa-id>
@@ -103,7 +126,15 @@ If Wan is unavailable or fails after bounded retries, use the image keyframe plu
 
 ### Final composition — Remotion
 
-Use the existing `render:project` workflow. It automatically prefers an approved scene video from `video-assets.json`; otherwise it renders the approved image source with deterministic motion.
+Use:
+
+```
+npm run render:project -- --project=<project-dir>
+npm run final:preflight -- --project=<project-dir>
+npm run project:doctor -- --project=<project-dir>
+```
+
+The renderer automatically prefers an approved scene video from `video-assets.json`; otherwise it renders the approved image source with deterministic motion. Do not mark final QA PASS unless deterministic preflight and project doctor pass.
 
 ## Media routing
 
