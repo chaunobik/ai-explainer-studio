@@ -29,7 +29,6 @@ Visual QA / selective repair
   ↓
 Media Router
   ├─ realistic motion → Wan2.2 I2V
-  ├─ complex/keyframe motion → LTX optional
   ├─ diagrams/infographics → Remotion/SVG
   └─ static visual → deterministic pan/zoom
   ↓
@@ -50,7 +49,7 @@ final.mp4
 
 AI Explainer Studio owns orchestration, contracts, QA, state, continuity and fallback policy. Model servers own inference.
 
-Do not embed Wan/LTX/PyTorch GPU lifecycle directly into the TypeScript core. Use provider adapters, with ComfyUI as the preferred local media execution boundary.
+Do not embed Wan/PyTorch GPU lifecycle directly into the TypeScript core. Use provider adapters, with ComfyUI as the preferred local media execution boundary.
 
 ## Source of truth
 
@@ -134,7 +133,7 @@ packages/core/src/providers/media-router.ts
 
 Current routing contract:
 - `realistic_motion` → Wan2.2 → static motion → Remotion
-- `complex_generative` → LTX → Wan2.2 → static motion
+- `complex_generative` → Wan2.2 → static motion → Remotion
 - `technical_diagram` / `infographic` → Remotion → static motion
 - `static_visual` → static motion → Remotion
 
