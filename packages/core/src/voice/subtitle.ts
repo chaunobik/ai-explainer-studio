@@ -2,10 +2,19 @@ import type {SubtitleCue, VoiceAsset, VoiceSpec} from "./types";
 
 function chunkWords(text: string, maxWords: number): string[] {
   const words = text.trim().split(/\s+/).filter(Boolean);
-  const chunks: string[] = [];
+  if (words.length === 0) return [];
 
-  for (let index = 0; index < words.length; index += maxWords) {
-    chunks.push(words.slice(index, index + maxWords).join(" "));
+  const limit = Math.max(1, maxWords);
+  const chunkCount = Math.max(1, Math.ceil(words.length / limit));
+  const baseSize = Math.floor(words.length / chunkCount);
+  const remainder = words.length % chunkCount;
+
+  const chunks: string[] = [];
+  let cursor = 0;
+  for (let index = 0; index < chunkCount; index += 1) {
+    const size = baseSize + (index < remainder ? 1 : 0);
+    chunks.push(words.slice(cursor, cursor + size).join(" "));
+    cursor += size;
   }
 
   return chunks;
