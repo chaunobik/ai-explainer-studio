@@ -365,6 +365,33 @@ export function recordAutonomousStageResult(
   return {...state, stages, updatedAt: nowIso()};
 }
 
+export function recoverAutonomousStage(
+  state: AutonomousRunState,
+  targetStage: AutonomousStage,
+  message: string | null = null,
+): AutonomousRunState {
+  if (targetStage === "complete" || checkpointSet.has(targetStage)) {
+    throw new Error("Recovery target must be a machine stage.");
+  }
+
+  const invalidated = invalidationByTarget[targetStage] ?? [targetStage];
+  const stages = structuredClone(state.stages);
+  for (const invalidatedStage of invalidated) {
+    stages[invalidatedStage].status = "waiting";
+    stages[invalidatedStage].attempt = 0;
+    stages[invalidatedStage].lastMessage = null;
+  }
+  stages[targetStage].status = "ready";
+  stages[targetStage].lastMessage = message;
+
+  return {
+    ...state,
+    currentStage: targetStage,
+    stages,
+    updatedAt: nowIso(),
+  };
+}
+
 export function resumeAutonomousStageAfterHumanReview(
   state: AutonomousRunState,
   message: string | null = null,
