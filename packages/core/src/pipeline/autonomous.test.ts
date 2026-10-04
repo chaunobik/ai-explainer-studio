@@ -5,6 +5,7 @@ import {
   createAutonomousRunState,
   getAutonomousDirective,
   recordAutonomousStageResult,
+  recoverAutonomousStage,
   reviseAutonomousCheckpoint,
 } from "./autonomous";
 
@@ -81,6 +82,39 @@ describe("autonomous pipeline", () => {
 
     expect(state.stages.checkpoint_canonical.status).toBe("approved");
     expect(state.currentStage).toBe("scene_prompts");
+  });
+
+  it("recovers only the canonical branch after an exhausted A0 strategy", () => {
+    let state = createAutonomousRunState({
+      runId: "RUN-1",
+      projectId: "P-1",
+      topic: "Topic",
+      maxAttempts: 1,
+    });
+
+    while (state.currentStage !== "canonical_generation") {
+      state = passCurrent(state);
+    }
+
+    state = recordAutonomousStageResult(
+      beginAutonomousStage(state),
+      "fail",
+      "Legacy 4x2 board failed semantic QA.",
+    );
+    expect(state.stages.canonical_generation.status).toBe("needs_human_review");
+
+    state = recoverAutonomousStage(
+      state,
+      "canonical_prompt",
+      "Switch to one canonical hero reference.",
+    );
+
+    expect(state.currentStage).toBe("canonical_prompt");
+    expect(state.stages.canonical_prompt.status).toBe("ready");
+    expect(state.stages.canonical_generation.attempt).toBe(0);
+    expect(state.stages.research.status).toBe("passed");
+    expect(state.stages.script.status).toBe("passed");
+    expect(state.stages.master_voice.status).toBe("passed");
   });
 
   it("preserves explicit checkpoints in guided mode", () => {
