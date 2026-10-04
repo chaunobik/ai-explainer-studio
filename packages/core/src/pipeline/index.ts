@@ -52,6 +52,7 @@ export {
   createAutonomousRunState,
   getAutonomousDirective,
   recordAutonomousStageResult,
+  recoverAutonomousStage,
   resumeAutonomousStageAfterHumanReview,
   reviseAutonomousCheckpoint,
 } from "./autonomous";
