@@ -28,8 +28,8 @@ The default run mode is **hands_off**.
 ```
 research
 → script
-→ master_voice
-→ storyboard
+→ storyboard (draft scene IDs/narration)
+→ master_voice (VieNeu + measured timing sync)
 → asset_plan
 → canonical_prompt
 → canonical_generation
@@ -56,11 +56,19 @@ Use the repository commands below. Do not invent a parallel provider integration
 ### Images — ComfyUI
 
 ```
-npm run image:generate -- --prompt "<complete prompt>" --out <output.png>
-npm run image:generate -- --prompt "<complete prompt>" --reference <approved-reference.png> --out <output.png>
+npm run image:generate -- --prompt "<complete prompt>" --out <output.png> --project <project-dir> --asset <asset-id>
+npm run image:generate -- --prompt "<complete prompt>" --reference <approved-A0-board.png> --crop x,y,w,h --out <output.png> --project <project-dir> --asset <asset-id>
 ```
 
-Use A0 as the source-of-truth reference for derived product scenes.
+Before generation, declare A0/A1/... in both image asset manifests using the ImageAsset schema. Generated ComfyUI assets are registered as `qa_pending`.
+
+Use A0 as the source-of-truth reference for derived product scenes. For the canonical 4×2 reference board, crop the relevant panel before img2img so the derived scene does not condition on the entire collage.
+
+After semantic image QA passes:
+
+```
+npm run image:status -- --project=<project-dir> --asset=<asset-id> --status=approved --qa-id=<qa-id>
+```
 
 ### Vietnamese narration — VieNeu-TTS
 
@@ -74,7 +82,10 @@ VoiceSpec batch:
 
 ```
 npm run voice:generate -- --spec <voice-spec.json> --project <project-dir>
+npm run voice:sync-timing -- --project=<project-dir>
 ```
+
+Create the draft storyboard first so stable `scene_id` values exist. Then build VoiceSpec from those scene IDs. `voice:sync-timing` updates VoiceSpec targets and storyboard durations from the measured WAV files, runs deterministic voice timing QA, and approves passing voice assets.
 
 ### Realistic motion — Wan2.2
 
@@ -126,5 +137,13 @@ Runtime state:
 ```
 .ai-explainer/runs/<slug>/state.json
 ```
+
+Topic artifact workspace:
+
+```
+.ai-explainer/projects/<slug>/
+```
+
+Never modify the canonical example while producing a user topic.
 
 Detailed provider setup is in `docs/PROVIDER_SETUP.md`. Detailed stage responsibilities are in `prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md`.
