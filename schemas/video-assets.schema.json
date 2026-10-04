@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/video-assets.schema.json",
+  "title": "VideoAssetsManifest",
+  "type": "object",
+  "required": ["project_id", "assets"],
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "provider_id": {"type": "string"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "scene_id", "status", "provider_id", "file"],
+        "properties": {
+          "asset_id": {"type": "string", "minLength": 1},
+          "scene_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["qa_pending", "approved", "rejected"]},
+          "provider_id": {"type": "string", "minLength": 1},
+          "prompt": {"type": "string"},
+          "file": {
+            "type": "object",
+            "required": ["uri", "mime_type", "checksum"],
+            "properties": {
+              "uri": {"type": "string", "minLength": 1},
+              "mime_type": {"const": "video/mp4"},
+              "checksum": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "qa_result_ids": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
