@@ -58,6 +58,9 @@ npm run create-video -- "Tại sao tủ lạnh nóng phía sau?"
 
 This command:
 - verifies Codex CLI is installed and authenticated;
+- initializes an isolated topic project under `.ai-explainer/projects/<slug>/`;
+- auto-starts ComfyUI/VieNeu when start commands are configured;
+- runs provider health checks;
 - initializes/resumes the persistent hands-off run;
 - invokes `codex exec` non-interactively;
 - tells Codex to execute the complete pipeline rather than merely describe it;
@@ -69,6 +72,8 @@ Equivalent explicit form:
 ```bash
 npm run create-video -- --topic "Tại sao tủ lạnh nóng phía sau?"
 ```
+
+Provider installation/model weights are a one-time machine setup; they are not committed into this repository. Follow [Provider Setup](docs/PROVIDER_SETUP.md) once, then normal usage is only the one command above.
 
 The lower-level `autopilot` command remains available for development/state debugging:
 
@@ -102,9 +107,12 @@ See [Codex / ChatGPT Autonomous Workflow](docs/CODEX_AUTONOMOUS_WORKFLOW.md).
 ## Current state
 - Milestone 1 — Content Intelligence: COMPLETE
 - Milestone 2 — Visual Intelligence: COMPLETE
-- Milestone 3 — Visual Generation: IN PROGRESS
-- Hands-off orchestration foundation: IMPLEMENTED
-- Media routing + graceful fallback contract: IMPLEMENTED
+- Milestone 3 — Visual Generation runtime: IMPLEMENTED (ComfyUI HTTP + manifest lifecycle)
+- VieNeu-TTS runtime: IMPLEMENTED (OpenAI-compatible HTTP + measured timing sync)
+- Wan2.2 runtime: IMPLEMENTED as optional I2V enhancement with Remotion fallback
+- Hands-off orchestration: IMPLEMENTED
+- Generated scene video composition: IMPLEMENTED
+- Remaining hardening: semantic VLM QA automation, asset cache, and real-GPU end-to-end qualification
 
 The canonical end-to-end example remains under `examples/fridge-hot-behind/`.
 
