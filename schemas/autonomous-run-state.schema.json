@@ -7,6 +7,7 @@
     "runId",
     "projectId",
     "topic",
+    "runMode",
     "currentStage",
     "stages",
     "revisionHistory",
@@ -17,6 +18,7 @@
     "runId": {"type": "string", "minLength": 1},
     "projectId": {"type": "string", "minLength": 1},
     "topic": {"type": "string", "minLength": 1},
+    "runMode": {"enum": ["hands_off", "guided"]},
     "currentStage": {"$ref": "#/$defs/stage"},
     "stages": {
       "type": "object",
@@ -53,6 +55,7 @@
       "enum": [
         "research",
         "script",
+        "master_voice",
         "storyboard",
         "asset_plan",
         "canonical_prompt",
@@ -64,7 +67,6 @@
         "checkpoint_storyboard",
         "scene_generation",
         "scene_qa",
-        "voice",
         "motion",
         "final_render",
         "final_qa",
