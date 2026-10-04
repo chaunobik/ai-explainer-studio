@@ -22,11 +22,11 @@ Research the topic, produce the existing ResearchResult contract and verify fact
 ### script
 Create narration from approved claims only. Run Script QA and repair automatically.
 
-### master_voice
-Generate the master narration before final scene timing. Capture actual audio duration and alignment/timestamp data. Use the configured Vietnamese VoiceProvider; prefer an API-compatible local provider such as VieNeu when available.
-
 ### storyboard
-Convert the approved script into a timed StoryboardSpec using real narration timing. Preserve narration text exactly and fit visual beats around measured speech.
+Create a draft StoryboardSpec from the approved script. Establish stable scene IDs, verbatim narration mapping and provisional durations. Run Storyboard QA for content/coverage.
+
+### master_voice
+Build VoiceSpec from the draft storyboard scene IDs, generate real WAV files through VieNeu, then run `voice:sync-timing`. Measured audio durations become the authoritative scene durations. Refresh timing-sensitive storyboard QA after synchronization.
 
 ### asset_plan
 Build the visual plan, AssetBible, lineage, transition plan and execution plan. Prefer reuse of existing approved assets over redefinition.
@@ -35,7 +35,7 @@ Build the visual plan, AssetBible, lineage, transition plan and execution plan. 
 Create the complete A0 multi-view reference prompt and PhotoCaptureSpec. Run Multi-View Prompt QA.
 
 ### canonical_generation
-Generate A0 through the configured ImageProvider / ComfyUI workflow when available.
+Generate A0 through `image:generate` using ComfyUI. Use a fixed 1536×1024 4×2 canonical board for recurring physical products. Register it as `qa_pending`, inspect it with `view_image`, then approve through `image:status` only after identity/multi-view QA passes.
 
 ### canonical_qa
 Run Multi-View Consistency QA. Repair/regenerate automatically for repairable failures.
@@ -53,7 +53,7 @@ Prepare keyframes/previews for machine QA and optional supervision UI.
 Automatic gate in hands_off mode; interactive checkpoint only in guided mode.
 
 ### scene_generation
-Generate independent scene assets in parallel where dependencies allow.
+Declare planned image assets first. Generate scene assets through `image:generate`; for recurring products use an approved A0 panel crop as the reference rather than conditioning on the whole board. Generated assets remain `qa_pending` until semantic QA passes.
 
 ### scene_qa
 Check factual correctness, continuity, identity, camera and required content. Repair only failed scenes.
@@ -65,13 +65,13 @@ Use the media router:
 - technical diagrams/infographics → Remotion/SVG;
 - static visuals → deterministic pan/zoom.
 
-Each provider gets bounded retries. On repeated failure, follow its fallback chain.
+For Wan clips, run `video:frames` and inspect sampled frames with `view_image` before `video:status=approved`. Each provider gets bounded retries. On repeated Wan failure, fall back to the approved keyframe plus deterministic Remotion motion.
 
 ### final_render
 Compose approved assets, master voice, aligned subtitles, music when configured, and motion into the final video.
 
 ### final_qa
-Check factual integrity, narration/visual synchronization, subtitle timing, audio levels, continuity and render integrity. Repair only affected downstream artifacts.
+Run `final:preflight` and `project:doctor` first. Then apply the Final QA prompt for factual integrity, narration/visual synchronization, subtitle coverage, continuity and render integrity. Never return complete when deterministic preflight fails. Repair only affected downstream artifacts.
 
 ### checkpoint_final
 Automatic gate in hands_off mode. PASS moves directly to complete.
