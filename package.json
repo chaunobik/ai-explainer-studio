@@ -35,7 +35,9 @@
     "image:generate": "tsx scripts/generate-image.ts",
     "voice:generate": "tsx scripts/generate-voice.ts",
     "video:generate": "tsx scripts/generate-video.ts",
-    "video:status": "tsx scripts/set-video-status.ts"
+    "video:status": "tsx scripts/set-video-status.ts",
+    "project:init": "tsx scripts/init-project.ts",
+    "voice:sync-timing": "tsx scripts/sync-voice-timing.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
