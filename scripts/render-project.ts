@@ -81,9 +81,9 @@ async function main(): Promise<void> {
   const voiceSpecPath = resolveProject(p.voice_spec);
   const voiceAssetsPath = resolveProject(p.voice_assets_manifest);
   const imageAssetsPath = resolveProject(p.image_assets_manifest);
-  const videoAssetsPath = p.video_assets_manifest
-    ? resolveProject(p.video_assets_manifest)
-    : null;
+  const videoAssetsPath = resolveProject(
+    p.video_assets_manifest ?? "video-assets.json",
+  );
   const output = path.resolve(arg("out") ?? resolveProject(p.output_file));
 
   for (const [relative, label] of [
@@ -245,7 +245,7 @@ async function main(): Promise<void> {
   }
 
   const videoByScene: Record<string, string> = {};
-  if (videoAssetsPath && fs.existsSync(videoAssetsPath)) {
+  if (fs.existsSync(videoAssetsPath)) {
     const videoManifest = readJson(videoAssetsPath);
     for (const videoAsset of videoManifest.assets ?? []) {
       if (videoAsset.status !== "approved") continue;
