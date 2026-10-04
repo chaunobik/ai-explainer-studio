@@ -117,6 +117,31 @@ describe("autonomous pipeline", () => {
     expect(state.stages.master_voice.status).toBe("passed");
   });
 
+  it("reopens a completed run from script when duration quality fails", () => {
+    let state = createAutonomousRunState({
+      runId: "RUN-1",
+      projectId: "P-1",
+      topic: "Topic",
+    });
+
+    while (state.currentStage !== "complete") {
+      state = passCurrent(state);
+    }
+
+    state = recoverAutonomousStage(
+      state,
+      "script",
+      "Final duration is too short.",
+    );
+
+    expect(state.currentStage).toBe("script");
+    expect(state.stages.script.status).toBe("ready");
+    expect(state.stages.storyboard.status).toBe("waiting");
+    expect(state.stages.master_voice.status).toBe("waiting");
+    expect(state.stages.final_render.status).toBe("waiting");
+    expect(state.stages.research.status).toBe("passed");
+  });
+
   it("preserves explicit checkpoints in guided mode", () => {
     let state = createAutonomousRunState({
       runId: "RUN-1",
