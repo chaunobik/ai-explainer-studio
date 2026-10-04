@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "typecheck": "tsc -b packages/core packages/renderer && npm run web:typecheck",
+    "typecheck": "tsc -b packages/core packages/renderer && npm run typecheck:scripts && npm run web:typecheck",
     "build:core": "tsc -b packages/core",
     "test": "vitest run",
     "validate:schemas": "node scripts/validate-schemas.mjs",
@@ -28,7 +28,19 @@
     "render:smoke": "tsx scripts/render-smoke.ts",
     "dev": "npm --workspace @ai-explainer-studio/web run dev",
     "web:typecheck": "npm --workspace @ai-explainer-studio/web run typecheck",
-    "web:build": "npm --workspace @ai-explainer-studio/web run build"
+    "web:build": "npm --workspace @ai-explainer-studio/web run build",
+    "create-video": "tsx scripts/create-video.ts",
+    "provider:ensure": "tsx scripts/ensure-providers.ts",
+    "provider:doctor": "tsx scripts/provider-doctor.ts",
+    "image:generate": "tsx scripts/generate-image.ts",
+    "voice:generate": "tsx scripts/generate-voice.ts",
+    "video:generate": "tsx scripts/generate-video.ts",
+    "video:status": "tsx scripts/set-video-status.ts",
+    "project:init": "tsx scripts/init-project.ts",
+    "voice:sync-timing": "tsx scripts/sync-voice-timing.ts",
+    "typecheck:scripts": "tsc -p tsconfig.scripts.json",
+    "final:preflight": "tsx scripts/final-preflight.ts",
+    "video:frames": "tsx scripts/extract-video-frames.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

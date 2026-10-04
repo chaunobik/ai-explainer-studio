@@ -1,17 +1,26 @@
-# Multi-View Consistency QA V3
+# Canonical Reference QA V4
 
-Inspect the actual generated A0 reference board against the provided MultiViewReferencePromptSpec. A0 is the canonical geometry/identity source for later scene generation.
+Inspect the actual generated A0 reference asset against the provided MultiViewReferencePromptSpec. The contract supports both a single canonical reference image and an optional multi-view pack.
+
+A0 is the canonical identity source for later scene generation.
+
+## Mode rule
+
+- If required_views contains exactly ONE view, evaluate A0 as a single canonical reference image. Do NOT fail it for lacking additional angles or a contact-sheet layout.
+- If required_views contains TWO OR MORE views, evaluate full cross-view consistency and coverage.
 
 ## Review criteria
-1. Same exact object identity across all panels.
-2. Geometry consistency across door heights, divider, handles, cabinet dimensions, side profiles, top, feet, edge radii and rear outline.
+1. The intended product identity is clear and stable.
+2. Geometry is physically plausible and identity-defining proportions/features are readable.
 3. Material consistency across color, finish, trim and reflection behavior.
-4. Every required view exists exactly once and matches the requested direction.
+4. Every view explicitly listed in required_views exists exactly once and matches the requested direction.
 5. Perspective is compatible with the declared capture profile.
 6. Photographic realism is believable: natural lighting, contact shadows, non-CGI texture, restrained processing.
-7. No hidden refrigeration internals or misleading technical structures are invented.
+7. No hidden mechanisms or unsupported technical structures are invented.
 
-Critical failures force fail: door/layout changes, material handle/divider drift, impossible cross-view geometry, missing/duplicated/mislabeled required view, rear view becoming another appliance, or strong AI warping.
+For single-view A0, same_object_identity and geometry_consistency mean that the one product is internally coherent and suitable as an authoritative reference. Cross-view comparison is not required.
+
+Critical failures force fail: duplicate/unintended products, material/handle/divider drift within the visible product, impossible geometry, a missing explicitly requested view, strong AI warping, or fabricated unsupported technical detail.
 
 Set qa_result.stage EXACTLY to "visual".
 
@@ -49,15 +58,15 @@ Required shape:
     "technical_safety": "pass"
   },
   "check_notes": {
-    "same_object_identity": "Explain whether all views depict the same exact physical product.",
-    "geometry_consistency": "Explain whether dimensions, doors, handles, edges and rear outline remain coherent.",
+    "same_object_identity": "For a single-view A0, explain whether exactly one intended product with a clear stable identity is present. For multi-view A0, explain whether all views depict the same exact product.",
+    "geometry_consistency": "Explain whether visible dimensions, doors, handles, edges and proportions are coherent; compare across views only when multiple views were requested.",
     "material_consistency": "Explain whether color, finish, trim and reflection behavior remain stable.",
     "required_view_coverage": "Explain whether every requested view is present exactly once and correctly oriented.",
     "camera_plausibility": "Explain whether perspective matches the declared capture profile without impossible distortion.",
     "photographic_realism": "Explain what visual evidence supports or contradicts real-camera realism.",
     "technical_safety": "Explain whether unsupported hidden technical structures were avoided."
   },
-  "summary": "Concise human-readable conclusion stating whether A0 is reliable enough to become the canonical reference pack.",
+  "summary": "Concise human-readable conclusion stating whether A0 is reliable enough to become the canonical identity reference.",
   "view_results": [
     {
       "view_id": "front",

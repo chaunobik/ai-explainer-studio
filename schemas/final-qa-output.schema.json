@@ -19,7 +19,11 @@
         "resolution",
         "audio_coverage",
         "subtitle_coverage",
-        "critical_stage_status"
+        "critical_stage_status",
+        "visual_variety",
+        "scene_narration_alignment",
+        "spatial_technical_correctness",
+        "subtitle_readability"
       ],
       "properties": {
         "duration": {
@@ -57,6 +61,35 @@
           "enum": [
             "pass",
             "fail"
+          ]
+        },
+        "visual_variety": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "scene_narration_alignment": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "spatial_technical_correctness": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail"
+          ]
+        },
+        "subtitle_readability": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "needs_review"
           ]
         }
       },

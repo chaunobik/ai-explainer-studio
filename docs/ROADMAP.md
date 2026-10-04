@@ -1,90 +1,70 @@
 # Roadmap
 
 ## Milestone 1 — Content Intelligence ✅ COMPLETE
-Goal: produce a validated storyboard from a topic.
-
-Deliverables:
-- VideoSpec base model
-- research result format
-- claim/evidence format
-- script format
-- storyboard format
-- QA result format
-- prompt templates for Research, Research QA, Script, Script QA, Storyboard, Storyboard QA
-- manual ChatGPT Web workflow documented
-- example topic processed end-to-end
-
-Exit condition: ✅ Met
-
-A topic can produce structured, reviewable JSON through the full content pipeline, with the canonical refrigerator example stored in `examples/fridge-hot-behind/`.
+Research, claim verification, script contracts and storyboard contracts are implemented.
 
 ## Milestone 2 — Visual Intelligence ✅ COMPLETE
-Goal: turn storyboard scenes into a coherent visual plan.
+AssetBible, lineage, visual routing, continuity rules and selective repair contracts are implemented.
 
-Deliverables:
-- AssetBible
-- entity model
-- anchor asset strategy
-- SceneLineage
-- Visual Router
-- TransitionSpec
-- continuity QA rules
+## Milestone 3 — Visual Generation ✅ RUNTIME WIRED
+Implemented:
+- ComfyUI HTTP client: upload, queue, history polling and output download
+- built-in text-to-image and img2img workflows using core ComfyUI nodes
+- canonical board panel crop before derived-scene conditioning
+- generated image manifest registration with checksum and `qa_pending`
+- explicit semantic QA approval through `image:status`
 
-Exit condition: ✅ Met
+Remaining hardening:
+- provider-specific high-fidelity identity conditioning beyond img2img
+- asset cache/deduplication
+- automated visual VLM score calibration across many topics
 
-Each storyboard scene now has a deliberate route, anchor/derivation lineage, and transition relationship to adjacent scenes. The canonical refrigerator example includes a passing Continuity QA artifact.
+## Milestone 4 — Media Engine ✅ RUNTIME WIRED
+Implemented:
+- media router
+- Wan2.2 official CLI adapter
+- TI2V-5B consumer-GPU configuration path
+- generated video manifest + checksum + QA gate
+- Remotion scene-video playback
+- deterministic Remotion fallback when Wan is unavailable
+- final composition supports mixed still/diagram/generated-video scenes
 
-## Milestone 3 — Visual Generation 🚧 IN PROGRESS
-Goal: generate/edit scene assets and validate them.
+Remaining hardening:
+- real-GPU performance qualification
+- automated semantic video QA thresholds
+- scene cache
 
-Deliverables:
-- image provider abstraction
-- anchor image workflow
-- derived-scene workflow
-- visual QA
-- continuity QA
-- repair/retry logic
+## Milestone 5 — Voice Timing ✅ RUNTIME WIRED
+Implemented:
+- VieNeu-TTS v3 Turbo OpenAI-compatible HTTP client
+- preset-voice health validation
+- real WAV generation
+- WAV duration/checksum extraction
+- draft storyboard → scene voice → measured timing sync
+- deterministic Voice QA and approved voice manifest
+- subtitle timing from actual audio duration
 
-Exit condition:
-A project can create a visually coherent set of approved scene assets.
+Remaining hardening:
+- optional word-level forced alignment instead of proportional subtitle chunks
+- pronunciation auto-repair loop
 
-## Milestone 4 — Video Engine
-Goal: animate approved visuals.
+## Milestone 6 — Hands-off Production 🚧 INTEGRATION QUALIFICATION
+Implemented:
+- one-command `create-video`
+- Codex non-interactive orchestration
+- per-topic isolated project workspace
+- provider auto-start hooks
+- provider doctor
+- hands-off auto-gates
+- bounded repair/fallback rules
+- final output existence verification
 
-Deliverables:
-- MotionSpec
-- Remotion project
-- reusable motion primitives
-- SVG overlays
-- Codex rendering workflow
-- scene-level render
-- motion QA
-- selective scene repair
+Exit condition still to qualify:
+Run 10–20 materially different topics on a configured production machine and confirm no critical factual, visual-continuity, provider or render failures.
 
-Exit condition:
-Approved assets can be rendered into scene MP4s and re-rendered individually.
-
-## Milestone 5 — Production
-Goal: assemble final publishable short video.
-
-Deliverables:
-- VoiceProvider abstraction
-- OpenAI/basic voice implementation
-- subtitle generation
-- audio/video synchronization
-- final compositor
-- final QA
-- final 1080×1920 export
-
-Exit condition:
-10–20 different topics can complete the pipeline without critical QA failures.
-
-## V2 candidates
-- ElevenLabs
-- advanced voice direction
-- additional image/video providers
-- full generative video for selected scenes
-- YouTube long-form
+## Later candidates
+- additional TTS/image/video providers
+- long-form YouTube
 - auto publishing
 - analytics feedback loop
 - SaaS/multi-user support

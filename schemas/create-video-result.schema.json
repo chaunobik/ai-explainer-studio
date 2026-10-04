@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-explainer-studio.local/schemas/create-video-result.schema.json",
+  "title": "CreateVideoResult",
+  "type": "object",
+  "required": [
+    "status",
+    "topic",
+    "run_slug",
+    "output_file",
+    "blocker",
+    "summary"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "complete",
+        "blocked"
+      ]
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_slug": {
+      "type": "string",
+      "minLength": 1
+    },
+    "output_file": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "blocker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

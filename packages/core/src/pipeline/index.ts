@@ -38,6 +38,7 @@ export type {
   AutonomousDirective,
   AutonomousDirectiveKind,
   AutonomousRevision,
+  AutonomousRunMode,
   AutonomousRunState,
   AutonomousStage,
   AutonomousStageState,
@@ -51,6 +52,7 @@ export {
   createAutonomousRunState,
   getAutonomousDirective,
   recordAutonomousStageResult,
+  recoverAutonomousStage,
   resumeAutonomousStageAfterHumanReview,
   reviseAutonomousCheckpoint,
 } from "./autonomous";

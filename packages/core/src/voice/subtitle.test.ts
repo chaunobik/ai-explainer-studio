@@ -17,4 +17,17 @@ describe("subtitle cue builder", () => {
       expect(cues[i].start_sec).toBe(cues[i - 1].end_sec);
     }
   });
+
+  it("balances the last cue instead of leaving a one-word orphan", () => {
+    const cues = buildSceneSubtitleCues(
+      "S1",
+      "một hai ba bốn năm sáu bảy tám chín mười mười-một mười-hai mười-ba",
+      6,
+      6,
+    );
+
+    const wordCounts = cues.map((cue) => cue.text.split(/\s+/).length);
+    expect(wordCounts).toEqual([5, 4, 4]);
+    expect(Math.min(...wordCounts)).toBeGreaterThanOrEqual(3);
+  });
 });

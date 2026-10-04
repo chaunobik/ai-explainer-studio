@@ -24,7 +24,14 @@ Your goal is to make the video visually coherent, realistic, technically faithfu
 11. Every scene must have exactly one SceneLineage record.
 12. Every transition between adjacent scenes must have a TransitionSpec.
 13. Context switches are allowed only when they improve understanding and must include a continuity bridge.
-14. Output valid JSON only, compatible with VisualPlan.
+14. Do not use one hero/reference image as the background for most of the video. A canonical anchor establishes identity; it is not a universal scene asset.
+15. For 6–10 scene explainers, create at least 3 meaningfully different visual states (for example: product context, component/rear/close-up, deterministic mechanism diagram, summary).
+16. Do not reuse the same exact source asset for more than 2 consecutive scenes unless the narration is explicitly describing a continuous change on that same visible object.
+17. A hidden component may be labelled/highlighted only when it is actually visible in the chosen view OR when the scene is explicitly a schematic/cutaway. Never place a label such as condenser/compressor/rear coil on the front exterior merely because that surface is convenient.
+18. Invisible processes (heat transfer, current, pressure, field, flow, logic) must use technical_diagram/programmatic_animation or a truthful cutaway; arrows on an unrelated exterior photo are not sufficient.
+19. If narration says "behind", "rear", "inside", "under", "back panel", or names a component whose location matters, route to a view/diagram that truthfully exposes that location.
+20. Visual variety is subordinate to correctness but still mandatory: every scene must add new explanatory information, not merely new text over the same picture.
+21. Output valid JSON only, compatible with VisualPlan.
 
 ### AssetBible rules
 
@@ -49,6 +56,15 @@ Choose the least generative route that can clearly explain the scene:
 real_asset → reference_edit → technical_diagram/programmatic_animation → generated_image only when justified
 
 Use source_strategy and regeneration_policy to make this explicit.
+
+### Anti-slideshow routing test
+
+Before returning the plan, audit the complete sequence:
+- Count how many scenes use the same anchor/reference as their primary visible background.
+- If one asset dominates more than roughly half the video, redesign the routes unless continuous reuse is essential to the explanation.
+- Ensure mechanism/invisible-process scenes are routed away from plain product photography.
+- Ensure any spatial technical label points to a component that is visible or explicitly schematic.
+- Ensure the viewer can understand the causal mechanism with the visuals muted; subtitles alone must not carry the explanation.
 
 ### Lineage rules
 

@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Img,
+  Video,
   interpolate,
   useCurrentFrame,
   useVideoConfig,
@@ -15,6 +16,7 @@ import {Label} from "./Label";
 interface SceneFrameProps {
   scene: MotionScene;
   assets: RendererAssetMap;
+  videoSrc?: string;
 }
 
 function cameraStyle(
@@ -51,7 +53,11 @@ function opacityValue(operations: MotionOperation[], seconds: number): number {
   );
 }
 
-export const SceneFrame: React.FC<SceneFrameProps> = ({scene, assets}) => {
+export const SceneFrame: React.FC<SceneFrameProps> = ({
+  scene,
+  assets,
+  videoSrc,
+}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const seconds = frame / fps;
@@ -60,8 +66,19 @@ export const SceneFrame: React.FC<SceneFrameProps> = ({scene, assets}) => {
 
   return (
     <AbsoluteFill style={{backgroundColor: background, overflow: "hidden"}}>
-      <AbsoluteFill style={{...cameraStyle(scene.operations, seconds), opacity: opacityValue(scene.operations, seconds)}}>
-        {source ? (
+      <AbsoluteFill
+        style={{
+          ...cameraStyle(scene.operations, seconds),
+          opacity: opacityValue(scene.operations, seconds),
+        }}
+      >
+        {videoSrc ? (
+          <Video
+            src={videoSrc}
+            muted
+            style={{width: "100%", height: "100%", objectFit: "cover"}}
+          />
+        ) : source ? (
           <Img
             src={source}
             style={{width: "100%", height: "100%", objectFit: "cover"}}

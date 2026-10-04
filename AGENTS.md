@@ -1,55 +1,203 @@
 # AI Explainer Studio — Codex Autopilot
 
-This repository supports an autonomous, checkpointed workflow. When the user gives a topic or asks to create an explainer, treat that topic as the only required input unless the user explicitly overrides the defaults.
+This repository is a one-topic autonomous production system. Treat the topic as the only normal user input.
 
-## Primary behavior
+## Normal entry point
 
-1. Start or resume the autonomous state:
-   - New topic: `npm run autopilot -- --topic "<topic>"`
-   - Resume: `npm run autopilot -- --slug <slug>`
-2. Follow the returned directive in a loop.
-3. For machine-verifiable work, do not ask the user for confirmation.
-4. Validate every generated artifact with the existing schemas, QA contracts and deterministic checks.
-5. On failure, diagnose the smallest repair, apply it, and retry automatically.
-6. Allow up to 3 automatic attempts. Only then request human intervention.
-7. Stop only at defined human checkpoints or when a required provider/tool is genuinely unavailable.
-8. Preserve approved artifacts. Revisions must invalidate only affected downstream work.
+Users run:
 
-## Human checkpoints
+```
+npm run create-video -- "<topic>"
+```
 
-- Checkpoint A — Canonical asset: show A0 preview plus short QA summary. Actions: Approve, Edit, Regenerate.
-- Checkpoint B — Storyboard and keyframes: show scene purpose, key visual, narration summary and duration. Actions: Approve all, Edit scene, Regenerate scene, Add/Remove scene.
-- Checkpoint C — Final output: show final preview and final QA summary. Actions: Approve & export, Edit scene, Edit narration/text, Regenerate.
+Do not ask them to manually run individual provider commands during normal production.
 
-After approval, continue immediately. Never ask for a second confirmation.
+## Default behavior
+
+The default run mode is **hands_off**.
+
+1. Continue the persistent autonomous state until `complete`.
+2. Do not ask for confirmation for machine-verifiable work.
+3. Validate every artifact with schemas, QA contracts and cross-stage checks.
+4. On failure, repair the smallest scope and retry up to 3 times.
+5. Preserve passing upstream artifacts.
+6. Never fabricate generated media, provider results or QA passes.
+
+## Canonical stage order
+
+```
+research
+→ script
+→ storyboard (draft scene IDs/narration)
+→ master_voice (VieNeu + measured timing sync)
+→ asset_plan
+→ canonical_prompt
+→ canonical_generation
+→ canonical_qa
+→ checkpoint_canonical (auto-gate)
+→ scene_prompts
+→ storyboard_preview
+→ checkpoint_storyboard (auto-gate)
+→ scene_generation
+→ scene_qa
+→ motion
+→ final_render
+→ final_qa
+→ checkpoint_final (auto-gate)
+→ complete
+```
+
+## Runtime provider commands
+
+Provider startup and health checks have already run before Codex is invoked by `create-video`.
+
+Use the repository commands below. Do not invent a parallel provider integration.
+
+### Images — ComfyUI
+
+```
+npm run image:generate -- --prompt "<complete prompt>" --out <output.png> --project <project-dir> --asset <asset-id>
+npm run image:generate -- --prompt "<complete prompt>" --reference <approved-A0-board.png> --crop x,y,w,h --out <output.png> --project <project-dir> --asset <asset-id>
+```
+
+Before generation, declare A0/A1/... in both image asset manifests using the ImageAsset schema. Generated ComfyUI assets are registered as `qa_pending`.
+
+Use A0 as the source-of-truth reference for derived product scenes.
+
+**Default V1 canonical strategy: one image, not an 8-view board.**
+
+Generate A0 as one clean, full-product hero reference. Prefer a front three-quarter camera angle that makes the product's proportions, door layout, trim, handles, material and silhouette easy to judge. A normal portrait or 4:3 image is preferred over a collage.
+
+Do NOT make a 4×2 / 8-view board a blocking requirement for a generic SDXL checkpoint. Multi-view boards are optional capability upgrades only when the configured provider can reliably generate them.
+
+Inspect A0 with Codex `view_image`. Approve it when:
+- exactly one intended product is present;
+- identity-defining geometry is clear and physically plausible;
+- materials/color/trim/handles are readable;
+- there is no severe AI warping or duplicate geometry;
+- it is strong enough to condition later scene generation.
+
+For derived scenes:
+
+```
+npm run image:generate -- --prompt "<complete scene prompt>" --reference <approved-A0.png> --out <output.png> --project <project-dir> --asset <asset-id>
+```
+
+Do not use `--crop` unless the actual approved reference is intentionally a contact sheet. For large viewpoint changes such as a rear view, keep A0 as the identity reference, repeat the exact subject-lock geometry in the prompt, and QA the derived image independently. If a rear/hidden surface is not established by A0 or approved research, do not invent unsupported fine detail.
+
+After semantic image QA passes:
+
+```
+npm run image:status -- --project=<project-dir> --asset=<asset-id> --status=approved --qa-id=<qa-id>
+```
+
+### Vietnamese narration — VieNeu-TTS
+
+Single file:
+
+```
+npm run voice:generate -- --text "<narration>" --out <output.wav>
+```
+
+VoiceSpec batch:
+
+```
+npm run voice:generate -- --spec <voice-spec.json> --project <project-dir>
+npm run voice:sync-timing -- --project=<project-dir>
+```
+
+Create the draft storyboard first so stable `scene_id` values exist. Then build VoiceSpec from those scene IDs. `voice:sync-timing` updates VoiceSpec targets and storyboard durations from the measured WAV files, runs deterministic voice timing QA, and approves passing voice assets.
+
+### Realistic motion — Wan2.2
+
+```
+npm run video:generate -- --image <approved-keyframe.png> --prompt "<motion-only prompt>" --out <scene.mp4> --project <project-dir> --scene-id <scene-id> --asset-id <video-asset-id>
+```
+
+Generated videos enter `qa_pending`. Sample frames first:
+
+```
+npm run video:frames -- --video <scene.mp4> --count 5
+```
+
+Inspect every sampled frame with Codex `view_image` for subject identity, physical correctness, temporal drift and forbidden objects. After semantic video QA passes:
+
+```
+npm run video:status -- --project=<project-dir> --asset=<video-asset-id> --status=approved --qa-id=<qa-id>
+```
+
+If Wan is unavailable or fails after bounded retries, use the image keyframe plus deterministic Remotion motion. Wan failure alone must not block the project.
+
+### Final composition — Remotion
+
+Use:
+
+```
+npm run render:project -- --project=<project-dir>
+npm run final:preflight -- --project=<project-dir>
+npm run project:doctor -- --project=<project-dir>
+```
+
+The renderer automatically prefers an approved scene video from `video-assets.json`; otherwise it renders the approved image source with deterministic motion.
+
+After rendering the final MP4:
+1. run `final:preflight`;
+2. run `project:doctor`;
+3. run `video:frames -- --video <final.mp4> --count 12` (or at least one sample per scene);
+4. inspect the sampled sequence with `view_image`;
+5. apply Final QA V3.
+
+Do not mark final QA PASS unless:
+- duration remains close to the intended storyboard target;
+- the same source image does not dominate most scenes;
+- no source asset is reused unchanged across more than two consecutive scenes without a deliberate continuous-shot reason;
+- hidden/rear/inside components are never labelled on the wrong visible surface;
+- mechanism scenes are explanatory diagrams/cutaways/appropriate views, not decorative arrows over an unrelated hero photo;
+- captions are readable and do not contain avoidable one-word orphan cues.
+
+If these checks fail, repair the earliest responsible stage. A render that is technically valid but visually repetitive or spatially misleading is a FAIL.
+
+## Media routing
+
+V1 deliberately uses a small stack:
+
+- realistic product motion → Wan2.2 when available;
+- technical diagram / engineering overlay → Remotion/SVG;
+- static or Wan-fallback scene → Remotion pan/zoom;
+- a canonical hero image is for identity continuity, not for use as the background of the whole video;
+- hidden mechanisms/components require an appropriate view or schematic; never fake spatial truth with a label on the wrong surface;
+- images/keyframes → ComfyUI;
+- Vietnamese speech → VieNeu-TTS.
+
+LTX and other experimental providers are not part of the V1 production stack.
 
 ## Automatic repair
 
-A QA failure is not a user checkpoint.
+```
+FAIL
+→ diagnose
+→ minimal repair
+→ regenerate only affected artifact
+→ QA again
+→ PASS
+```
 
-Use this loop:
-
-FAIL -> diagnose -> minimally repair prompt/spec -> regenerate -> QA again.
-
-When a user requests an edit, merge the request into the complete existing master spec. Never replace a detailed prompt with only the short edit sentence.
-
-## Existing contracts are authoritative
-
-Reuse the current repository contracts instead of inventing parallel formats:
-- `schemas/`
-- `prompts/`
-- `packages/core/src/`
-- `docs/CONTENT_CONTRACTS.md`
-- canonical example: `examples/fridge-hot-behind/`
-
-Keep IDs stable across repair revisions unless a schema explicitly requires a new artifact ID.
-
-## Provider/tool boundary
-
-Use image/audio/video generation tools directly when they are available in the current Codex/ChatGPT environment. If a required provider is not available, do not pretend generation succeeded. Mark the current machine stage as `needs_human_review` with the exact missing capability and the already-prepared provider prompt/job so the user only handles that unavoidable boundary.
+Do not restart the whole topic for a localized failure.
 
 ## State
 
-Autopilot state is stored under `.ai-explainer/runs/<slug>/state.json` and is intentionally gitignored. Read it before resuming interrupted work. Do not restart a run from the topic if a valid state already exists.
+Runtime state:
 
-Detailed stage responsibilities are in `prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md`.
+```
+.ai-explainer/runs/<slug>/state.json
+```
+
+Topic artifact workspace:
+
+```
+.ai-explainer/projects/<slug>/
+```
+
+Never modify the canonical example while producing a user topic.
+
+Detailed provider setup is in `docs/PROVIDER_SETUP.md`. Detailed stage responsibilities are in `prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md`.

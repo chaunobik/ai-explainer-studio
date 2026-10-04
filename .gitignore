@@ -3,5 +3,6 @@ dist/
 *.tsbuildinfo
 .env
 .env.*
+!.env.example
 .DS_Store
 .ai-explainer/

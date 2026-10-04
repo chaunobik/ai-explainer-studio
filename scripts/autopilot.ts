@@ -6,8 +6,10 @@ import {
   createAutonomousRunState,
   getAutonomousDirective,
   recordAutonomousStageResult,
+  recoverAutonomousStage,
   resumeAutonomousStageAfterHumanReview,
   reviseAutonomousCheckpoint,
+  type AutonomousRunMode,
   type AutonomousRunState,
   type AutonomousStage,
 } from "../packages/core/src/index";
@@ -43,12 +45,23 @@ function statePath(slug: string): string {
 }
 
 function readState(file: string): AutonomousRunState {
-  return JSON.parse(fs.readFileSync(file, "utf8"));
+  const state = JSON.parse(fs.readFileSync(file, "utf8")) as AutonomousRunState;
+  if (!state.runMode) state.runMode = "guided";
+  return state;
 }
 
 function writeState(file: string, state: AutonomousRunState): void {
   fs.mkdirSync(path.dirname(file), {recursive: true});
   fs.writeFileSync(file, JSON.stringify(state, null, 2) + "\n");
+}
+
+function requestedRunMode(): AutonomousRunMode {
+  const mode = valueArg("mode");
+  if (!mode) return "hands_off";
+  if (mode !== "hands_off" && mode !== "guided") {
+    throw new Error("--mode must be hands_off or guided.");
+  }
+  return mode;
 }
 
 const topic = valueArg("topic");
@@ -70,6 +83,7 @@ if (topic && !fs.existsSync(file)) {
     runId: "RUN-" + slug,
     projectId,
     topic,
+    runMode: requestedRunMode(),
   });
   writeState(file, state);
 } else {
@@ -115,6 +129,15 @@ if (revise) {
   );
 }
 
+const recover = valueArg("recover");
+if (recover) {
+  state = recoverAutonomousStage(
+    state,
+    recover as AutonomousStage,
+    valueArg("note") ?? "Automatic strategy recovery.",
+  );
+}
+
 if (hasFlag("resume-human")) {
   state = resumeAutonomousStageAfterHumanReview(
     state,
@@ -131,6 +154,7 @@ console.log(
       run_id: state.runId,
       project_id: state.projectId,
       topic: state.topic,
+      run_mode: state.runMode,
       current_stage: state.currentStage,
       directive: getAutonomousDirective(state),
     },

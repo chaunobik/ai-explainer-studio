@@ -77,13 +77,19 @@ export function compileMultiViewReferencePrompt(
     )
     .join("\n");
 
+  const singleView = spec.requiredViews.length === 1;
+
   return [
-    "IMAGE TASK: CREATE ONE CANONICAL MULTI-VIEW REFERENCE BOARD",
+    singleView
+      ? "IMAGE TASK: CREATE ONE CANONICAL REFERENCE IMAGE"
+      : "IMAGE TASK: CREATE ONE CANONICAL MULTI-VIEW REFERENCE BOARD",
     `Asset: ${spec.assetId}`,
     `Prompt: ${spec.promptId}`,
     "",
     "CORE REQUIREMENT",
-    "Every panel must depict the exact same physical product. This board is the visual source of truth for all later video scenes.",
+    singleView
+      ? "Create one highly stable, realistic canonical product image. This image is the visual identity source of truth for all later video scenes."
+      : "Every panel must depict the exact same physical product. This board is the visual source of truth for all later video scenes.",
     "",
     "SUBJECT IDENTITY LOCK",
     spec.subjectLock.canonicalDescription,
@@ -119,15 +125,15 @@ export function compileMultiViewReferencePrompt(
     `Floor: ${spec.environment.floor}`,
     `Lighting continuity: ${spec.environment.lightingContinuity}`,
     "",
-    "REFERENCE BOARD COMPOSITION",
+    singleView ? "REFERENCE IMAGE COMPOSITION" : "REFERENCE BOARD COMPOSITION",
     `Layout: ${spec.boardComposition.layout}`,
     `Labels: ${spec.boardComposition.labels}`,
-    "Panel rules:",
+    singleView ? "Composition rules:" : "Panel rules:",
     bullets(spec.boardComposition.panelRules),
     "Crop rules:",
     bullets(spec.boardComposition.cropRules),
     "",
-    "CROSS-VIEW CONSISTENCY",
+    singleView ? "IDENTITY STABILITY" : "CROSS-VIEW CONSISTENCY",
     bullets(spec.crossViewConsistencyRules),
     "",
     "PHOTOGRAPHIC REALISM",
@@ -146,7 +152,9 @@ export function compileMultiViewReferencePrompt(
       : "Opaque background.",
     "",
     "FINAL RULE",
-    "Do not create several similar products. Create one stable canonical product observed from multiple camera positions. Geometry, materials, proportions and distinguishing features must remain identical across every panel.",
+    singleView
+      ? "Create exactly one canonical product, not a collage or contact sheet. Geometry, materials, proportions and distinguishing features must be clean, readable and reproducible in later reference-conditioned scenes."
+      : "Do not create several similar products. Create one stable canonical product observed from multiple camera positions. Geometry, materials, proportions and distinguishing features must remain identical across every panel.",
   ]
     .filter(Boolean)
     .join("\n");

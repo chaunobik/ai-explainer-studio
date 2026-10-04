@@ -8,6 +8,7 @@ export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
   motionSpec,
   assets,
   audioByScene = {},
+  videoByScene = {},
   subtitleCues = [],
 }) => {
   let from = 0;
@@ -22,6 +23,7 @@ export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
         const start = from;
         from += durationInFrames;
         const audio = audioByScene[scene.scene_id];
+        const video = videoByScene[scene.scene_id];
         const cues = subtitleCues.filter(
           (cue) => cue.scene_id === scene.scene_id,
         );
@@ -33,7 +35,7 @@ export const ExplainerVideo: React.FC<ExplainerVideoProps> = ({
             durationInFrames={durationInFrames}
             name={scene.scene_id}
           >
-            <SceneFrame scene={scene} assets={assets} />
+            <SceneFrame scene={scene} assets={assets} videoSrc={video} />
             {audio ? <Audio src={audio} /> : null}
             <SceneSubtitle cues={cues} />
           </Sequence>

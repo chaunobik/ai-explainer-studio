@@ -35,6 +35,14 @@ function dataUri(filePath: string): string {
   return `data:${mime};base64,${fs.readFileSync(filePath).toString("base64")}`;
 }
 
+function videoDataUri(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext !== ".mp4") {
+    throw new Error(`Unsupported generated video extension: ${ext}`);
+  }
+  return `data:video/mp4;base64,${fs.readFileSync(filePath).toString("base64")}`;
+}
+
 function sha256(filePath: string): string {
   return crypto
     .createHash("sha256")
@@ -73,6 +81,9 @@ async function main(): Promise<void> {
   const voiceSpecPath = resolveProject(p.voice_spec);
   const voiceAssetsPath = resolveProject(p.voice_assets_manifest);
   const imageAssetsPath = resolveProject(p.image_assets_manifest);
+  const videoAssetsPath = resolveProject(
+    p.video_assets_manifest ?? "video-assets.json",
+  );
   const output = path.resolve(arg("out") ?? resolveProject(p.output_file));
 
   for (const [relative, label] of [
@@ -233,8 +244,40 @@ async function main(): Promise<void> {
     audioByScene[voiceAsset.scene_id] = dataUri(audioPath);
   }
 
+  const videoByScene: Record<string, string> = {};
+  if (fs.existsSync(videoAssetsPath)) {
+    const videoManifest = readJson(videoAssetsPath);
+    for (const videoAsset of videoManifest.assets ?? []) {
+      if (videoAsset.status !== "approved") continue;
+      if (!videoAsset.qa_result_ids?.length) {
+        throw new Error(
+          `Approved video ${videoAsset.asset_id} has no QA result ID.`,
+        );
+      }
+      const videoPath = resolveProject(videoAsset.file.uri);
+      if (!fs.existsSync(videoPath)) {
+        throw new Error(
+          `Missing approved video file for ${videoAsset.asset_id}: ${videoPath}`,
+        );
+      }
+      const actualChecksum = sha256(videoPath);
+      if (actualChecksum !== videoAsset.file.checksum) {
+        throw new Error(
+          `Checksum mismatch for video ${videoAsset.asset_id}. Manifest=${videoAsset.file.checksum}, actual=${actualChecksum}.`,
+        );
+      }
+      videoByScene[videoAsset.scene_id] = videoDataUri(videoPath);
+    }
+  }
+
   const subtitleCues = buildSubtitleCues(voiceSpec, voiceManifest.assets, 6);
-  const inputProps = {motionSpec: motion, assets, audioByScene, subtitleCues};
+  const inputProps = {
+    motionSpec: motion,
+    assets,
+    audioByScene,
+    videoByScene,
+    subtitleCues,
+  };
 
   const serveUrl = await bundle({
     entryPoint: path.join(root, "packages", "renderer", "src", "entry.tsx"),

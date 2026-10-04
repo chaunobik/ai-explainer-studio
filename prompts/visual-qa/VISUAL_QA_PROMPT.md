@@ -24,6 +24,13 @@ Inspect the actual image. Do not approve it merely because the prompt sounded co
 - required_objects are present when applicable
 - requested transforms are visually achieved
 - no distracting unrelated content
+- the chosen camera/view actually exposes the location discussed by narration
+
+### Check 2B — Spatial truth
+- labels and highlights must point to something actually visible, or the scene must be explicitly schematic/cutaway
+- never approve a hidden rear/inside component label pasted onto an unrelated front exterior surface
+- "behind", "rear", "inside", "under" and similar spatial claims must be visually represented truthfully
+- invisible processes may use arrows only when the underlying diagram/view makes their path meaningful
 
 ### Check 3 — Entity continuity
 - compare with approved reference assets
@@ -43,6 +50,8 @@ Any critical violation forces fail even if other scores are high. Examples:
 - main object changes identity
 - required technical component is wrong or missing
 - image contradicts the narration/storyboard mechanism
+- a component label/highlight is placed on the wrong physical surface or wrong view
+- a mechanism scene is only decorative arrows over an unrelated product photo
 
 ### Output
 Set qa_result.stage to visual.

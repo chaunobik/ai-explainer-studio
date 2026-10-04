@@ -1,8 +1,8 @@
 # AI Explainer Studio
 
-AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually continuous, short-form science and engineering explainer videos.
+AI Explainer Studio is an autonomous pipeline for creating accurate, visually continuous, short-form science and engineering explainer videos.
 
-> Core principle: **Research → Verify → Explain → Visualize → Verify → Render**
+> Core principle: **Research → Verify → Narrate → Time → Visualize → Verify → Render**
 
 ## V1 target
 - TikTok + YouTube Shorts
@@ -10,16 +10,90 @@ AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually c
 - Vietnamese
 - 45–60 seconds
 - 6–10 scenes
-- image-first, motion-later
+- one-topic input
+- hands-off by default
 - QA after every stage
 - visual continuity as a first-class requirement
+- graceful provider fallback instead of blocking the whole run
 
-## Foundation docs
-- [Project Concept V1.0](docs/PROJECT_CONCEPT.md)
-- [Architecture V1](docs/ARCHITECTURE.md)
-- [Roadmap](docs/ROADMAP.md)
+## Production workflow
 
-## Core schemas
+```
+Topic
+→ Research + QA
+→ Script + QA
+→ Draft Storyboard + QA
+→ VieNeu Voice + measured timing sync
+→ AssetBible / Visual Plan
+→ Canonical A0 + QA
+→ Scene assets + QA
+→ Motion Router
+→ Render
+→ Final QA
+→ final.mp4
+```
+
+The draft storyboard establishes stable scene IDs and verbatim narration. VieNeu then generates the real WAV files, and measured audio duration is synchronized back into Storyboard + VoiceSpec before visual planning.
+
+## Media routing
+
+AI Explainer Studio is the orchestrator, not the model server.
+
+Preferred provider direction:
+- image generation/editing → ComfyUI workflows
+- realistic image-to-video → Wan2.2
+- Vietnamese narration → VieNeu-compatible VoiceProvider
+- engineering diagrams, overlays and deterministic animation → Remotion/SVG
+- final composition → Remotion + FFmpeg
+
+The core router lives in `packages/core/src/providers/media-router.ts`.
+
+## One-command production
+
+The normal user-facing command is now:
+
+```bash
+npm run create-video -- "Tại sao tủ lạnh nóng phía sau?"
+```
+
+This command:
+- verifies Codex CLI is installed and authenticated;
+- initializes an isolated topic project under `.ai-explainer/projects/<slug>/`;
+- auto-starts ComfyUI/VieNeu when start commands are configured;
+- runs provider health checks;
+- initializes/resumes the persistent hands-off run;
+- invokes `codex exec` non-interactively;
+- tells Codex to execute the complete pipeline rather than merely describe it;
+- writes the structured agent result under `.ai-explainer/runs/<slug>/codex-result.json`;
+- only reports `complete` when the returned final video path actually exists.
+
+Equivalent explicit form:
+
+```bash
+npm run create-video -- --topic "Tại sao tủ lạnh nóng phía sau?"
+```
+
+Provider installation/model weights are a one-time machine setup; they are not committed into this repository. Follow [Provider Setup](docs/PROVIDER_SETUP.md) once, then normal usage is only the one command above.
+
+The lower-level `autopilot` command remains available for development/state debugging:
+
+```bash
+npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
+```
+
+Default mode is `hands_off`. Legacy checkpoint stages are retained as compatibility gates but auto-approve after the preceding QA passes.
+
+To use interactive checkpoints:
+
+```bash
+npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?" --mode guided
+```
+
+The orchestrator retries repairable failures up to 3 times, then follows provider fallbacks where possible. It escalates only when no safe provider/fallback can satisfy the stage.
+
+See [Codex / ChatGPT Autonomous Workflow](docs/CODEX_AUTONOMOUS_WORKFLOW.md).
+
+## Core contracts
 - [VideoSpec](schemas/video-spec.schema.json)
 - [SceneSpec](schemas/scene-spec.schema.json)
 - [AssetBible](schemas/asset-bible.schema.json)
@@ -28,66 +102,28 @@ AI Explainer Studio is an AI-assisted pipeline for creating accurate, visually c
 - [TransitionSpec](schemas/transition-spec.schema.json)
 - [QAResult](schemas/qa-result.schema.json)
 - [AutonomousRunState](schemas/autonomous-run-state.schema.json)
+- [CreateVideoResult](schemas/create-video-result.schema.json)
 
-## Current development phase
-**Milestone 1 — Content Intelligence: COMPLETE**
+## Current state
+- Milestone 1 — Content Intelligence: COMPLETE
+- Milestone 2 — Visual Intelligence: COMPLETE
+- Milestone 3 — Visual Generation runtime: IMPLEMENTED (ComfyUI HTTP + manifest lifecycle)
+- VieNeu-TTS runtime: IMPLEMENTED (OpenAI-compatible HTTP + measured timing sync)
+- Wan2.2 runtime: IMPLEMENTED as optional I2V enhancement with Remotion fallback
+- Hands-off orchestration: IMPLEMENTED
+- Generated scene video composition: IMPLEMENTED
+- Remaining hardening: semantic VLM QA automation, asset cache, and real-GPU end-to-end qualification
 
-**Milestone 2 — Visual Intelligence: COMPLETE**
+The canonical end-to-end example remains under `examples/fridge-hot-behind/`.
 
-The current V1 pipeline is defined through:
+## Development
 
-    Topic
-    → Research + QA
-    → Script + QA
-    → Storyboard + QA
-    → AssetBible
-    → Visual Router
-    → Scene Lineage
-    → Transition Plan
-    → Continuity QA
-
-The canonical end-to-end example is under `examples/fridge-hot-behind/`.
-
-**Milestone 3 — Visual Generation: IN PROGRESS**
-
-Implemented: prompt-first A0 multi-view reference generation → realistic PhotoCaptureSpec → Multi-View Prompt QA → Multi-View Consistency QA → detailed per-scene ImagePromptSpec → scene Visual QA → repair/retry.
-
-The canonical workflow no longer requires a real product photograph. A0 is generated by AI as a multi-view reference pack, approved as the visual source of truth, then A1/A2/A5/A6 are generated from selected A0 view(s).
-
-Programmatic assets A3/A4/A7 are intentionally deferred to Milestone 4 (Remotion/SVG).
-
-## Codex autopilot
-
-The repository now supports a one-topic autonomous orchestration mode for Codex in VS Code or the Codex/ChatGPT app.
-
-Give Codex a topic. Root `AGENTS.md` instructs it to:
-- generate and validate stages automatically;
-- auto-repair failures up to 3 times;
-- preserve approved artifacts;
-- pause only at canonical asset, storyboard/keyframe, and final-output checkpoints;
-- resume from persistent local state instead of restarting.
-
-CLI state helper:
-
-    npm run autopilot -- --topic "Tại sao tủ lạnh nóng phía sau?"
-
-See [Codex / ChatGPT Autonomous Workflow](docs/CODEX_AUTONOMOUS_WORKFLOW.md).
-
-## V1 operator entry points
-- [Operator workflow](docs/OPERATOR_WORKFLOW.md)
-- [V1 Full Rerun Checklist](docs/V1_FULL_RERUN.md)
-
-For normal manual operation, start the guided dashboard. CLI checks remain developer diagnostics.
-
-## Run the guided dashboard
-
-    git checkout main
-    git pull
-    npm install
-    npm run dev
+```bash
+npm install
+npm run check
+npm run dev
+```
 
 Open `http://localhost:3000`.
 
-The dashboard recalculates **Next Action** after every upload, approval, QA result, preview render, and final render. CLI commands remain available for developer diagnostics, but they are no longer required for the normal production workflow.
-
-See [Guided Local Dashboard](docs/WEB_DASHBOARD.md).
+The browser dashboard remains useful as a supervision/debug surface. Normal production direction is topic-in → final-video-out.
