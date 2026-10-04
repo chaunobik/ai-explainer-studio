@@ -1,6 +1,6 @@
 # AI Explainer Studio — Codex Autopilot
 
-This repository supports an autonomous, checkpointed workflow. When the user gives a topic or asks to create an explainer, treat that topic as the only required input unless the user explicitly overrides the defaults.
+This repository supports a fully autonomous workflow. When the user gives a topic or asks to create an explainer, treat that topic as the only required input unless the user explicitly overrides defaults.
 
 ## Primary behavior
 
@@ -8,34 +8,58 @@ This repository supports an autonomous, checkpointed workflow. When the user giv
    - New topic: `npm run autopilot -- --topic "<topic>"`
    - Resume: `npm run autopilot -- --slug <slug>`
 2. Follow the returned directive in a loop.
-3. For machine-verifiable work, do not ask the user for confirmation.
+3. Do not ask the user for approval at canonical asset, storyboard/keyframe, or final-output gates. They are automatic QA gates.
 4. Validate every generated artifact with the existing schemas, QA contracts and deterministic checks.
 5. On failure, diagnose the smallest repair, apply it, and retry automatically.
-6. Allow up to 3 automatic attempts. Only then request human intervention.
-7. Stop only at defined human checkpoints or when a required provider/tool is genuinely unavailable.
-8. Preserve approved artifacts. Revisions must invalidate only affected downstream work.
+6. Allow up to 3 automatic attempts per stage.
+7. After retries are exhausted, prefer graceful degradation before human interruption:
+   - generative video -> deterministic Remotion motion over an approved image;
+   - preferred image provider -> alternate configured image provider;
+   - preferred voice provider -> alternate configured voice provider.
+8. Interrupt only when a required capability is genuinely unavailable and no configured fallback can produce a valid artifact.
+9. Preserve passing artifacts. Revisions must invalidate only affected downstream work.
 
-## Human checkpoints
+## Automatic QA gates
 
-- Checkpoint A — Canonical asset: show A0 preview plus short QA summary. Actions: Approve, Edit, Regenerate.
-- Checkpoint B — Storyboard and keyframes: show scene purpose, key visual, narration summary and duration. Actions: Approve all, Edit scene, Regenerate scene, Add/Remove scene.
-- Checkpoint C — Final output: show final preview and final QA summary. Actions: Approve & export, Edit scene, Edit narration/text, Regenerate.
+These legacy checkpoint stage names remain in the state schema for backward compatibility, but new runs auto-approve them:
 
-After approval, continue immediately. Never ask for a second confirmation.
+- `checkpoint_canonical`: auto-approve after canonical QA passes.
+- `checkpoint_storyboard`: auto-approve after storyboard/keyframe QA passes.
+- `checkpoint_final`: auto-complete after final QA passes.
+
+Never stop a new run merely because one of these stage names exists in the schema.
+
+## Preferred production stack
+
+Use provider abstractions rather than coupling orchestration to a model:
+
+- Content/orchestration: Codex / ChatGPT
+- Image workflow server: ComfyUI
+- Realistic motion: Wan image-to-video through ComfyUI
+- Advanced multi-keyframe video: optional LTX provider
+- Vietnamese TTS: VieNeu-compatible HTTP provider
+- Technical/diagram motion and fallback: Remotion + SVG
+- Final composition: Remotion + FFmpeg
+
+If a media provider is not configured in the current environment, surface the missing provider exactly; never pretend an asset was generated.
+
+## Timing principle
+
+For new pipeline work, narration timing should inform scene timing. Prefer generating or estimating narration timing as early as contracts allow, then make storyboard/motion durations follow real audio rather than forcing audio into arbitrary scene durations.
+
+Existing scene-based VoiceSpec contracts remain authoritative until their migration is complete.
 
 ## Automatic repair
 
-A QA failure is not a user checkpoint.
-
-Use this loop:
+Use:
 
 FAIL -> diagnose -> minimally repair prompt/spec -> regenerate -> QA again.
 
-When a user requests an edit, merge the request into the complete existing master spec. Never replace a detailed prompt with only the short edit sentence.
+Keep approved parents and unrelated assets unchanged. When an edit affects one scene only, do not regenerate passing scenes.
 
 ## Existing contracts are authoritative
 
-Reuse the current repository contracts instead of inventing parallel formats:
+Reuse:
 - `schemas/`
 - `prompts/`
 - `packages/core/src/`
@@ -44,12 +68,8 @@ Reuse the current repository contracts instead of inventing parallel formats:
 
 Keep IDs stable across repair revisions unless a schema explicitly requires a new artifact ID.
 
-## Provider/tool boundary
-
-Use image/audio/video generation tools directly when they are available in the current Codex/ChatGPT environment. If a required provider is not available, do not pretend generation succeeded. Mark the current machine stage as `needs_human_review` with the exact missing capability and the already-prepared provider prompt/job so the user only handles that unavoidable boundary.
-
 ## State
 
-Autopilot state is stored under `.ai-explainer/runs/<slug>/state.json` and is intentionally gitignored. Read it before resuming interrupted work. Do not restart a run from the topic if a valid state already exists.
+Autopilot state is stored under `.ai-explainer/runs/<slug>/state.json` and is intentionally gitignored. Read it before resuming interrupted work.
 
 Detailed stage responsibilities are in `prompts/orchestrator/AUTONOMOUS_ORCHESTRATOR.md`.
