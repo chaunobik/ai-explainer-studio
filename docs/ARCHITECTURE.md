@@ -9,11 +9,16 @@ Research + factual QA
   ↓
 Script + script QA
   ↓
-Master Voice
-  ├─ TTS provider
-  └─ measured timing/alignment
+Draft Storyboard
+  ├─ stable scene IDs
+  └─ verbatim narration per scene
   ↓
-Timed Storyboard
+VieNeu Voice
+  ├─ real WAV generation
+  └─ measured duration
+  ↓
+Timing Sync
+  └─ updates VoiceSpec + Storyboard durations
   ↓
 VideoSpec
   ↓
@@ -49,7 +54,13 @@ final.mp4
 
 AI Explainer Studio owns orchestration, contracts, QA, state, continuity and fallback policy. Model servers own inference.
 
-Do not embed Wan/PyTorch GPU lifecycle directly into the TypeScript core. Use provider adapters, with ComfyUI as the preferred local media execution boundary.
+Do not load Python AI models inside the TypeScript process. Runtime boundaries are explicit:
+- ComfyUI: HTTP provider for still-image generation/editing;
+- VieNeu-TTS: OpenAI-compatible HTTP provider for Vietnamese speech;
+- Wan2.2: isolated official Python CLI provider for optional I2V;
+- Remotion: TypeScript renderer and deterministic fallback.
+
+This keeps GPU/model lifecycle outside the orchestration core while still giving the one-command runner a concrete execution path.
 
 ## Source of truth
 
@@ -64,8 +75,8 @@ Default stage order:
 ```
 research
 → script
-→ master_voice
 → storyboard
+→ master_voice
 → asset_plan
 → canonical_prompt
 → canonical_generation
