@@ -1,8 +1,8 @@
 export const AUTONOMOUS_STAGE_ORDER = [
   "research",
   "script",
-  "master_voice",
   "storyboard",
+  "master_voice",
   "asset_plan",
   "canonical_prompt",
   "canonical_generation",
@@ -123,7 +123,6 @@ const revisionTargets: Record<AutonomousCheckpoint, AutonomousStage[]> = {
 const invalidationByTarget: Partial<Record<AutonomousStage, AutonomousStage[]>> = {
   master_voice: [
     "master_voice",
-    "storyboard",
     "asset_plan",
     "canonical_prompt",
     "canonical_generation",
