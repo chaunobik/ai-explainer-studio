@@ -210,6 +210,9 @@ async function main(): Promise<void> {
   const args = [
     "exec",
     "--full-auto",
+    "--search",
+    "-c",
+    "sandbox_workspace_write.network_access=true",
     "--output-schema",
     schemaPath,
     "--output-last-message",
