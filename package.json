@@ -29,7 +29,13 @@
     "dev": "npm --workspace @ai-explainer-studio/web run dev",
     "web:typecheck": "npm --workspace @ai-explainer-studio/web run typecheck",
     "web:build": "npm --workspace @ai-explainer-studio/web run build",
-    "create-video": "tsx scripts/create-video.ts"
+    "create-video": "tsx scripts/create-video.ts",
+    "provider:ensure": "tsx scripts/ensure-providers.ts",
+    "provider:doctor": "tsx scripts/provider-doctor.ts",
+    "image:generate": "tsx scripts/generate-image.ts",
+    "voice:generate": "tsx scripts/generate-voice.ts",
+    "video:generate": "tsx scripts/generate-video.ts",
+    "video:status": "tsx scripts/set-video-status.ts"
   },
   "devDependencies": {
     "typescript": "^5.0.0",
