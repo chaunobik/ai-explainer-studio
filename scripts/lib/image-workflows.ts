@@ -12,6 +12,13 @@ export interface ImageWorkflowOptions {
   filenamePrefix: string;
 }
 
+export interface ImageCropRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export function textToImageWorkflow(
   options: ImageWorkflowOptions,
 ): Record<string, unknown> {
@@ -66,9 +73,11 @@ export function imageToImageWorkflow(
   options: ImageWorkflowOptions & {
     inputFilename: string;
     denoise: number;
+    crop?: ImageCropRect;
   },
 ): Record<string, unknown> {
-  return {
+  const sourceNode = options.crop ? "12" : "10";
+  const workflow: Record<string, any> = {
     "3": {
       class_type: "KSampler",
       inputs: {
@@ -110,7 +119,32 @@ export function imageToImageWorkflow(
     },
     "11": {
       class_type: "VAEEncode",
-      inputs: {pixels: ["10", 0], vae: ["4", 2]},
+      inputs: {pixels: ["13", 0], vae: ["4", 2]},
+    },
+    "13": {
+      class_type: "ImageScale",
+      inputs: {
+        image: [sourceNode, 0],
+        upscale_method: "lanczos",
+        width: options.width,
+        height: options.height,
+        crop: "center",
+      },
     },
   };
+
+  if (options.crop) {
+    workflow["12"] = {
+      class_type: "ImageCrop",
+      inputs: {
+        image: ["10", 0],
+        width: options.crop.width,
+        height: options.crop.height,
+        x: options.crop.x,
+        y: options.crop.y,
+      },
+    };
+  }
+
+  return workflow;
 }
