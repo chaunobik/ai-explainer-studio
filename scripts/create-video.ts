@@ -77,7 +77,22 @@ function runOrThrow(executable: string, args: string[], label: string): void {
   }
 }
 
-function preflightCodex(): string {
+interface CodexRuntime {
+  executable: string;
+  rootHelp: string;
+  execHelp: string;
+}
+
+function helpText(executable: string, args: string[]): string {
+  const result = spawnSync(executable, args, {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    shell: false,
+  });
+  return `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+}
+
+function preflightCodex(): CodexRuntime {
   const executable = resolveCodexCommand();
   const login = spawnSync(executable, ["login", "status"], {
     cwd: process.cwd(),
@@ -97,7 +112,16 @@ function preflightCodex(): string {
     );
   }
 
-  return executable;
+  const rootHelp = helpText(executable, ["--help"]);
+  const execHelp = helpText(executable, ["exec", "--help"]);
+
+  if (!execHelp.includes("--output-schema") || !execHelp.includes("--output-last-message")) {
+    throw new Error(
+      "Installed Codex CLI is too old for structured create-video runs. Update Codex and retry.",
+    );
+  }
+
+  return {executable, rootHelp, execHelp};
 }
 
 async function main(): Promise<void> {
@@ -114,7 +138,7 @@ async function main(): Promise<void> {
     );
   }
 
-  const codexCommand = preflightCodex();
+  const codex = preflightCodex();
 
   const slug = slugify(topic);
   const runDir = path.join(process.cwd(), ".ai-explainer", "runs", slug);
@@ -207,17 +231,35 @@ async function main(): Promise<void> {
     "Your final response is consumed by the create-video runner and MUST conform to the supplied JSON output schema.",
   ].join("\n");
 
-  const args = [
-    "exec",
-    "--full-auto",
-    "--search",
-    "-c",
-    "sandbox_workspace_write.network_access=true",
+  const args: string[] = [];
+
+  // --search is a root/global option in current Codex builds. Detect it rather
+  // than assuming a specific CLI version.
+  if (codex.rootHelp.includes("--search")) args.push("--search");
+
+  args.push("exec");
+
+  // Prefer the convenience alias when supported; otherwise use explicit
+  // non-interactive workspace-write settings.
+  if (codex.execHelp.includes("--full-auto")) {
+    args.push("--full-auto");
+  } else {
+    args.push("--sandbox", "workspace-write");
+    args.push("-c", 'approval_policy="never"');
+  }
+
+  // Media providers and web research need network access from Codex commands.
+  args.push("-c", "sandbox_workspace_write.network_access=true");
+  if (!codex.rootHelp.includes("--search")) {
+    args.push("-c", 'web_search="live"');
+  }
+
+  args.push(
     "--output-schema",
     schemaPath,
     "--output-last-message",
     resultFile,
-  ];
+  );
 
   const model = valueArg("model");
   if (model) args.push("--model", model);
@@ -229,7 +271,7 @@ async function main(): Promise<void> {
   console.log(`Run:   ${slug}`);
   console.log("Codex is now executing the complete workflow.\n");
 
-  const child = spawn(codexCommand, args, {
+  const child = spawn(codex.executable, args, {
     cwd: process.cwd(),
     stdio: ["pipe", "inherit", "inherit"],
     shell: false,
