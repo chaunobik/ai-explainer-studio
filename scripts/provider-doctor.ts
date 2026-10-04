@@ -31,7 +31,9 @@ async function main(): Promise<void> {
         "server is reachable but COMFYUI_CHECKPOINT is not configured in .env",
       );
     }
-    return `reachable at ${process.env.COMFYUI_BASE_URL ?? "http://127.0.0.1:8188"}; checkpoint=${checkpoint}`;
+    const client = new ComfyUiClient();
+    await client.validateCoreImageRuntime(checkpoint);
+    return `reachable at ${process.env.COMFYUI_BASE_URL ?? "http://127.0.0.1:8188"}; checkpoint=${checkpoint}; core workflow nodes ready`;
   });
 
   const voice = await check("VieNeu-TTS", async () => {
