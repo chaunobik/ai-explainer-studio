@@ -121,6 +121,25 @@ const revisionTargets: Record<AutonomousCheckpoint, AutonomousStage[]> = {
 };
 
 const invalidationByTarget: Partial<Record<AutonomousStage, AutonomousStage[]>> = {
+  script: [
+    "script",
+    "storyboard",
+    "master_voice",
+    "asset_plan",
+    "canonical_prompt",
+    "canonical_generation",
+    "canonical_qa",
+    "checkpoint_canonical",
+    "scene_prompts",
+    "storyboard_preview",
+    "checkpoint_storyboard",
+    "scene_generation",
+    "scene_qa",
+    "motion",
+    "final_render",
+    "final_qa",
+    "checkpoint_final",
+  ],
   master_voice: [
     "master_voice",
     "asset_plan",
