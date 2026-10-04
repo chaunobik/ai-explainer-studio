@@ -28,12 +28,19 @@ function dataUri(filePath: string): string {
     ext === ".webp" ? "image/webp" :
     ext === ".mp3" ? "audio/mpeg" :
     ext === ".wav" ? "audio/wav" :
-    ext === ".m4a" ? "audio/mp4" :
-    ext === ".mp4" ? "video/mp4" :
+    ext === ".m4a" || ext === ".mp4" ? "audio/mp4" :
     null;
 
   if (!mime) throw new Error(`Unsupported media extension: ${ext}`);
   return `data:${mime};base64,${fs.readFileSync(filePath).toString("base64")}`;
+}
+
+function videoDataUri(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext !== ".mp4") {
+    throw new Error(`Unsupported generated video extension: ${ext}`);
+  }
+  return `data:video/mp4;base64,${fs.readFileSync(filePath).toString("base64")}`;
 }
 
 function sha256(filePath: string): string {
@@ -259,7 +266,7 @@ async function main(): Promise<void> {
           `Checksum mismatch for video ${videoAsset.asset_id}. Manifest=${videoAsset.file.checksum}, actual=${actualChecksum}.`,
         );
       }
-      videoByScene[videoAsset.scene_id] = dataUri(videoPath);
+      videoByScene[videoAsset.scene_id] = videoDataUri(videoPath);
     }
   }
 
