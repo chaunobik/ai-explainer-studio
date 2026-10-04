@@ -1,16 +1,14 @@
 # Provider Setup — One-time machine configuration
 
-The application code is wired to real providers. Large external model weights are intentionally not committed to this repository.
+AI Explainer Studio is wired to real local providers. Large external repositories and model weights are machine dependencies and are intentionally **not** committed into this Git repository.
 
-External model repositories and weights are intentionally machine dependencies, not source files in AI Explainer Studio.
-
-After this one-time setup, normal production is:
+After this one-time setup, normal production is one command:
 
 ```powershell
 npm run create-video -- "Chủ đề video"
 ```
 
-`create-video` automatically starts ComfyUI and VieNeu when their start commands are configured in `.env`, checks provider health, launches Codex non-interactively, and renders the result.
+The command initializes an isolated project, starts/checks providers, enables Codex live web research, runs the hands-off production workflow, and verifies the final MP4 before reporting success.
 
 ## 1. Create local configuration
 
@@ -18,13 +16,13 @@ npm run create-video -- "Chủ đề video"
 Copy-Item .env.example .env
 ```
 
-Edit `.env` for the paths on your machine.
+Edit `.env` for the actual paths on your machine. `.env` is ignored by Git; `.env.example` is the committed template.
 
-## 2. ComfyUI — required for image generation
+## 2. ComfyUI — required for still images/keyframes
 
 Source: https://github.com/Comfy-Org/ComfyUI
 
-Run ComfyUI as a local server, normally on:
+Run ComfyUI as a local server, normally:
 
 ```
 http://127.0.0.1:8188
@@ -36,23 +34,25 @@ Put a photorealistic SD/SDXL-compatible checkpoint under:
 ComfyUI/models/checkpoints/
 ```
 
-Then set the exact filename:
+Set its exact filename:
 
 ```dotenv
+COMFYUI_BASE_URL=http://127.0.0.1:8188
 COMFYUI_CHECKPOINT=your-model.safetensors
 ```
 
-The built-in AI Explainer workflow uses only core ComfyUI nodes:
+The built-in adapter uses core ComfyUI nodes only:
 - CheckpointLoaderSimple
 - CLIPTextEncode
 - EmptyLatentImage / LoadImage
+- ImageCrop / ImageScale
 - VAEEncode / VAEDecode
 - KSampler
 - SaveImage
 
-No custom node pack is required for the image adapter.
+No custom node pack is required for the built-in image workflow.
 
-To let `create-video` start ComfyUI automatically:
+Optional auto-start example:
 
 ```dotenv
 COMFYUI_START_COMMAND=python D:\AI\ComfyUI\main.py --listen 127.0.0.1 --port 8188
@@ -60,27 +60,20 @@ COMFYUI_START_COMMAND=python D:\AI\ComfyUI\main.py --listen 127.0.0.1 --port 818
 
 ## 3. VieNeu-TTS v3 Turbo — required for Vietnamese narration
 
-Source: https://github.com/pnnbao97/VieNeu-TTS
+Canonical source: https://github.com/pnnbao97/VieNeu-TTS
 
-VieNeu exposes an OpenAI-compatible endpoint:
+VieNeu exposes:
+- `POST /v1/audio/speech`
+- `GET /v1/voices`
+- `GET /health`
 
-```
-POST /v1/audio/speech
-```
-
-and health endpoint:
-
-```
-GET /health
-```
-
-Start the local API using the upstream project, for example:
+Upstream local server example:
 
 ```powershell
 uv run python -m apps.openai_speech
 ```
 
-Default AI Explainer configuration:
+AI Explainer defaults:
 
 ```dotenv
 VIENEU_BASE_URL=http://127.0.0.1:8000
@@ -90,14 +83,16 @@ VIENEU_VOICE=Mai Anh
 Optional auto-start example:
 
 ```dotenv
-VIENEU_START_COMMAND=cd /d D:\AI\vieneu-tts && uv run python -m apps.openai_speech
+VIENEU_START_COMMAND=cd /d D:\AI\VieNeu-TTS && uv run python -m apps.openai_speech
 ```
 
-## 4. Wan2.2 — optional enhancement
+## 4. Wan2.2 — optional realistic I2V
 
 Source: https://github.com/Wan-Video/Wan2.2
 
-AI Explainer invokes the official `generate.py` CLI. The default configuration uses the official consumer-GPU TI2V-5B path:
+Wan is intentionally optional because Remotion is the deterministic fallback.
+
+Example local configuration:
 
 ```dotenv
 WAN_REPO_DIR=D:\AI\Wan2.2
@@ -107,16 +102,16 @@ WAN_TASK=ti2v-5B
 WAN_SIZE=704*1280
 ```
 
-The upstream Wan2.2 documentation states TI2V-5B is the consumer-GPU model and supports image-to-video at 720p. If Wan is not configured or generation fails, AI Explainer falls back to deterministic Remotion motion rather than blocking the complete video.
+The adapter invokes the upstream `generate.py` CLI. If Wan is absent or fails after bounded retries, the approved keyframe is rendered with deterministic Remotion motion instead of blocking the entire video.
 
-## 5. Verify everything
+## 5. Verify machine setup once
 
 ```powershell
 npm run provider:ensure
 npm run provider:doctor
 ```
 
-Expected minimum result:
+Expected minimum:
 
 ```
 ✓ ComfyUI
@@ -125,21 +120,80 @@ Expected minimum result:
 ✓ Media output directory
 ```
 
-ComfyUI and VieNeu are required. Wan is optional because Remotion is its safe fallback.
+ComfyUI and VieNeu are required. Wan may show a warning and the system can still produce a video through Remotion fallback.
 
-## Provider commands
+## Exact internal media lifecycle
 
-These are internal production commands normally called by Codex:
+These commands are normally called by Codex automatically. They are listed here for debugging.
+
+### Image generation
+
+Generate and register A0:
 
 ```powershell
-npm run image:generate -- --prompt "..." --out output.png
-npm run image:generate -- --prompt "..." --reference A0.png --out scene.png
-
-npm run voice:generate -- --text "Xin chào" --out voice.wav
-npm run voice:generate -- --spec path\voice-spec.json --project path\project
-
-npm run video:generate -- --image scene.png --prompt "subtle camera push-in" --out scene.mp4
-npm run video:status -- --project=path\project --asset=VID-S1 --status=approved --qa-id=QA-VID-S1
+npm run image:generate -- --prompt "..." --width 1536 --height 1024 --out <A0.png> --project <project-dir> --asset A0
 ```
 
-Normal users should not need to run these manually.
+After Codex inspects A0 and semantic QA passes:
+
+```powershell
+npm run image:status -- --project=<project-dir> --asset=A0 --status=approved --qa-id=QA-A0
+```
+
+Generate a derived scene from one canonical panel:
+
+```powershell
+npm run image:generate -- --prompt "..." --reference <A0.png> --crop 384,0,384,512 --out <scene.png> --project <project-dir> --asset A1
+```
+
+Then approve only after semantic image QA:
+
+```powershell
+npm run image:status -- --project=<project-dir> --asset=A1 --status=approved --qa-id=QA-A1
+```
+
+### Voice generation and authoritative timing
+
+```powershell
+npm run voice:generate -- --spec <project-dir>\voice-spec.json --project <project-dir>
+npm run voice:sync-timing -- --project=<project-dir>
+```
+
+The first command produces real WAV files. The second measures those WAVs, synchronizes Storyboard + VoiceSpec durations, runs deterministic timing QA, and approves passing voice assets.
+
+### Wan scene video
+
+```powershell
+npm run video:generate -- --image <scene.png> --prompt "subtle realistic motion only" --out <scene.mp4> --project <project-dir> --scene-id S1 --asset-id VID-S1
+npm run video:frames -- --video <scene.mp4> --count 5
+```
+
+Codex inspects the sampled frames before approval:
+
+```powershell
+npm run video:status -- --project=<project-dir> --asset=VID-S1 --status=approved --qa-id=QA-VID-S1
+```
+
+### Final render and deterministic verification
+
+```powershell
+npm run render:project -- --project=<project-dir>
+npm run final:preflight -- --project=<project-dir>
+npm run project:doctor -- --project=<project-dir>
+```
+
+`final:preflight` verifies the actual MP4 exists and checks resolution, FPS and duration against MotionSpec. `project:doctor` verifies project contracts/integrity.
+
+## Normal use after setup
+
+Do not run the internal commands above manually for every video. Use only:
+
+```powershell
+npm run create-video -- "Tại sao tủ lạnh nóng phía sau?"
+```
+
+Output is stored under:
+
+```
+.ai-explainer/projects/<topic-slug>/output/final.mp4
+```
