@@ -138,7 +138,24 @@ npm run final:preflight -- --project=<project-dir>
 npm run project:doctor -- --project=<project-dir>
 ```
 
-The renderer automatically prefers an approved scene video from `video-assets.json`; otherwise it renders the approved image source with deterministic motion. Do not mark final QA PASS unless deterministic preflight and project doctor pass.
+The renderer automatically prefers an approved scene video from `video-assets.json`; otherwise it renders the approved image source with deterministic motion.
+
+After rendering the final MP4:
+1. run `final:preflight`;
+2. run `project:doctor`;
+3. run `video:frames -- --video <final.mp4> --count 12` (or at least one sample per scene);
+4. inspect the sampled sequence with `view_image`;
+5. apply Final QA V3.
+
+Do not mark final QA PASS unless:
+- duration remains close to the intended storyboard target;
+- the same source image does not dominate most scenes;
+- no source asset is reused unchanged across more than two consecutive scenes without a deliberate continuous-shot reason;
+- hidden/rear/inside components are never labelled on the wrong visible surface;
+- mechanism scenes are explanatory diagrams/cutaways/appropriate views, not decorative arrows over an unrelated hero photo;
+- captions are readable and do not contain avoidable one-word orphan cues.
+
+If these checks fail, repair the earliest responsible stage. A render that is technically valid but visually repetitive or spatially misleading is a FAIL.
 
 ## Media routing
 
@@ -147,6 +164,8 @@ V1 deliberately uses a small stack:
 - realistic product motion → Wan2.2 when available;
 - technical diagram / engineering overlay → Remotion/SVG;
 - static or Wan-fallback scene → Remotion pan/zoom;
+- a canonical hero image is for identity continuity, not for use as the background of the whole video;
+- hidden mechanisms/components require an appropriate view or schematic; never fake spatial truth with a label on the wrong surface;
 - images/keyframes → ComfyUI;
 - Vietnamese speech → VieNeu-TTS.
 
